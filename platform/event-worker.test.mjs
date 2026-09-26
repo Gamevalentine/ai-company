@@ -24,3 +24,13 @@ test('memory survives unrelated events',()=>{
   s=applyEvent(s,'message_send',{from:'TB-01',to:'ATLAS',message_type:'STATUS',payload:{ok:true}});
   assert.equal(s.memories.find(x=>x.key==='shared:note').value,'remember');
 });
+
+
+test('duplicate task IDs are idempotent',()=>{
+  let s=createEmptyState();
+  const payload={actor_id:'ATLAS',assigned_to:'TB-01',task_id:'ATLAS-ISSUE-99',project:'TrainingBot',objective:'same task'};
+  s=applyEvent(s,'create_task',payload);
+  s=applyEvent(s,'create_task',payload);
+  assert.equal(s.tasks.filter(t=>t.task_id==='ATLAS-ISSUE-99').length,1);
+  assert.ok(s.audit.some(x=>x.action==='TASK_DUPLICATE_IGNORED'&&x.task_id==='ATLAS-ISSUE-99'));
+});
