@@ -1,4 +1,5 @@
 name: TrainingBot Security Check
+# SECURITY-TB-01 brain revision 2
 
 on:
   workflow_dispatch:
