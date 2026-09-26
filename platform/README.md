@@ -112,3 +112,23 @@ Chưa được phép báo PASS hoàn toàn:
 Không cần quyết định trả phí ở bước bootstrap này.
 
 Để hoàn tất AC-08 và đưa pilot chạy end-to-end thật, cần chọn cách cấp credential an toàn cho backend executor. Không được đặt token vào index.html, localStorage, task payload hoặc repo. Sau đó mới kết nối Safe Executor và chạy pilot sandbox thật.
+
+
+## Durable event-driven state (server-side, no always-on server)
+
+Pilot đã chuyển Task Store, Inbox/Outbox, Memory, Execution và Audit sang nhánh riêng `aion-runtime-state`.
+
+- Source of truth được lưu trong `aion-state.enc.json`.
+- State được mã hóa at-rest bằng AES-256-GCM; data key được wrap bằng RSA-OAEP-SHA256 từ GitHub App private key đã nằm trong GitHub Secrets.
+- Không lưu plaintext memory/task state trong branch sau migration.
+- Workflow `AION Runtime Event` chỉ thức dậy khi có event rồi decrypt tạm trong runner, apply event, re-encrypt và commit state.
+- Workflow `AION Executor Bridge` sau khi thu kết quả Safe Executor sẽ tự ghi PASS/FAIL + evidence vào durable state, tạo message cho DEV-TB-01 và audit event.
+- Cả hai workflow dùng cùng concurrency group `aion-runtime-state` để tránh ghi đè state trong pilot.
+
+Live verification:
+- State migration workflow: success.
+- Encrypted bridge run: 36269016376 — success.
+- TrainingBot executor run tương ứng: 36269022719 — success.
+- Durable state branch head sau run: 32080a1ab6eebacee2b5577a13729128d92e0d95 (`runtime: executor result`).
+
+Giới hạn hiện tại: đây vẫn là bootstrap persistence trên GitHub, chưa phải database transaction/concurrency cho quy mô lớn. Phù hợp pilot TrainingBot và không cần server chạy 24/7.
