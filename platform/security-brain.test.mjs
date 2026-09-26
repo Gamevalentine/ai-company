@@ -75,3 +75,24 @@ test('unavailable dependency audit requires attention',()=>{
   assert.equal(g.status,'NEEDS_ATTENTION');
   assert.equal(g.needs_manager_attention,true);
 });
+
+
+test('hard-gate report replaces contradictory AI findings',async()=>{
+  const e=cleanEvidence();
+  e.dependency_audit.available=false;
+  e.headers.strict_transport_security=false;
+  e.headers.content_security_policy=false;
+  const r=await reviewSecurityEvidence(e,{fetchImpl:mockFetch({
+    status:'SECURITY_OK',
+    severity:'info',
+    summary:'Everything is fine.',
+    findings:['No missing headers found.'],
+    recommended_action:'NO_ACTION',
+    needs_manager_attention:false
+  })});
+  assert.equal(r.status,'NEEDS_ATTENTION');
+  assert.equal(r.hard_gate_overrode_model,true);
+  assert.ok(r.findings.some(x=>x.includes('Dependency audit evidence is unavailable')));
+  assert.ok(r.findings.some(x=>x.includes('strict_transport_security')));
+  assert.equal(r.findings.some(x=>x.includes('No missing headers found')),false);
+});
