@@ -1,0 +1,24 @@
+name: AION Agent Platform Tests
+
+on:
+  push:
+    paths:
+      - 'platform/**'
+      - '.github/workflows/aion-agent-platform-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run platform acceptance tests
+        working-directory: platform
+        run: npm test
