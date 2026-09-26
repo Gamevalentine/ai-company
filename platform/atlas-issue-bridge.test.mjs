@@ -23,7 +23,7 @@ test('bridge accepts only Gamevalentine sandbox TrainingBot tasks',()=>{
 test('bridge rejects other authors and production mode',()=>{
   const base=JSON.stringify({objective:'safe task',acceptance_criteria:['pass'],execution_mode:'sandbox-only'});
   assert.throws(()=>parseAtlasIssue({author:'someone',issueNumber:1,body:base}),/untrusted/);
-  assert.throws(()=>parseAtlasIssue({author:'Gamevalentine',issueNumber:1,body:JSON.stringify({objective:'prod',acceptance_criteria:['pass'],execution_mode:'production'})}),/sandbox-only/);
+  assert.throws(()=>parseAtlasIssue({author:'Gamevalentine',issueNumber:1,body:JSON.stringify({objective:'production task',acceptance_criteria:['pass'],execution_mode:'production'})}),/sandbox-only/);
 });
 
 test('result comment contains machine-readable CEO return envelope',()=>{
