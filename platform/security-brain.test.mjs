@@ -13,7 +13,7 @@ function mockFetch(reply){
 function cleanEvidence(){
   return {
     static_scan:{private_key_files:0,committed_env_files:0,credential_like_files:0},
-    dependency_audit:{critical:0,high:0,moderate:0},
+    dependency_audit:{available:true,critical:0,high:0,moderate:0},
     headers:{
       strict_transport_security:true,
       content_security_policy:true,
@@ -62,4 +62,16 @@ test('security AI report accepts clean supported verdict',async()=>{
   assert.equal(r.agent_id,'SECURITY-TB-01');
   assert.equal(r.status,'SECURITY_OK');
   assert.equal(r.hard_gate_overrode_model,false);
+});
+
+
+test('unavailable dependency audit requires attention',()=>{
+  const e=cleanEvidence();
+  e.dependency_audit.available=false;
+  const g=enforceSecurityVerdict(
+    {status:'SECURITY_OK',severity:'info',recommended_action:'NO_ACTION',needs_manager_attention:false},
+    hardSecurityChecks(e)
+  );
+  assert.equal(g.status,'NEEDS_ATTENTION');
+  assert.equal(g.needs_manager_attention,true);
 });
