@@ -123,5 +123,21 @@
     "comms_low_risk_auto_reply_only": true,
     "comms_escalates_sensitive_cases": true,
     "no_mass_messaging_without_owner": true
+  },
+  "director": {
+    "agent_id": "TB-01",
+    "title": "Giám đốc TrainingBot",
+    "brain": "trainingbot-director.mjs",
+    "status": "OPERATIONAL_V2",
+    "capabilities": [
+      "hiểu mục tiêu cấp văn phòng",
+      "chọn đúng nhân viên chuyên môn",
+      "giao nhiều task song song",
+      "đặt priority và dependency",
+      "theo dõi trạng thái nhiều nhân viên",
+      "gom kết quả và báo ATLAS",
+      "đưa task lỗi về NEEDS_REWORK",
+      "chặn công việc cần Owner approval trước khi dispatch"
+    ]
   }
 }
