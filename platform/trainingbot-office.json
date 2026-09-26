@@ -59,9 +59,16 @@
         "audit bảo mật",
         "kiểm tra cấu hình",
         "phát hiện rủi ro",
-        "đề xuất giảm thiểu"
+        "đề xuất giảm thiểu",
+        "kiểm tra metadata file cấu hình/source ở chế độ chỉ đọc",
+        "đọc kết quả dependency audit đã làm sạch",
+        "kiểm tra public security headers",
+        "phân loại SECURITY_OK / NEEDS_ATTENTION / CRITICAL",
+        "chuyển vấn đề cho DEV hoặc TB-01 dựa trên evidence"
       ],
-      "status": "IDENTITY_READY"
+      "status": "BRAIN_READY",
+      "brain": "security-brain.mjs",
+      "workflow": "trainingbot-security-check.yml"
     },
     {
       "agent_id": "OPS-TB-01",
