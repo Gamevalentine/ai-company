@@ -74,3 +74,24 @@ test('AI QA PASS requires model PASS and complete hard evidence',async()=>{
   assert.equal(s.tasks.find(t=>t.task_id==='AION-AI-PILOT-001').status,'READY_FOR_CEO_REVIEW');
   assert.ok(s.messages.some(m=>m.to==='ATLAS'&&m.type==='AI_MANAGER_REPORT'));
 });
+
+
+test('AI manager retries malformed local-model output once',async()=>{
+  let calls=0;
+  const fetchImpl=async()=>{
+    calls++;
+    if(calls===1) return {ok:true,json:async()=>({model:'test-model',message:{content:'{"summary":"broken"'}}),text:async()=>''};
+    return {ok:true,json:async()=>({model:'test-model',message:{content:JSON.stringify({
+      summary:'retry recovered',
+      operation:'validate-sandbox',
+      dev_objective:'Validate the TrainingBot sandbox build',
+      qa_focus:['verify run URL','verify commit SHA'],
+      needs_owner_approval:false,
+      risk_reason:'sandbox only'
+    })}}),text:async()=>''};
+  };
+  const s=bootstrapAiPilot(createEmptyState(),{taskId:'AION-AI-RETRY'});
+  const out=await managerPlan(s,{taskId:'AION-AI-RETRY',fetchImpl});
+  assert.equal(calls,2);
+  assert.equal(out.state.tasks.find(t=>t.task_id==='AION-AI-RETRY').status,'AI_MANAGER_PLANNED');
+});
