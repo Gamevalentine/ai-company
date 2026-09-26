@@ -58,14 +58,23 @@ Runtime đã có contract requestExecution() và chỉ cho phép sandbox_build, 
 
 Request production hoặc target main bị chặn bằng PRODUCTION_HARD_BLOCK.
 
-Hiện execution được ghi là PENDING_EXTERNAL. Chưa tự dispatch GitHub Actions vì chưa có backend credential được Chủ sở hữu cấp. Đây là chủ ý an toàn: token không nằm trong giao diện, task payload hay repository.
+GitHub App AION HQ Executor đã được cấu hình ở repository secret và bridge workflow đã dispatch thật sang TrainingBot Safe Executor.
 
-Khi có phương án credential/backend được Chủ sở hữu phê duyệt, adapter sẽ:
-1. nhận execution record;
-2. dispatch workflow AION HQ Safe Executor;
-3. poll/receive kết quả;
-4. gọi completeExecution();
-5. ghi result/evidence về Task Store và Audit.
+Luồng đã chứng minh:
+1. AION Executor Bridge tạo GitHub App token ngắn hạn;
+2. dispatch workflow AION HQ Safe Executor trong trainingbot-cloudflare;
+3. Safe Executor chạy safety gate + build aion-sandbox;
+4. Safe Executor tạo machine-readable evidence artifact;
+5. Bridge chờ run hoàn tất, thu run ID/conclusion/URL/head SHA và upload evidence artifact riêng;
+6. runtime có Result Collector + completeExecution() để ghi PASS/FAIL vào Task Store và DEV inbox khi backend runtime được kết nối.
+
+Bằng chứng live pilot:
+- Bridge run: 36267386771 — success.
+- TrainingBot Safe Executor run: 36267394730 — success.
+- TrainingBot evidence artifact: aion-executor-result-36267394730.
+- Bridge evidence artifact: aion-bridge-result-36267386771.
+
+Production vẫn bị khóa; pilot chỉ chạy validate-sandbox.
 
 ## Acceptance status hiện tại
 
@@ -95,7 +104,7 @@ Chưa được phép báo PASS hoàn toàn:
 2. Chưa có distributed lock cho nhiều process ghi đồng thời.
 3. ATLAS trong ChatGPT Project chưa có API được kết nối với runtime này; hiện ATLAS vẫn là external controller.
 4. Chưa có LLM brain adapter cho TB-01/DEV/QA. Runtime và identity đã tách, nhưng hành vi tự trị của từng Agent là bước kế tiếp.
-5. Chưa có GitHub Actions credential/result collector ở backend.
+5. GitHub Actions credential bridge và result collector đã có; chưa có backend runtime 24/7 để tự gọi collector và giữ Task Store live.
 6. Chưa deploy runtime 24/7.
 
 ## Bước tiếp theo cần Chủ sở hữu quyết định
