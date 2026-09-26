@@ -33,16 +33,17 @@
   "recurring_schedule_enabled": false,
   "status": "OPERATIONAL",
   "live_verification": {
-    "run_id": "36273973588",
+    "run_id": "36274301055",
     "conclusion": "success",
     "result": "NEEDS_ATTENTION",
-    "critical_findings": 0,
-    "high_dependency_findings": 0,
+    "hard_gate_overrode_model": true,
     "private_key_files": 0,
     "committed_env_files": 0,
-    "attention_reason": [
-      "missing strict-transport-security header",
-      "missing content-security-policy header"
+    "credential_like_files": 0,
+    "dependency_audit_available": false,
+    "missing_important_headers": [
+      "strict_transport_security",
+      "content_security_policy"
     ]
   }
 }
