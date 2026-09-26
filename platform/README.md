@@ -132,3 +132,25 @@ Live verification:
 - Durable state branch head sau run: 32080a1ab6eebacee2b5577a13729128d92e0d95 (`runtime: executor result`).
 
 Giới hạn hiện tại: đây vẫn là bootstrap persistence trên GitHub, chưa phải database transaction/concurrency cho quy mô lớn. Phù hợp pilot TrainingBot và không cần server chạy 24/7.
+
+
+## TrainingBot Agent Team operational brains
+
+Pilot đã bổ sung brain runtime theo vai trò, không dùng dịch vụ AI trả phí:
+
+- `TB-01`: nhận goal từ ATLAS, tạo DEV task, chờ execution evidence, mở QA task, nhận QA result và báo cáo ATLAS.
+- `DEV-TB-01`: chỉ tạo yêu cầu Safe Executor cho `aion-sandbox`; không có quyền production.
+- `QA-TB-01`: đánh giá độc lập evidence của DEV theo các kiểm tra bắt buộc rồi trả QA_PASS/QA_FAIL.
+- Nếu QA FAIL, TB-01 chuyển root task sang NEEDS_REWORK và có thể tạo DEV retry task.
+- Nếu QA PASS, TB-01 chuyển root task sang READY_FOR_CEO_REVIEW và gửi MANAGER_REPORT cho ATLAS.
+
+Live end-to-end pilot:
+- AION Agent Team run: 36269315731 — success.
+- TrainingBot Safe Executor run: 36269327913 — success.
+- Root task: AION-AGENT-PILOT-001 → READY_FOR_CEO_REVIEW.
+- DEV task: AION-AGENT-PILOT-001-DEV-01 → EXECUTION_PASSED.
+- QA task: AION-AGENT-PILOT-001-QA-01 → QA_PASS.
+- TB-01 emitted MANAGER_REPORT to ATLAS.
+- Encrypted durable state persisted on `aion-runtime-state` at commit `9b038e60a2f86c45000754db557401dc86d0c052`.
+
+Lưu ý: đây là operational/policy brain v0.1 để chứng minh tổ chức Agent hoạt động thật mà không phát sinh phí model. Chưa có LLM provider cho suy luận mở/ngôn ngữ tự nhiên.
