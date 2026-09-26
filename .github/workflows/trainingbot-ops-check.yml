@@ -1,0 +1,113 @@
+name: TrainingBot OPS Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: Optional AION task ID
+        required: false
+        default: OPS-MANUAL
+        type: string
+      target_url:
+        description: TrainingBot public base URL
+        required: false
+        default: https://trainingbot.io.vn
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trainingbot-ops-check.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-ops-check
+  cancel-in-progress: false
+
+jobs:
+  ops-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout AION runtime
+        uses: actions/checkout@v4
+
+      - name: Create read-only TrainingBot app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.AION_GITHUB_APP_ID }}
+          private-key: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          owner: Gamevalentine
+          repositories: trainingbot-cloudflare
+
+      - name: Probe TrainingBot public routes
+        env:
+          BASE_URL: ${{ inputs.target_url || 'https://trainingbot.io.vn' }}
+        run: |
+          set -euo pipefail
+          printf '[]' > routes.json
+
+          probe() {
+            PATHNAME="$1"
+            URL="${BASE_URL%/}$PATHNAME"
+            OUT=$(curl -L -sS --retry 2 --retry-all-errors --connect-timeout 10 --max-time 20               -o /dev/null -w '%{http_code}|%{time_total}|%{url_effective}' "$URL" || printf '000|20|%s' "$URL")
+            CODE=$(printf '%s' "$OUT" | cut -d'|' -f1)
+            SECONDS=$(printf '%s' "$OUT" | cut -d'|' -f2)
+            EFFECTIVE=$(printf '%s' "$OUT" | cut -d'|' -f3-)
+            MS=$(awk -v s="$SECONDS" 'BEGIN { printf "%.0f", s*1000 }')
+            jq --arg path "$PATHNAME" --arg code "$CODE" --arg ms "$MS" --arg url "$EFFECTIVE"               '. += [{path:$path,http_code:($code|tonumber),time_total_ms:($ms|tonumber),effective_url:$url}]'               routes.json > routes.tmp.json
+            mv routes.tmp.json routes.json
+          }
+
+          probe "/"
+          probe "/news"
+          probe "/wiki"
+          probe "/ban-cap-nhat"
+
+      - name: Read TrainingBot repository status
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/Gamevalentine/trainingbot-cloudflare             --jq '{full_name:.full_name,default_branch:.default_branch,updated_at:.updated_at,archived:.archived}'             > repo.json
+
+          gh api 'repos/Gamevalentine/trainingbot-cloudflare/actions/runs?per_page=8'             --jq '[.workflow_runs[] | {name:.name,status:.status,conclusion:.conclusion,event:.event,head_branch:.head_branch,head_sha:.head_sha,html_url:.html_url,created_at:.created_at}]'             > runs.json
+
+          jq -n             --arg source "trainingbot-ops-probe"             --arg task_id "${{ inputs.task_id || 'OPS-AUTO-SMOKE' }}"             --slurpfile routes routes.json             --slurpfile repo repo.json             --slurpfile runs runs.json             '{source:$source,task_id:$task_id,checked_at:(now|todate),routes:$routes[0],github_repo:$repo[0],recent_workflow_runs:$runs[0]}'             > ops-evidence.json
+
+          cat ops-evidence.json
+
+      - name: Install local AI runtime
+        run: |
+          timeout 120s bash -c 'curl -fsSL https://ollama.com/install.sh | sh'
+          nohup ollama serve >/tmp/ollama.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/ollama.log
+          exit 1
+
+      - name: Pull OPS model
+        run: timeout 180s ollama pull qwen2.5:1.5b-instruct
+
+      - name: OPS-TB-01 reviews evidence
+        env:
+          AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
+        run: |
+          timeout 150s node platform/ops-brain.mjs review             --evidence ops-evidence.json             --output ops-report.json             --markdown ops-report.md
+          cat ops-report.json
+          cat ops-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload OPS evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: trainingbot-ops-${{ github.run_id }}
+          path: |
+            ops-evidence.json
+            ops-report.json
+            ops-report.md
+          retention-days: 7
