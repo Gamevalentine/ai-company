@@ -1,0 +1,35 @@
+{
+  "agent_id": "SECURITY-TB-01",
+  "title": "Nhân viên an ninh TrainingBot",
+  "reports_to": "TB-01",
+  "mode": "READ_ONLY_DEFENSIVE",
+  "brain": "security-brain.mjs",
+  "workflow": "trainingbot-security-check.yml",
+  "evidence_sources": [
+    "source/config file metadata on aion-sandbox",
+    "sanitized dependency audit counts",
+    "public HTTP security headers"
+  ],
+  "verdicts": [
+    "SECURITY_OK",
+    "NEEDS_ATTENTION",
+    "CRITICAL"
+  ],
+  "escalation": {
+    "code_or_dependency_issue": "DEV-TB-01",
+    "unclear_or_high_risk": "TB-01"
+  },
+  "safeguards": {
+    "source_edit": false,
+    "deploy": false,
+    "credential_change": false,
+    "secret_read": false,
+    "secret_output": false,
+    "dns_change": false,
+    "data_delete": false,
+    "paid_action": false,
+    "exploit_execution": false
+  },
+  "recurring_schedule_enabled": false,
+  "status": "BRAIN_READY"
+}
