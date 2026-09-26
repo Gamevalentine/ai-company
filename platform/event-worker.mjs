@@ -20,7 +20,8 @@ export function createEmptyState(){
       {agent_id:'CONTENT-TB-01',role:'content',reports_to:'TB-01'},
       {agent_id:'SECURITY-TB-01',role:'security',reports_to:'TB-01'},
       {agent_id:'OPS-TB-01',role:'ops',reports_to:'TB-01'},
-      {agent_id:'ANALYTICS-TB-01',role:'analytics',reports_to:'TB-01'}
+      {agent_id:'ANALYTICS-TB-01',role:'analytics',reports_to:'TB-01'},
+      {agent_id:'PUBLISHER-TB-01',role:'multiplatform_publisher',reports_to:'TB-01'}
     ],
     tasks:[],
     messages:[],
