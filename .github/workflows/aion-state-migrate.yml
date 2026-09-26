@@ -1,0 +1,56 @@
+name: AION State Migration
+
+on:
+  push:
+    paths:
+      - '.github/workflows/aion-state-migrate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aion-runtime-state
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout runtime code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: app
+
+      - name: Checkout durable state
+        uses: actions/checkout@v4
+        with:
+          ref: aion-runtime-state
+          path: runtime-state
+
+      - name: Encrypt durable state
+        env:
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ ! -f runtime-state/aion-state.json ]; then
+            echo "Plaintext state is already absent."
+            exit 0
+          fi
+          node app/platform/state-crypto.mjs encrypt \
+            --input runtime-state/aion-state.json \
+            --output runtime-state/aion-state.enc.json
+          rm runtime-state/aion-state.json
+
+      - name: Persist encrypted state
+        run: |
+          git -C runtime-state config user.name "AION Runtime"
+          git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
+          git -C runtime-state add -A
+          if git -C runtime-state diff --cached --quiet; then
+            echo "No migration change."
+            exit 0
+          fi
+          git -C runtime-state commit -m "runtime: encrypt durable state"
+          git -C runtime-state push origin HEAD:aion-runtime-state
