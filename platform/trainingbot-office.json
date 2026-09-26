@@ -76,9 +76,10 @@
         "phân loại HEALTHY / DEGRADED / INCIDENT",
         "chuyển sự cố cho DEV / Security / TB-01 dựa trên evidence"
       ],
-      "status": "BRAIN_READY",
+      "status": "OPERATIONAL",
       "brain": "ops-brain.mjs",
-      "workflow": "trainingbot-ops-check.yml"
+      "workflow": "trainingbot-ops-check.yml",
+      "live_run": "36273620725"
     },
     {
       "agent_id": "ANALYTICS-TB-01",
