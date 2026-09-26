@@ -103,19 +103,14 @@
     .person .face{width:42px;height:42px;border-radius:14px;background:#172f4d;display:grid;place-items:center;font-size:21px}
     .person b{display:block;font-size:13px}.person small{color:var(--muted)}
     .org-line{width:2px;height:18px;background:var(--line)}
-    .managers{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .managers{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
     .manager{
-      border:1px solid var(--line);background:#0d1c30;border-radius:16px;padding:14px;
-      transition:.16s;cursor:pointer;position:relative;overflow:hidden
+      border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px;
+      transition:.16s;cursor:pointer
     }
-    .manager:before{content:'VĂN PHÒNG';position:absolute;right:12px;bottom:8px;font-size:9px;letter-spacing:.12em;color:rgba(145,164,189,.34)}
-    .manager:hover{transform:translateY(-2px);border-color:#3b6b94;box-shadow:0 10px 28px rgba(0,0,0,.18)}
-    .manager-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+    .manager:hover{transform:translateY(-2px);border-color:#3b6b94}
+    .manager-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
     .manager-title{font-size:13px;font-weight:800}
-    .office-manager{font-size:11px;color:var(--muted);margin-bottom:10px}
-    .office-manager b{color:var(--text)}
-    .mini-team{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-    .mini-agent{font-size:10px;padding:5px 7px;border:1px solid var(--line);border-radius:8px;background:#12243b;color:#b9c8da}
     .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:rgba(52,211,153,.10);color:#86efac;border:1px solid rgba(52,211,153,.18)}
     .badge.warn{background:rgba(251,191,36,.10);color:#fde68a;border-color:rgba(251,191,36,.18)}
     .manager p{font-size:11px;color:var(--muted);margin:0;line-height:1.5}
@@ -255,7 +250,7 @@
       <div class="dashboard-grid">
         <div>
           <div class="card">
-            <div class="card-head"><div><h2>Sơ đồ điều hành</h2><span>Chủ sở hữu → CEO → 5 văn phòng website</span></div><span>LIVE DEMO</span></div>
+            <div class="card-head"><div><h2>Sơ đồ điều hành</h2><span>Chủ sở hữu → CEO → Trưởng phòng website</span></div><span>LIVE DEMO</span></div>
             <div class="card-body">
               <div class="org">
                 <div class="person">
@@ -267,40 +262,30 @@
                 </div>
                 <div class="org-line"></div>
                 <div class="managers">
-                  <div class="manager" data-name="TrainingBot" data-status="Bình thường" data-tasks="5" data-staff="6" data-goal="Ổn định API, cải thiện trải nghiệm và tăng nội dung hữu ích." data-team="DEV · QA · SEO · Analytics · Security">
-                    <div class="manager-top"><div class="manager-title">🏢 Văn phòng TrainingBot</div><span class="badge">Online</span></div>
-                    <div class="office-manager">Trưởng phòng: <b>TB-01</b></div>
-                    <p>6 AI · 5 nhiệm vụ · Ưu tiên: API & nội dung</p>
-                    <div class="mini-team"><span class="mini-agent">DEV</span><span class="mini-agent">QA</span><span class="mini-agent">SEO</span><span class="mini-agent">Analytics</span><span class="mini-agent">Security</span></div>
+                  <div class="manager" data-name="TrainingBot" data-status="Bình thường" data-tasks="5" data-staff="6" data-goal="Ổn định API, cải thiện trải nghiệm và tăng nội dung hữu ích.">
+                    <div class="manager-top"><div class="manager-title">TrainingBot Manager</div><span class="badge">Online</span></div>
+                    <p>6 AI · 5 nhiệm vụ<br>Ưu tiên: API & nội dung</p>
                   </div>
-                  <div class="manager" data-name="Toolpick" data-status="Bình thường" data-tasks="3" data-staff="5" data-goal="Giữ hệ sinh thái công cụ ổn định và tối ưu luồng người dùng." data-team="DEV · DevOps · QA · Security">
-                    <div class="manager-top"><div class="manager-title">🏢 Văn phòng Toolpick</div><span class="badge">Online</span></div>
-                    <div class="office-manager">Trưởng phòng: <b>TP-01</b></div>
-                    <p>5 AI · 3 nhiệm vụ · Ưu tiên: ổn định hệ thống</p>
-                    <div class="mini-team"><span class="mini-agent">DEV</span><span class="mini-agent">DevOps</span><span class="mini-agent">QA</span><span class="mini-agent">Security</span></div>
+                  <div class="manager" data-name="Toolpick" data-status="Bình thường" data-tasks="3" data-staff="5" data-goal="Giữ hệ sinh thái công cụ ổn định và tối ưu luồng người dùng.">
+                    <div class="manager-top"><div class="manager-title">Toolpick Manager</div><span class="badge">Online</span></div>
+                    <p>5 AI · 3 nhiệm vụ<br>Ưu tiên: ổn định hệ thống</p>
                   </div>
-                  <div class="manager" data-name="HMOOB MUSIC" data-status="Cần theo dõi" data-tasks="4" data-staff="6" data-goal="Tối ưu trang sản phẩm, hiệu năng mobile và chất lượng trải nghiệm mua hàng." data-team="DEV · Mobile QA · Product · SEO · Analytics">
-                    <div class="manager-top"><div class="manager-title">🏢 Văn phòng HMOOB MUSIC</div><span class="badge warn">Theo dõi</span></div>
-                    <div class="office-manager">Trưởng phòng: <b>HM-01</b></div>
-                    <p>6 AI · 4 nhiệm vụ · Ưu tiên: tốc độ mobile</p>
-                    <div class="mini-team"><span class="mini-agent">DEV</span><span class="mini-agent">Mobile QA</span><span class="mini-agent">Product</span><span class="mini-agent">SEO</span><span class="mini-agent">Analytics</span></div>
+                  <div class="manager" data-name="HMOOB MUSIC" data-status="Cần theo dõi" data-tasks="4" data-staff="6" data-goal="Tối ưu trang sản phẩm, hiệu năng mobile và chất lượng trải nghiệm mua hàng.">
+                    <div class="manager-top"><div class="manager-title">HMOOB Manager</div><span class="badge warn">Theo dõi</span></div>
+                    <p>6 AI · 4 nhiệm vụ<br>Ưu tiên: tốc độ mobile</p>
                   </div>
-                  <div class="manager" data-name="Toolpick Mail" data-status="Bình thường" data-tasks="1" data-staff="5" data-goal="Theo dõi đăng nhập, bảo mật, độ ổn định và luồng gửi nhận thư." data-team="Backend · Security · DevOps · QA">
-                    <div class="manager-top"><div class="manager-title">🏢 Văn phòng Toolpick Mail</div><span class="badge">Online</span></div>
-                    <div class="office-manager">Trưởng phòng: <b>ML-01</b></div>
-                    <p>5 AI · 1 nhiệm vụ · Ưu tiên: bảo mật</p>
-                    <div class="mini-team"><span class="mini-agent">Backend</span><span class="mini-agent">Security</span><span class="mini-agent">DevOps</span><span class="mini-agent">QA</span></div>
+                  <div class="manager" data-name="Toolpick Mail" data-status="Bình thường" data-tasks="1" data-staff="5" data-goal="Theo dõi đăng nhập, bảo mật, độ ổn định và luồng gửi nhận thư.">
+                    <div class="manager-top"><div class="manager-title">Mail Manager</div><span class="badge">Online</span></div>
+                    <p>5 AI · 1 nhiệm vụ<br>Ưu tiên: bảo mật</p>
                   </div>
-                  <div class="manager" data-name="Mầm Kids" data-status="Bình thường" data-tasks="1" data-staff="4" data-goal="Giữ giao diện học tập rõ ràng, ổn định và thân thiện trên nhiều màn hình." data-team="UI · Content · QA">
-                    <div class="manager-top"><div class="manager-title">🏢 Văn phòng Mầm Kids</div><span class="badge">Online</span></div>
-                    <div class="office-manager">Trưởng phòng: <b>MK-01</b></div>
-                    <p>4 AI · 1 nhiệm vụ · Ưu tiên: giao diện</p>
-                    <div class="mini-team"><span class="mini-agent">UI</span><span class="mini-agent">Content</span><span class="mini-agent">QA</span></div>
+                  <div class="manager" data-name="Mầm Kids" data-status="Bình thường" data-tasks="1" data-staff="4" data-goal="Giữ giao diện học tập rõ ràng, ổn định và thân thiện trên nhiều màn hình.">
+                    <div class="manager-top"><div class="manager-title">Mầm Kids Manager</div><span class="badge">Online</span></div>
+                    <p>4 AI · 1 nhiệm vụ<br>Ưu tiên: giao diện</p>
                   </div>
                 </div>
               </div>
 
-              <div class="section-title">Tình trạng 5 văn phòng</div>
+              <div class="section-title">Website</div>
               <div class="websites">
                 <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small>Manager: TB-01 · 5 việc</small></div>
                 <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>Manager: TP-01 · 3 việc</small></div>
@@ -449,34 +434,12 @@
 
     <section class="view" id="view-office">
       <div class="page-card">
-        <h2>🏢 Hệ thống văn phòng AI</h2>
-        <p style="color:var(--muted)">Mỗi website là một văn phòng độc lập, có Trưởng phòng và đội nhân viên AI riêng. CEO chỉ quản lý các Trưởng phòng.</p>
+        <h2>Văn phòng AI</h2>
+        <p style="color:var(--muted)">Chế độ trực quan để nhìn nhanh AI nào đang làm việc trong từng “phòng”.</p>
         <div class="office" style="margin-top:16px">
-          <div class="room manager" data-name="TrainingBot" data-status="Bình thường" data-tasks="5" data-staff="6" data-goal="Ổn định API, cải thiện trải nghiệm và tăng nội dung hữu ích." data-team="DEV · QA · SEO · Analytics · Security">
-            <h3>🏢 Văn phòng TrainingBot</h3>
-            <div class="desk"><span>👔</span><b>TB-01 · Trưởng phòng</b><br>Đang điều phối 5 nhiệm vụ</div>
-            <div class="desks" style="margin-top:8px"><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🧪</span>QA · Waiting</div><div class="desk"><span>🔎</span>SEO · Working</div><div class="desk"><span>📊</span>Analytics · Working</div><div class="desk"><span>🛡️</span>Security · Watching</div></div>
-          </div>
-          <div class="room manager" data-name="Toolpick" data-status="Bình thường" data-tasks="3" data-staff="5" data-goal="Giữ hệ sinh thái công cụ ổn định và tối ưu luồng người dùng." data-team="DEV · DevOps · QA · Security">
-            <h3>🏢 Văn phòng Toolpick</h3>
-            <div class="desk"><span>👔</span><b>TP-01 · Trưởng phòng</b><br>Đang điều phối 3 nhiệm vụ</div>
-            <div class="desks" style="margin-top:8px"><div class="desk"><span>🛠️</span>DEV · Working</div><div class="desk"><span>☁️</span>DevOps · Working</div><div class="desk"><span>🧪</span>QA · Idle</div><div class="desk"><span>🛡️</span>Security · Watching</div></div>
-          </div>
-          <div class="room manager" data-name="HMOOB MUSIC" data-status="Cần theo dõi" data-tasks="4" data-staff="6" data-goal="Tối ưu trang sản phẩm, hiệu năng mobile và chất lượng trải nghiệm mua hàng." data-team="DEV · Mobile QA · Product · SEO · Analytics">
-            <h3>🏢 Văn phòng HMOOB MUSIC</h3>
-            <div class="desk"><span>👔</span><b>HM-01 · Trưởng phòng</b><br>Đang điều phối 4 nhiệm vụ</div>
-            <div class="desks" style="margin-top:8px"><div class="desk"><span>📱</span>Mobile QA · Working</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🛍️</span>Product · Idle</div><div class="desk"><span>🔎</span>SEO · Waiting</div><div class="desk"><span>📊</span>Analytics · Working</div></div>
-          </div>
-          <div class="room manager" data-name="Toolpick Mail" data-status="Bình thường" data-tasks="1" data-staff="5" data-goal="Theo dõi đăng nhập, bảo mật, độ ổn định và luồng gửi nhận thư." data-team="Backend · Security · DevOps · QA">
-            <h3>🏢 Văn phòng Toolpick Mail</h3>
-            <div class="desk"><span>👔</span><b>ML-01 · Trưởng phòng</b><br>Đang điều phối 1 nhiệm vụ</div>
-            <div class="desks" style="margin-top:8px"><div class="desk"><span>⚙️</span>Backend · Working</div><div class="desk"><span>🛡️</span>Security · Watching</div><div class="desk"><span>☁️</span>DevOps · Idle</div><div class="desk"><span>🧪</span>QA · Waiting</div></div>
-          </div>
-          <div class="room manager" data-name="Mầm Kids" data-status="Bình thường" data-tasks="1" data-staff="4" data-goal="Giữ giao diện học tập rõ ràng, ổn định và thân thiện trên nhiều màn hình." data-team="UI · Content · QA">
-            <h3>🏢 Văn phòng Mầm Kids</h3>
-            <div class="desk"><span>👔</span><b>MK-01 · Trưởng phòng</b><br>Đang điều phối 1 nhiệm vụ</div>
-            <div class="desks" style="margin-top:8px"><div class="desk"><span>🎨</span>UI · Working</div><div class="desk"><span>✍️</span>Content · Idle</div><div class="desk"><span>🧪</span>QA · Waiting</div></div>
-          </div>
+          <div class="room"><h3>TrainingBot Department</h3><div class="desks"><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🧪</span>QA · Waiting</div><div class="desk"><span>🔎</span>SEO · Working</div><div class="desk"><span>📊</span>Analytics · Working</div></div></div>
+          <div class="room"><h3>Toolpick Department</h3><div class="desks"><div class="desk"><span>🛠️</span>DEV · Working</div><div class="desk"><span>☁️</span>DevOps · Working</div><div class="desk"><span>🧪</span>QA · Idle</div><div class="desk"><span>🛡️</span>Security · Watching</div></div></div>
+          <div class="room"><h3>HMOOB MUSIC Department</h3><div class="desks"><div class="desk"><span>📱</span>Mobile QA · Working</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🛍️</span>Product · Idle</div><div class="desk"><span>🔎</span>SEO · Waiting</div></div></div>
         </div>
       </div>
     </section>
@@ -500,7 +463,7 @@
 
 <div class="modal" id="detailModal">
   <div class="modal-card">
-    <div class="modal-head"><h3 id="modalTitle">Văn phòng</h3><button class="close" id="modalClose">×</button></div>
+    <div class="modal-head"><h3 id="modalTitle">Department</h3><button class="close" id="modalClose">×</button></div>
     <div class="modal-body">
       <div id="modalStatus" style="color:var(--muted)"></div>
       <div class="modal-grid">
@@ -508,11 +471,9 @@
         <div class="mini-stat"><b id="modalTasks">0</b><small>Nhiệm vụ</small></div>
         <div class="mini-stat"><b>1</b><small>Trưởng phòng</small></div>
       </div>
-      <h4>Đội ngũ trong văn phòng</h4>
-      <p id="modalTeam" style="color:#b9c8da;line-height:1.65"></p>
       <h4>Mục tiêu hiện tại</h4>
       <p id="modalGoal" style="color:var(--muted);line-height:1.65"></p>
-      <button class="primary-btn" id="openDepartment">Mở khu Nhân viên AI</button>
+      <button class="primary-btn" id="openDepartment">Mở phòng làm việc</button>
     </div>
   </div>
 </div>
@@ -541,7 +502,7 @@
     tasks:['Nhiệm vụ','Công việc AI đang thực hiện trên toàn công ty.'],
     approvals:['Phê duyệt','Những việc AI bắt buộc phải xin quyền từ bạn.'],
     reports:['Báo cáo','Kết quả điều hành do CEO tổng hợp.'],
-    office:['Văn phòng AI','Mỗi website có một văn phòng, Trưởng phòng và đội AI riêng.'],
+    office:['Văn phòng AI','Chế độ trực quan theo dõi AI đang làm việc.'],
     logs:['Nhật ký','Lịch sử quyết định và hành động của các AI.']
   };
 
@@ -557,11 +518,10 @@
 
   const modal=document.getElementById('detailModal');
   document.querySelectorAll('.manager').forEach(m=>m.addEventListener('click',()=>{
-    document.getElementById('modalTitle').textContent='🏢 Văn phòng '+m.dataset.name;
+    document.getElementById('modalTitle').textContent=m.dataset.name+' Department';
     document.getElementById('modalStatus').textContent='Trạng thái: '+m.dataset.status;
     document.getElementById('modalStaff').textContent=m.dataset.staff;
     document.getElementById('modalTasks').textContent=m.dataset.tasks;
-    document.getElementById('modalTeam').textContent=m.dataset.team || 'Đội nhân viên AI chuyên trách';
     document.getElementById('modalGoal').textContent=m.dataset.goal;
     modal.classList.add('show');
   }));
