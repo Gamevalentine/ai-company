@@ -2,19 +2,24 @@ name: ATLAS CEO Dispatch Bridge
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: GitHub issue number to retry
+        required: true
+        type: string
 
 permissions:
   contents: write
   issues: write
 
 concurrency:
-  group: aion-runtime-state
+  group: aion-atlas-${{ github.event.issue.number || inputs.issue_number }}
   cancel-in-progress: false
 
 jobs:
   dispatch:
-    if: github.event.issue.user.login == 'Gamevalentine' && startsWith(github.event.issue.title, '[ATLAS]')
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -30,40 +35,94 @@ jobs:
         with:
           ref: aion-runtime-state
           path: runtime-state
+          fetch-depth: 0
+
+      - name: Resolve and guard issue
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_ISSUE_NUMBER: ${{ github.event.issue.number }}
+          INPUT_ISSUE_NUMBER: ${{ inputs.issue_number }}
+        run: |
+          set -euo pipefail
+          ISSUE_NUMBER="\${EVENT_ISSUE_NUMBER:-$INPUT_ISSUE_NUMBER}"
+          test -n "$ISSUE_NUMBER"
+
+          gh issue view "$ISSUE_NUMBER" \
+            --repo Gamevalentine/ai-company \
+            --json number,title,body,author,state > atlas-issue.json
+
+          TITLE=$(jq -r '.title' atlas-issue.json)
+          AUTHOR=$(jq -r '.author.login' atlas-issue.json)
+
+          if [ "$AUTHOR" != "Gamevalentine" ] || [[ "$TITLE" != "[ATLAS]"* ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Issue is not an authorized ATLAS task."
+            exit 0
+          fi
+
+          HAS_RESULT=$(gh api \
+            "repos/Gamevalentine/ai-company/issues/$ISSUE_NUMBER/comments?per_page=100" \
+            --paginate \
+            --jq '[.[] | select(.body | contains("<!-- AION_RESULT "))] | length' | awk '{s+=$1} END {print s+0}')
+
+          if [ "$HAS_RESULT" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Issue already has AION_RESULT; duplicate execution blocked."
+            exit 0
+          fi
+
+          jq -r '.body' atlas-issue.json > atlas-issue-body.json
+          echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "author=$AUTHOR" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
 
       - name: Parse and validate ATLAS request
+        if: steps.guard.outputs.skip != 'true'
         env:
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          ISSUE_NUMBER: ${{ steps.guard.outputs.issue_number }}
+          ISSUE_AUTHOR: ${{ steps.guard.outputs.author }}
         run: |
-          printf '%s' "$ISSUE_BODY" > atlas-issue-body.json
           node app/platform/atlas-issue-bridge.mjs parse \
             --body-file atlas-issue-body.json \
             --issue-number "$ISSUE_NUMBER" \
             --author "$ISSUE_AUTHOR" \
             --output atlas-task.json
-          cat atlas-task.json
+          TASK_ID=$(jq -r '.task_id' atlas-task.json)
+          echo "TASK_ID=$TASK_ID" >> "$GITHUB_ENV"
+          echo "STATE_ENC=runtime-state/tasks/$TASK_ID.enc.json" >> "$GITHUB_ENV"
+          echo "STATE_TMP=runtime-state/tasks/$TASK_ID.tmp.json" >> "$GITHUB_ENV"
 
-      - name: Decrypt runtime state
+      - name: Restore task state
+        if: steps.guard.outputs.skip != 'true'
         env:
           AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
         run: |
-          node app/platform/state-crypto.mjs decrypt \
-            --input runtime-state/aion-state.enc.json \
-            --output runtime-state/aion-state.tmp.json
+          set -euo pipefail
+          mkdir -p runtime-state/tasks
+          rm -f "$STATE_TMP"
+          if [ -f "$STATE_ENC" ]; then
+            node app/platform/state-crypto.mjs decrypt \
+              --input "$STATE_ENC" \
+              --output "$STATE_TMP"
+            echo "Existing task state restored."
+          else
+            echo "New task state will be initialized."
+          fi
 
       - name: ATLAS sends task to TB-01
+        if: steps.guard.outputs.skip != 'true'
         run: |
           PAYLOAD=$(jq -c '.' atlas-task.json)
           node app/platform/event-worker.mjs \
-            --state runtime-state/aion-state.tmp.json \
+            --state "$STATE_TMP" \
             --type create_task \
             --payload "$PAYLOAD"
 
       - name: Install Ollama
+        if: steps.guard.outputs.skip != 'true'
         run: |
-          curl -fsSL https://ollama.com/install.sh | sh
+          timeout 120s bash -c 'curl -fsSL https://ollama.com/install.sh | sh'
           nohup ollama serve >/tmp/ollama.log 2>&1 &
           for i in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then
@@ -75,27 +134,29 @@ jobs:
           exit 1
 
       - name: Pull local AI model
-        run: ollama pull qwen2.5:1.5b-instruct
+        if: steps.guard.outputs.skip != 'true'
+        run: timeout 180s ollama pull qwen2.5:1.5b-instruct
 
       - name: TB-01 AI plans the task
+        if: steps.guard.outputs.skip != 'true'
         env:
           AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
         run: |
-          TASK_ID=$(jq -r '.task_id' atlas-task.json)
-          node app/platform/ai-brains.mjs manager-plan \
-            --state runtime-state/aion-state.tmp.json \
+          timeout 150s node app/platform/ai-brains.mjs manager-plan \
+            --state "$STATE_TMP" \
             --task-id "$TASK_ID"
 
       - name: DEV-TB-01 prepares sandbox queue
+        if: steps.guard.outputs.skip != 'true'
         run: |
-          TASK_ID=$(jq -r '.task_id' atlas-task.json)
           node app/platform/ai-brains.mjs dev-queue \
-            --state runtime-state/aion-state.tmp.json \
+            --state "$STATE_TMP" \
             --task-id "$TASK_ID" \
             --output atlas-dev-queue.json
           cat atlas-dev-queue.json
 
       - name: Create temporary TrainingBot GitHub App token
+        if: steps.guard.outputs.skip != 'true'
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
@@ -105,19 +166,21 @@ jobs:
           repositories: trainingbot-cloudflare
 
       - name: DEV-TB-01 executes Safe Executor
+        if: steps.guard.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
           COUNT=$(jq 'length' atlas-dev-queue.json)
           test "$COUNT" -le 1
+
           if [ "$COUNT" -eq 0 ]; then
-            echo "No DEV task to execute."
+            echo "No queued DEV work; continuing from restored task state."
             exit 0
           fi
 
           ROW=$(jq -c '.[0]' atlas-dev-queue.json)
-          TASK_ID=$(echo "$ROW" | jq -r '.task_id')
+          DEV_TASK_ID=$(echo "$ROW" | jq -r '.task_id')
           OPERATION=$(echo "$ROW" | jq -r '.operation')
 
           case "$OPERATION" in
@@ -126,29 +189,40 @@ jobs:
           esac
 
           STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          gh workflow run aion-safe-executor.yml \
-            --repo Gamevalentine/trainingbot-cloudflare \
-            --ref main \
-            -f task_id="$TASK_ID" \
-            -f operation="$OPERATION" \
-            -f confirm="AION-SANDBOX"
+          DISPATCH_OK=0
+          for ATTEMPT in 1 2; do
+            if gh workflow run aion-safe-executor.yml \
+              --repo Gamevalentine/trainingbot-cloudflare \
+              --ref main \
+              -f task_id="$DEV_TASK_ID" \
+              -f operation="$OPERATION" \
+              -f confirm="AION-SANDBOX"; then
+              DISPATCH_OK=1
+              break
+            fi
+            echo "Dispatch attempt $ATTEMPT failed; retrying."
+            sleep 3
+          done
+          test "$DISPATCH_OK" -eq 1
 
           RUN_ID=""
-          for i in $(seq 1 40); do
+          for i in $(seq 1 60); do
             RUN_ID=$(gh run list \
               --repo Gamevalentine/trainingbot-cloudflare \
               --workflow aion-safe-executor.yml \
               --event workflow_dispatch \
-              --limit 30 \
+              --limit 40 \
               --json databaseId,displayTitle,createdAt \
-              --jq '.[] | select(.displayTitle | contains("'"$TASK_ID"'")) | select(.createdAt >= "'"$STARTED_AT"'") | .databaseId' | head -n 1 || true)
+              --jq '.[] | select(.displayTitle | contains("'"$DEV_TASK_ID"'")) | select(.createdAt >= "'"$STARTED_AT"'") | .databaseId' | head -n 1 || true)
             if [ -n "$RUN_ID" ]; then break; fi
             sleep 2
           done
           test -n "$RUN_ID"
 
           set +e
-          gh run watch "$RUN_ID" --repo Gamevalentine/trainingbot-cloudflare --exit-status
+          timeout 12m gh run watch "$RUN_ID" \
+            --repo Gamevalentine/trainingbot-cloudflare \
+            --exit-status
           WATCH_EXIT=$?
           set -e
 
@@ -157,10 +231,17 @@ jobs:
             --json databaseId,status,conclusion,url,headSha,createdAt,updatedAt \
             --jq '.' > atlas-run.json
 
+          if [ "$WATCH_EXIT" -eq 124 ]; then
+            gh run cancel "$RUN_ID" --repo Gamevalentine/trainingbot-cloudflare || true
+            jq '.conclusion="timed_out"' atlas-run.json > atlas-run.tmp.json
+            mv atlas-run.tmp.json atlas-run.json
+          fi
+
           CONCLUSION=$(jq -r '.conclusion // "failure"' atlas-run.json)
           if [ "$CONCLUSION" = "success" ]; then RESULT="PASS"; else RESULT="FAIL"; fi
+
           PAYLOAD=$(jq -c \
-            --arg task_id "$TASK_ID" \
+            --arg task_id "$DEV_TASK_ID" \
             --arg operation "$OPERATION" \
             --arg result "$RESULT" \
             '{
@@ -176,69 +257,138 @@ jobs:
             }' atlas-run.json)
 
           node app/platform/event-worker.mjs \
-            --state runtime-state/aion-state.tmp.json \
+            --state "$STATE_TMP" \
             --type executor_result \
             --payload "$PAYLOAD"
 
-          if [ "$WATCH_EXIT" -ne 0 ]; then
-            echo "Safe Executor failed; QA will review FAIL evidence."
-          fi
-
       - name: QA-TB-01 AI reviews evidence
+        if: steps.guard.outputs.skip != 'true'
         env:
           AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
         run: |
-          TASK_ID=$(jq -r '.task_id' atlas-task.json)
-          node app/platform/ai-brains.mjs qa-review \
-            --state runtime-state/aion-state.tmp.json \
+          timeout 150s node app/platform/ai-brains.mjs qa-review \
+            --state "$STATE_TMP" \
             --task-id "$TASK_ID"
 
       - name: Create CEO return summary
+        if: steps.guard.outputs.skip != 'true'
         run: |
-          TASK_ID=$(jq -r '.task_id' atlas-task.json)
           node app/platform/ai-brains.mjs summary \
-            --state runtime-state/aion-state.tmp.json \
+            --state "$STATE_TMP" \
             --task-id "$TASK_ID" \
             --output atlas-result-summary.json
           node app/platform/atlas-issue-bridge.mjs render \
             --summary-file atlas-result-summary.json \
-            --issue-number "${{ github.event.issue.number }}" \
+            --issue-number "${{ steps.guard.outputs.issue_number }}" \
             --output atlas-result-comment.md
           cat atlas-result-summary.json
 
-      - name: Encrypt updated runtime state
+      - name: Encrypt task state
+        if: always() && steps.guard.outputs.skip != 'true'
         env:
           AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
         run: |
+          if [ ! -f "$STATE_TMP" ]; then
+            echo "No task state to persist."
+            exit 0
+          fi
           node app/platform/state-crypto.mjs encrypt \
-            --input runtime-state/aion-state.tmp.json \
-            --output runtime-state/aion-state.enc.json
-          rm -f runtime-state/aion-state.tmp.json
+            --input "$STATE_TMP" \
+            --output "$STATE_ENC"
+          rm -f "$STATE_TMP"
 
-      - name: Persist encrypted state
+      - name: Persist sharded encrypted state
+        if: always() && steps.guard.outputs.skip != 'true'
         run: |
-          git -C runtime-state config user.name "AION Runtime"
-          git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
-          git -C runtime-state add aion-state.enc.json
-          if ! git -C runtime-state diff --cached --quiet; then
-            git -C runtime-state commit -m "runtime: ATLAS issue ${{ github.event.issue.number }}"
-            git -C runtime-state push origin HEAD:aion-runtime-state
+          set -euo pipefail
+          if [ ! -f "$STATE_ENC" ]; then
+            echo "No encrypted task state to commit."
+            exit 0
           fi
 
+          git -C runtime-state config user.name "AION Runtime"
+          git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
+          git -C runtime-state add "tasks/$TASK_ID.enc.json"
+
+          if git -C runtime-state diff --cached --quiet; then
+            echo "No state change."
+            exit 0
+          fi
+
+          git -C runtime-state commit -m "runtime: $TASK_ID"
+
+          for ATTEMPT in 1 2 3; do
+            if git -C runtime-state push origin HEAD:aion-runtime-state; then
+              exit 0
+            fi
+            echo "State push conflict/transient failure; rebasing attempt $ATTEMPT."
+            git -C runtime-state fetch origin aion-runtime-state
+            git -C runtime-state rebase origin/aion-runtime-state
+            sleep 2
+          done
+          exit 1
+
       - name: Return result to ATLAS mailbox
+        if: success() && steps.guard.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.guard.outputs.issue_number }}
         run: |
-          gh issue comment "${{ github.event.issue.number }}" \
-            --repo Gamevalentine/ai-company \
-            --body-file atlas-result-comment.md
+          EXISTING=$(gh api \
+            "repos/Gamevalentine/ai-company/issues/$ISSUE_NUMBER/comments?per_page=100" \
+            --paginate \
+            --jq '[.[] | select(.body | contains("<!-- AION_RESULT "))] | length' | awk '{s+=$1} END {print s+0}')
+          if [ "$EXISTING" -eq 0 ]; then
+            gh issue comment "$ISSUE_NUMBER" \
+              --repo Gamevalentine/ai-company \
+              --body-file atlas-result-comment.md
+          else
+            echo "AION_RESULT already exists; duplicate comment blocked."
+          fi
+
+      - name: Auto-close completed ATLAS task
+        if: success() && steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.guard.outputs.issue_number }}
+        run: |
+          STATUS=$(jq -r '.status' atlas-result-summary.json)
+          if [ "$STATUS" = "READY_FOR_CEO_REVIEW" ]; then
+            gh issue close "$ISSUE_NUMBER" \
+              --repo Gamevalentine/ai-company \
+              --reason completed
+          else
+            echo "Task status is $STATUS; leaving issue open."
+          fi
 
       - name: Upload bridge evidence
+        if: success() && steps.guard.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: atlas-bridge-${{ github.event.issue.number }}-${{ github.run_id }}
+          name: atlas-bridge-${{ steps.guard.outputs.issue_number }}-${{ github.run_id }}
           path: |
             atlas-task.json
             atlas-result-summary.json
             atlas-result-comment.md
           retention-days: 7
+
+      - name: Report runtime failure without faking AION_RESULT
+        if: failure() && steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ steps.guard.outputs.issue_number }}
+        run: |
+          if [ -z "$ISSUE_NUMBER" ]; then exit 0; fi
+          cat > failure.md <<EOF
+          ## AION Runtime failure
+
+          Runtime stopped before a valid \`AION_RESULT\` was produced.
+          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - Production action: **blocked / not authorized**
+          - Retry: run **ATLAS CEO Dispatch Bridge** manually with issue number \`$ISSUE_NUMBER\`.
+
+          <!-- AION_RUNTIME_FAILURE run_id=${{ github.run_id }} -->
+          EOF
+          gh issue comment "$ISSUE_NUMBER" \
+            --repo Gamevalentine/ai-company \
+            --body-file failure.md || true
