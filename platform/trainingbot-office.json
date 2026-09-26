@@ -1,0 +1,97 @@
+{
+  "office_id": "TRAININGBOT-OFFICE",
+  "name": "Văn phòng TrainingBot",
+  "manager": "TB-01",
+  "reports_to": "ATLAS",
+  "project": "TrainingBot",
+  "status": "ACTIVE_BUILDOUT",
+  "mission": "Vận hành, cải tiến và bảo vệ TrainingBot theo tuyến quản lý của AION HQ, ưu tiên sandbox, bằng chứng và QA độc lập.",
+  "departments": [
+    {
+      "agent_id": "DEV-TB-01",
+      "department": "Phát triển",
+      "responsibilities": [
+        "đọc source",
+        "thay đổi sandbox",
+        "build sandbox",
+        "so sánh sandbox với main",
+        "gửi evidence"
+      ],
+      "status": "OPERATIONAL"
+    },
+    {
+      "agent_id": "QA-TB-01",
+      "department": "Kiểm thử",
+      "responsibilities": [
+        "QA độc lập",
+        "PASS/FAIL",
+        "kiểm tra evidence",
+        "retest"
+      ],
+      "status": "OPERATIONAL"
+    },
+    {
+      "agent_id": "SEO-TB-01",
+      "department": "SEO",
+      "responsibilities": [
+        "audit SEO",
+        "metadata",
+        "indexability",
+        "đề xuất tối ưu"
+      ],
+      "status": "IDENTITY_READY"
+    },
+    {
+      "agent_id": "CONTENT-TB-01",
+      "department": "Nội dung",
+      "responsibilities": [
+        "audit nội dung",
+        "soạn nháp",
+        "kiểm tra tính nhất quán",
+        "đề xuất cập nhật"
+      ],
+      "status": "IDENTITY_READY"
+    },
+    {
+      "agent_id": "SECURITY-TB-01",
+      "department": "An ninh",
+      "responsibilities": [
+        "audit bảo mật",
+        "kiểm tra cấu hình",
+        "phát hiện rủi ro",
+        "đề xuất giảm thiểu"
+      ],
+      "status": "IDENTITY_READY"
+    },
+    {
+      "agent_id": "OPS-TB-01",
+      "department": "Vận hành",
+      "responsibilities": [
+        "health check",
+        "đọc trạng thái/log",
+        "phân loại sự cố",
+        "báo cáo uptime"
+      ],
+      "status": "IDENTITY_READY"
+    },
+    {
+      "agent_id": "ANALYTICS-TB-01",
+      "department": "Phân tích",
+      "responsibilities": [
+        "phân tích số liệu tổng hợp",
+        "hành trình truy cập",
+        "báo cáo chỉ số",
+        "không suy đoán dữ liệu nhạy cảm"
+      ],
+      "status": "IDENTITY_READY"
+    }
+  ],
+  "governance": {
+    "atlas_assigns_only_to": "TB-01",
+    "specialist_reports_to": "TB-01",
+    "production_requires_owner": true,
+    "qa_independent": true,
+    "no_unapproved_cost": true,
+    "no_sensitive_demographic_inference": true
+  }
+}
