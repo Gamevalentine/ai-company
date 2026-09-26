@@ -44,6 +44,18 @@ export function hardSecurityChecks(evidence={}){
   };
 }
 
+function hardSecurityFindings(checks){
+  const out=[];
+  if(checks.private_key_files>0) out.push('Private-key file metadata detected in tracked source: '+checks.private_key_files);
+  if(checks.committed_env_files>0) out.push('Committed environment file metadata detected: '+checks.committed_env_files);
+  if(checks.credential_like_files>0) out.push('Credential-like tracked filename metadata detected: '+checks.credential_like_files);
+  if(checks.dependency_audit_available===false) out.push('Dependency audit evidence is unavailable; dependency risk is not fully verified.');
+  if(checks.critical_dependency_findings>0) out.push('Critical dependency findings reported: '+checks.critical_dependency_findings);
+  if(checks.high_dependency_findings>0) out.push('High dependency findings reported: '+checks.high_dependency_findings);
+  if(checks.missing_important_headers?.length) out.push('Missing important public security headers: '+checks.missing_important_headers.join(', '));
+  return out;
+}
+
 export function enforceSecurityVerdict(model,checks){
   if(checks.hard_critical){
     return {
@@ -113,8 +125,12 @@ export async function reviewSecurityEvidence(evidence,{fetchImpl=fetch}={}){
     agent_id:'SECURITY-TB-01',
     status:gate.status,
     severity:gate.severity,
-    summary:ai.parsed.summary,
-    findings:Array.isArray(ai.parsed.findings)?ai.parsed.findings:[],
+    summary:gate.overridden
+      ? 'Hard evidence requires attention; review the listed security findings.'
+      : ai.parsed.summary,
+    findings:gate.overridden
+      ? hardSecurityFindings(checks)
+      : (Array.isArray(ai.parsed.findings)?ai.parsed.findings:[]),
     recommended_action:gate.recommended_action,
     needs_manager_attention:gate.needs_manager_attention,
     hard_checks:checks,
