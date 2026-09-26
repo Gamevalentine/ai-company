@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "updated_at": "2026-09-26T20:13:44.650Z",
+  "agents": [
+    {
+      "agent_id": "OWNER",
+      "role": "owner",
+      "reports_to": null
+    },
+    {
+      "agent_id": "ATLAS",
+      "role": "ceo",
+      "reports_to": "OWNER"
+    },
+    {
+      "agent_id": "TB-01",
+      "role": "manager",
+      "reports_to": "ATLAS"
+    },
+    {
+      "agent_id": "DEV-TB-01",
+      "role": "developer",
+      "reports_to": "TB-01"
+    },
+    {
+      "agent_id": "QA-TB-01",
+      "role": "qa",
+      "reports_to": "TB-01"
+    }
+  ],
+  "tasks": [],
+  "messages": [],
+  "memories": [],
+  "executions": [],
+  "audit": []
+}
