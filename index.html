@@ -160,7 +160,11 @@
       display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px
     }
     .room{border:1px solid var(--line);border-radius:18px;background:#0c1a2b;padding:14px;min-height:180px}
-    .room h3{font-size:13px;margin:0 0 10px}.desks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .room-link{display:block;text-decoration:none;color:inherit;transition:.16s}
+    .room-link:hover{transform:translateY(-2px);border-color:#3b6b94;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+    .room-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .room-open{font-size:10px;color:#8bdcf0;border:1px solid rgba(110,231,255,.22);padding:5px 8px;border-radius:999px}
+    .room h3{font-size:13px;margin:0}.desks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
     .desk{padding:11px;border-radius:12px;background:#12243b;font-size:11px}
     .desk span{display:block;font-size:18px;margin-bottom:4px}
     .modal{
@@ -435,11 +439,28 @@
     <section class="view" id="view-office">
       <div class="page-card">
         <h2>Văn phòng AI</h2>
-        <p style="color:var(--muted)">Chế độ trực quan để nhìn nhanh AI nào đang làm việc trong từng “phòng”.</p>
+        <p style="color:var(--muted)">Mỗi website có một trang văn phòng riêng. Bấm vào từng văn phòng để quan sát Trưởng phòng, nhân viên AI, nhiệm vụ và nhật ký của đúng website đó.</p>
         <div class="office" style="margin-top:16px">
-          <div class="room"><h3>TrainingBot Department</h3><div class="desks"><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🧪</span>QA · Waiting</div><div class="desk"><span>🔎</span>SEO · Working</div><div class="desk"><span>📊</span>Analytics · Working</div></div></div>
-          <div class="room"><h3>Toolpick Department</h3><div class="desks"><div class="desk"><span>🛠️</span>DEV · Working</div><div class="desk"><span>☁️</span>DevOps · Working</div><div class="desk"><span>🧪</span>QA · Idle</div><div class="desk"><span>🛡️</span>Security · Watching</div></div></div>
-          <div class="room"><h3>HMOOB MUSIC Department</h3><div class="desks"><div class="desk"><span>📱</span>Mobile QA · Working</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🛍️</span>Product · Idle</div><div class="desk"><span>🔎</span>SEO · Waiting</div></div></div>
+          <a class="room room-link" href="office/trainingbot/">
+            <div class="room-top"><h3>TrainingBot Department</h3><span class="room-open">Mở văn phòng →</span></div>
+            <div class="desks"><div class="desk"><span>👔</span>TB-01 · Manager</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🧪</span>QA · Waiting</div><div class="desk"><span>🔎</span>SEO · Working</div></div>
+          </a>
+          <a class="room room-link" href="office/toolpick/">
+            <div class="room-top"><h3>Toolpick Department</h3><span class="room-open">Mở văn phòng →</span></div>
+            <div class="desks"><div class="desk"><span>👔</span>TP-01 · Manager</div><div class="desk"><span>🛠️</span>DEV · Working</div><div class="desk"><span>☁️</span>DevOps · Working</div><div class="desk"><span>🛡️</span>Security · Watching</div></div>
+          </a>
+          <a class="room room-link" href="office/hmoob-music/">
+            <div class="room-top"><h3>HMOOB MUSIC Department</h3><span class="room-open">Mở văn phòng →</span></div>
+            <div class="desks"><div class="desk"><span>👔</span>HM-01 · Manager</div><div class="desk"><span>📱</span>Mobile QA · Working</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🛍️</span>Product · Idle</div></div>
+          </a>
+          <a class="room room-link" href="office/toolpick-mail/">
+            <div class="room-top"><h3>Toolpick Mail Department</h3><span class="room-open">Mở văn phòng →</span></div>
+            <div class="desks"><div class="desk"><span>👔</span>ML-01 · Manager</div><div class="desk"><span>⚙️</span>Backend · Working</div><div class="desk"><span>🛡️</span>Security · Watching</div><div class="desk"><span>🧪</span>QA · Waiting</div></div>
+          </a>
+          <a class="room room-link" href="office/mam-kids/">
+            <div class="room-top"><h3>Mầm Kids Department</h3><span class="room-open">Mở văn phòng →</span></div>
+            <div class="desks"><div class="desk"><span>👔</span>MK-01 · Manager</div><div class="desk"><span>🎨</span>UI · Working</div><div class="desk"><span>✍️</span>Content · Idle</div><div class="desk"><span>🧪</span>QA · Waiting</div></div>
+          </a>
         </div>
       </div>
     </section>
