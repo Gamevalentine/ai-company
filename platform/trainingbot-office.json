@@ -66,9 +66,11 @@
         "phân loại SECURITY_OK / NEEDS_ATTENTION / CRITICAL",
         "chuyển vấn đề cho DEV hoặc TB-01 dựa trên evidence"
       ],
-      "status": "BRAIN_READY",
+      "status": "OPERATIONAL",
       "brain": "security-brain.mjs",
-      "workflow": "trainingbot-security-check.yml"
+      "workflow": "trainingbot-security-check.yml",
+      "live_run": "36273973588",
+      "last_live_result": "NEEDS_ATTENTION"
     },
     {
       "agent_id": "OPS-TB-01",
