@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const DEFAULT_MODEL=process.env.AION_LOCAL_MODEL||'qwen2.5:0.5b-instruct';
+const DEFAULT_MODEL=process.env.AION_LOCAL_MODEL||'qwen2.5:1.5b-instruct';
 const DEFAULT_URL=process.env.OLLAMA_URL||'http://127.0.0.1:11434';
 
 function now(){ return new Date().toISOString(); }
@@ -21,12 +21,12 @@ function ensureArrays(s){
 const MANAGER_SCHEMA={
   type:'object',
   properties:{
-    summary:{type:'string'},
+    summary:{type:'string',maxLength:240},
     operation:{type:'string',enum:['validate-sandbox','compare-with-main']},
-    dev_objective:{type:'string'},
-    qa_focus:{type:'array',items:{type:'string'},minItems:1,maxItems:6},
+    dev_objective:{type:'string',maxLength:240},
+    qa_focus:{type:'array',items:{type:'string',maxLength:160},minItems:1,maxItems:5},
     needs_owner_approval:{type:'boolean'},
-    risk_reason:{type:'string'}
+    risk_reason:{type:'string',maxLength:240}
   },
   required:['summary','operation','dev_objective','qa_focus','needs_owner_approval','risk_reason']
 };
@@ -35,8 +35,8 @@ const QA_SCHEMA={
   type:'object',
   properties:{
     verdict:{type:'string',enum:['PASS','FAIL']},
-    reason:{type:'string'},
-    concerns:{type:'array',items:{type:'string'},maxItems:8}
+    reason:{type:'string',maxLength:300},
+    concerns:{type:'array',items:{type:'string',maxLength:180},maxItems:6}
   },
   required:['verdict','reason','concerns']
 };
@@ -49,7 +49,7 @@ async function ollamaChat({system,user,schema,fetchImpl=fetch,url=DEFAULT_URL,mo
       model,
       stream:false,
       format:schema,
-      options:{temperature:0.1,num_predict:512},
+      options:{temperature:0,num_predict:768},
       messages:[
         {role:'system',content:system},
         {role:'user',content:user}
@@ -106,6 +106,8 @@ export async function managerPlan(inputState,{taskId,fetchImpl=fetch}){
     'You report to ATLAS CEO and delegate technical work to DEV-TB-01 and independent verification to QA-TB-01.',
     'Never edit source code yourself. Never perform QA yourself. Never request production deploy, merge, DNS, secrets, data deletion, or paid services.',
     'This pilot is sandbox-only. Choose exactly one allowed operation: validate-sandbox or compare-with-main.',
+    'Set needs_owner_approval=false for these two sandbox operations. Set it true only if your own proposed plan would require production, secrets, DNS, deletion, paid services, or another owner-gated action.',
+    'Keep every text field concise and non-repetitive.',
     'Return only the requested structured JSON.'
   ].join('\n');
   const user=JSON.stringify({
