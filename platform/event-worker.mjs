@@ -51,6 +51,15 @@ export function applyEvent(inputState,type,payload={}){
     const assigned=payload.assigned_to;
     agent(state,actor); agent(state,assigned);
     if(!canAssign(state,actor,assigned)) throw new Error(actor+' cannot assign directly to '+assigned);
+    const requestedId=payload.task_id||null;
+    if(requestedId){
+      const existing=state.tasks.find(x=>x.task_id===requestedId);
+      if(existing){
+        addAudit(state,{actor,action:'TASK_DUPLICATE_IGNORED',task_id:requestedId,target:assigned,result:'NOOP'});
+        state.updated_at=now();
+        return state;
+      }
+    }
     const task={
       task_id:payload.task_id||uid('TASK'),
       parent_task_id:payload.parent_task_id||null,
