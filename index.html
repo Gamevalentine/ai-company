@@ -354,7 +354,7 @@
               tự đề xuất mục tiêu và chuẩn bị kế hoạch. CEO chưa được tự ý thay đổi website thật.
             </p>
           </div>
-          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát & lập kế hoạch</div>
+          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát dữ liệu thật & lập kế hoạch</div>
         </div>
 
         <div class="grid-stats" style="margin-top:18px">
@@ -426,6 +426,74 @@
                 <div class="time">22:32</div>
                 <p><b>ATLAS:</b> Mọi thay đổi production phải tiếp tục đi qua Chủ sở hữu. <span style="color:var(--muted)">Lý do: giữ quyền kiểm soát cuối cùng ở con người.</span></p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;margin-top:16px" id="ceoStage3">
+          <div class="card-head">
+            <div>
+              <h2>🌐 Dữ liệu thật CEO đang đọc</h2>
+              <span>Chế độ chỉ đọc — ATLAS chỉ kiểm tra khả năng truy cập và nguồn công khai, không thay đổi website</span>
+            </div>
+            <button id="ceoLiveRefresh" class="small-btn" type="button">Kiểm tra lại</button>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px" id="ceoLiveSources">
+              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://trainingbot.io.vn">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>TrainingBot</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn: trainingbot.io.vn</div>
+                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
+              </div>
+
+              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://toolpick.id.vn">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Toolpick</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn: toolpick.id.vn</div>
+                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
+              </div>
+
+              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://toolpick.id.vn/mam-kids/">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Mầm Kids</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn: toolpick.id.vn/mam-kids/</div>
+                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
+              </div>
+
+              <div class="staff-card">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>HMOOB MUSIC</b><span class="badge warn">Chưa cấu hình</span>
+                </div>
+                <div class="role" style="margin-top:7px">Chưa có URL công khai được xác định chắc chắn.</div>
+                <div class="now">ATLAS không tự đoán nguồn dữ liệu.</div>
+              </div>
+
+              <div class="staff-card">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Toolpick Mail</b><span class="badge warn">Chưa cấu hình</span>
+                </div>
+                <div class="role" style="margin-top:7px">Chưa có URL production được xác định chắc chắn.</div>
+                <div class="now">ATLAS không tự đoán nguồn dữ liệu.</div>
+              </div>
+
+              <div class="staff-card ceo-live-source" data-kind="github" data-url="https://api.github.com/repos/Gamevalentine/trainingbot-cloudflare">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Mã nguồn TrainingBot</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn công khai: GitHub</div>
+                <div class="now ceo-live-detail">Chờ đọc trạng thái repository.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)">
+              <div style="font-size:10px;color:var(--muted)">
+                Kiểm tra website dùng yêu cầu mạng chỉ đọc. “Có phản hồi” chỉ xác nhận kết nối mạng thành công, không khẳng định toàn bộ chức năng website đều tốt.
+              </div>
+              <div id="ceoLiveLastCheck" style="font-size:10px;color:var(--muted)">Chưa kiểm tra</div>
             </div>
           </div>
         </div>
@@ -893,6 +961,69 @@
     items.sort((a,b)=>Number(b.dataset.score)-Number(a.dataset.score)).forEach(item=>list.appendChild(item));
   }
   renderCeoPriorities();
+
+  // CEO Giai đoạn 3: đọc dữ liệu thật ở chế độ chỉ đọc.
+  async function checkCeoLiveSource(card){
+    const status=card.querySelector('.ceo-live-status');
+    const detail=card.querySelector('.ceo-live-detail');
+    const kind=card.dataset.kind;
+    const url=card.dataset.url;
+    if(!status||!detail||!url) return;
+
+    status.textContent='Đang kiểm tra';
+    status.classList.remove('warn');
+    status.style.background='';
+    status.style.color='';
+    status.style.borderColor='';
+    detail.textContent='ATLAS đang đọc nguồn dữ liệu...';
+
+    const started=performance.now();
+    try{
+      if(kind==='github'){
+        const res=await fetch(url,{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const data=await res.json();
+        const pushed=data.pushed_at?new Date(data.pushed_at).toLocaleString('vi-VN'):'Không rõ';
+        status.textContent='Đã kết nối';
+        detail.textContent='Nhánh mặc định: '+(data.default_branch||'không rõ')+' · Cập nhật mã nguồn gần nhất: '+pushed;
+      }else{
+        await fetch(url,{method:'GET',mode:'no-cors',cache:'no-store',redirect:'follow'});
+        const ms=Math.max(1,Math.round(performance.now()-started));
+        status.textContent='Có phản hồi';
+        detail.textContent='Kết nối mạng thành công · khoảng '+ms+' ms';
+      }
+    }catch(error){
+      status.textContent='Không truy cập được';
+      status.classList.add('warn');
+      status.style.background='rgba(251,113,133,.10)';
+      status.style.color='#fda4af';
+      status.style.borderColor='rgba(251,113,133,.20)';
+      detail.textContent='Không nhận được phản hồi từ nguồn này ở lần kiểm tra hiện tại.';
+    }
+  }
+
+  async function refreshCeoLiveData(){
+    const button=document.getElementById('ceoLiveRefresh');
+    const last=document.getElementById('ceoLiveLastCheck');
+    const cards=[...document.querySelectorAll('.ceo-live-source')];
+    if(!cards.length) return;
+    if(button){
+      button.disabled=true;
+      button.textContent='Đang kiểm tra...';
+    }
+    await Promise.all(cards.map(checkCeoLiveSource));
+    if(last) last.textContent='Kiểm tra lúc '+new Date().toLocaleString('vi-VN');
+    if(button){
+      button.disabled=false;
+      button.textContent='Kiểm tra lại';
+    }
+  }
+
+  const ceoLiveRefresh=document.getElementById('ceoLiveRefresh');
+  if(ceoLiveRefresh){
+    ceoLiveRefresh.addEventListener('click',refreshCeoLiveData);
+    refreshCeoLiveData();
+  }
 
   if(location.hash==='#office' || localStorage.getItem('aiCompanyView')==='office'){
     switchView('office');
