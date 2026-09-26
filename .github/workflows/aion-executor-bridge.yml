@@ -1,0 +1,47 @@
+name: AION Executor Bridge
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: AION task ID
+        required: true
+        default: AION-PILOT-001
+      operation:
+        description: Sandbox operation
+        required: true
+        default: validate-sandbox
+        type: choice
+        options:
+          - validate-sandbox
+          - compare-with-main
+
+permissions:
+  contents: read
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create temporary GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.AION_GITHUB_APP_ID }}
+          private-key: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          owner: Gamevalentine
+          repositories: trainingbot-cloudflare
+
+      - name: Run TrainingBot Safe Executor
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TASK_ID: ${{ inputs.task_id }}
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          gh workflow run aion-safe-executor.yml \
+            --repo Gamevalentine/trainingbot-cloudflare \
+            --ref main \
+            -f task_id="$TASK_ID" \
+            -f operation="$OPERATION" \
+            -f confirm="AION-SANDBOX"
