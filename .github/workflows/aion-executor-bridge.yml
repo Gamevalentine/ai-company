@@ -34,14 +34,59 @@ jobs:
           repositories: trainingbot-cloudflare
 
       - name: Run TrainingBot Safe Executor
+        id: dispatch
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           TASK_ID: ${{ inputs.task_id }}
           OPERATION: ${{ inputs.operation }}
         run: |
+          echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
           gh workflow run aion-safe-executor.yml \
             --repo Gamevalentine/trainingbot-cloudflare \
             --ref main \
             -f task_id="$TASK_ID" \
             -f operation="$OPERATION" \
             -f confirm="AION-SANDBOX"
+
+      - name: Collect TrainingBot executor result
+        id: collect
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          TASK_ID: ${{ inputs.task_id }}
+          STARTED_AT: ${{ steps.dispatch.outputs.started_at }}
+        run: |
+          set -euo pipefail
+          RUN_ID=""
+          for i in $(seq 1 30); do
+            RUN_ID=$(gh run list \
+              --repo Gamevalentine/trainingbot-cloudflare \
+              --workflow aion-safe-executor.yml \
+              --event workflow_dispatch \
+              --limit 20 \
+              --json databaseId,displayTitle,createdAt \
+              --jq '.[] | select(.displayTitle | contains(env.TASK_ID)) | select(.createdAt >= env.STARTED_AT) | .databaseId' | head -n 1)
+            if [ -n "$RUN_ID" ]; then break; fi
+            sleep 2
+          done
+          test -n "$RUN_ID"
+          set +e
+          gh run watch "$RUN_ID" --repo Gamevalentine/trainingbot-cloudflare --exit-status
+          WATCH_EXIT=$?
+          set -e
+          gh run view "$RUN_ID" \
+            --repo Gamevalentine/trainingbot-cloudflare \
+            --json databaseId,status,conclusion,url,headSha,createdAt,updatedAt \
+            --jq '{run_id:.databaseId,status,conclusion,run_url:.url,head_sha:.headSha,created_at:.createdAt,updated_at:.updatedAt}' \
+            > executor-result.json
+          cat executor-result.json
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          if [ "$WATCH_EXIT" -ne 0 ]; then exit "$WATCH_EXIT"; fi
+
+      - name: Upload collected evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aion-bridge-result-${{ github.run_id }}
+          path: executor-result.json
+          if-no-files-found: warn
+          retention-days: 7
