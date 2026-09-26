@@ -40,21 +40,38 @@ jobs:
           ref: aion-runtime-state
           path: runtime-state
 
+      - name: Decrypt durable state in runner
+        env:
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          node app/platform/state-crypto.mjs decrypt \
+            --input runtime-state/aion-state.enc.json \
+            --output runtime-state/aion-state.tmp.json
+
       - name: Apply event
         env:
           EVENT_TYPE: ${{ inputs.event_type }}
           PAYLOAD_JSON: ${{ inputs.payload_json }}
         run: |
           node app/platform/event-worker.mjs \
-            --state runtime-state/aion-state.json \
+            --state runtime-state/aion-state.tmp.json \
             --type "$EVENT_TYPE" \
             --payload "$PAYLOAD_JSON"
+
+      - name: Re-encrypt durable state
+        env:
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          node app/platform/state-crypto.mjs encrypt \
+            --input runtime-state/aion-state.tmp.json \
+            --output runtime-state/aion-state.enc.json
+          rm -f runtime-state/aion-state.tmp.json
 
       - name: Persist durable state
         run: |
           git -C runtime-state config user.name "AION Runtime"
           git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
-          git -C runtime-state add aion-state.json
+          git -C runtime-state add aion-state.enc.json
           if git -C runtime-state diff --cached --quiet; then
             echo "No state change."
             exit 0
