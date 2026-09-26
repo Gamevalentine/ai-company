@@ -178,3 +178,26 @@ Live AI pilot:
 - Encrypted state persisted at commit `d07601f2d4cc53d2cfde8bb7f37e36b9ff225c68`.
 
 The first 0.5B model attempt was rejected after malformed/truncated structured output. The runtime was hardened with bounded JSON schemas and upgraded to the 1.5B local model before accepting the successful pilot.
+
+
+## ATLAS bridge hardening
+
+ATLAS bridge đã được nâng từ pilot tuần tự lên vận hành ổn định hơn:
+
+- **Auto-close:** Issue được tự đóng khi task đạt `READY_FOR_CEO_REVIEW`.
+- **Duplicate protection:** Issue đã có `AION_RESULT` không được chạy lại; reopen sẽ bị guard chặn và tự đóng lại.
+- **Retry:** workflow hỗ trợ retry bằng reopen Issue chưa có `AION_RESULT`, hoặc manual dispatch với `issue_number`.
+- **Local-AI retry:** lời gọi Ollama có timeout 120 giây và retry một lần nếu output lỗi/không parse được.
+- **Executor retry:** dispatch Safe Executor thử tối đa hai lần khi gặp lỗi hạ tầng.
+- **Timeout:** chờ Safe Executor tối đa 12 phút; timeout bị ghi thành FAIL để QA xử lý, không treo workflow vô hạn.
+- **Failure visibility:** nếu bridge dừng trước khi có kết quả hợp lệ, Issue nhận comment `AION_RUNTIME_FAILURE`; không giả mạo `AION_RESULT`.
+- **Parallel task isolation:** mỗi ATLAS Issue dùng state mã hóa riêng ở `aion-runtime-state/tasks/ATLAS-ISSUE-N.enc.json`; concurrency khóa theo từng Issue thay vì khóa toàn runtime.
+- **Conflict-safe persistence:** state sharded push có fetch/rebase/retry tối đa 3 lần để hai task khác nhau có thể ghi gần đồng thời.
+
+Live verification:
+- Parallel test A run `36271351448` — success.
+- Parallel test B run `36271352530` — success.
+- Hai workflow cùng ở trạng thái `in_progress` trong cùng khoảng thời gian và tạo hai state shard riêng.
+- Issue #3 và #4 đều tự đóng sau `READY_FOR_CEO_REVIEW`.
+- Reopen Issue #3 tạo run `36271511028`; duplicate guard skip toàn bộ AI/DEV/QA/executor, không tạo comment kết quả thứ hai, và tự đóng Issue lại.
+- State files: `tasks/ATLAS-ISSUE-3.enc.json` và `tasks/ATLAS-ISSUE-4.enc.json`.
