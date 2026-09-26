@@ -1,6 +1,9 @@
 name: AION Executor Bridge
 
 on:
+  push:
+    paths:
+      - '.github/workflows/aion-executor-bridge.yml'
   workflow_dispatch:
     inputs:
       task_id:
@@ -37,8 +40,8 @@ jobs:
         id: dispatch
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          TASK_ID: ${{ inputs.task_id }}
-          OPERATION: ${{ inputs.operation }}
+          TASK_ID: ${{ inputs.task_id || 'AION-AUTO-CHECK' }}
+          OPERATION: ${{ inputs.operation || 'validate-sandbox' }}
         run: |
           echo "started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
           gh workflow run aion-safe-executor.yml \
