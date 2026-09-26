@@ -9,9 +9,9 @@ const __dirname=path.dirname(fileURLToPath(import.meta.url));
 const agents=JSON.parse(fs.readFileSync(path.join(__dirname,'agents.json'),'utf8'));
 const office=JSON.parse(fs.readFileSync(path.join(__dirname,'trainingbot-office.json'),'utf8'));
 
-const specialistIds=['DEV-TB-01','QA-TB-01','SEO-TB-01','CONTENT-TB-01','SECURITY-TB-01','OPS-TB-01','ANALYTICS-TB-01'];
+const specialistIds=['DEV-TB-01','QA-TB-01','SEO-TB-01','CONTENT-TB-01','SECURITY-TB-01','OPS-TB-01','ANALYTICS-TB-01','PUBLISHER-TB-01'];
 
-test('TrainingBot office has one manager and seven direct specialists',()=>{
+test('TrainingBot office has one manager and eight direct specialists',()=>{
   assert.equal(office.manager,'TB-01');
   const direct=agents.filter(a=>a.reports_to==='TB-01').map(a=>a.agent_id).sort();
   assert.deepEqual(direct,specialistIds.slice().sort());
@@ -45,4 +45,16 @@ test('analytics role explicitly blocks sensitive demographic inference',()=>{
   const a=agents.find(x=>x.agent_id==='ANALYTICS-TB-01');
   assert.ok(a.prohibited_actions.includes('infer_sensitive_demographics'));
   assert.equal(office.governance.no_sensitive_demographic_inference,true);
+});
+
+
+test('publisher role can prepare content but cannot publish unapproved content or spend money',()=>{
+  const a=agents.find(x=>x.agent_id==='PUBLISHER-TB-01');
+  assert.ok(a.permissions.includes('adapt_content_per_platform'));
+  assert.ok(a.permissions.includes('prepare_publish_queue'));
+  assert.ok(a.prohibited_actions.includes('publish_unapproved_content'));
+  assert.ok(a.prohibited_actions.includes('create_paid_campaign'));
+  assert.ok(a.prohibited_actions.includes('spend_money'));
+  assert.equal(office.governance.publisher_requires_approved_content,true);
+  assert.equal(office.governance.no_paid_campaign_without_owner,true);
 });
