@@ -589,6 +589,11 @@
   }
   bindApprovalButtons();
   syncApprovalPage();
+
+  if(location.hash==='#office' || localStorage.getItem('aiCompanyView')==='office'){
+    switchView('office');
+    localStorage.removeItem('aiCompanyView');
+  }
 </script>
 </body>
 </html>
