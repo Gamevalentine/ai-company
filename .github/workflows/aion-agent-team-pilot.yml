@@ -1,0 +1,192 @@
+name: AION TrainingBot Agent Team Pilot
+
+on:
+  push:
+    paths:
+      - '.github/workflows/aion-agent-team-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aion-runtime-state
+  cancel-in-progress: false
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout runtime code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: app
+
+      - name: Checkout encrypted runtime state
+        uses: actions/checkout@v4
+        with:
+          ref: aion-runtime-state
+          path: runtime-state
+
+      - name: Decrypt runtime state
+        env:
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          node app/platform/state-crypto.mjs decrypt \
+            --input runtime-state/aion-state.enc.json \
+            --output runtime-state/aion-state.tmp.json
+
+      - name: Bootstrap pilot goal from ATLAS
+        run: |
+          node app/platform/agent-brains.mjs bootstrap \
+            --state runtime-state/aion-state.tmp.json \
+            --task-id AION-AGENT-PILOT-001
+
+      - name: TB-01 manager accepts and delegates
+        run: |
+          node app/platform/agent-brains.mjs manager \
+            --state runtime-state/aion-state.tmp.json
+
+      - name: DEV-TB-01 prepares execution queue
+        run: |
+          node app/platform/agent-brains.mjs dev-queue \
+            --state runtime-state/aion-state.tmp.json \
+            --output dev-queue.json
+          cat dev-queue.json
+
+      - name: Create temporary TrainingBot GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.AION_GITHUB_APP_ID }}
+          private-key: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          owner: Gamevalentine
+          repositories: trainingbot-cloudflare
+
+      - name: DEV-TB-01 executes sandbox tasks
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          COUNT=$(jq 'length' dev-queue.json)
+          if [ "$COUNT" -eq 0 ]; then
+            echo "No pending DEV sandbox tasks."
+            exit 0
+          fi
+
+          for ROW in $(jq -c '.[]' dev-queue.json); do
+            TASK_ID=$(echo "$ROW" | jq -r '.task_id')
+            OPERATION=$(echo "$ROW" | jq -r '.operation')
+            STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+            echo "Dispatching $TASK_ID -> $OPERATION"
+            gh workflow run aion-safe-executor.yml \
+              --repo Gamevalentine/trainingbot-cloudflare \
+              --ref main \
+              -f task_id="$TASK_ID" \
+              -f operation="$OPERATION" \
+              -f confirm="AION-SANDBOX"
+
+            RUN_ID=""
+            for i in $(seq 1 40); do
+              RUN_ID=$(gh run list \
+                --repo Gamevalentine/trainingbot-cloudflare \
+                --workflow aion-safe-executor.yml \
+                --event workflow_dispatch \
+                --limit 30 \
+                --json databaseId,displayTitle,createdAt \
+                --jq '.[] | select(.displayTitle | contains("'"$TASK_ID"'")) | select(.createdAt >= "'"$STARTED_AT"'") | .databaseId' | head -n 1 || true)
+              if [ -n "$RUN_ID" ]; then break; fi
+              sleep 2
+            done
+            test -n "$RUN_ID"
+
+            set +e
+            gh run watch "$RUN_ID" --repo Gamevalentine/trainingbot-cloudflare --exit-status
+            WATCH_EXIT=$?
+            set -e
+
+            gh run view "$RUN_ID" \
+              --repo Gamevalentine/trainingbot-cloudflare \
+              --json databaseId,status,conclusion,url,headSha,createdAt,updatedAt \
+              --jq '.' > run.json
+
+            CONCLUSION=$(jq -r '.conclusion // "failure"' run.json)
+            if [ "$CONCLUSION" = "success" ]; then RESULT="PASS"; else RESULT="FAIL"; fi
+            PAYLOAD=$(jq -c \
+              --arg task_id "$TASK_ID" \
+              --arg operation "$OPERATION" \
+              --arg result "$RESULT" \
+              '{
+                task_id:$task_id,
+                operation:$operation,
+                result:$result,
+                run_id:(.databaseId|tostring),
+                run_url:.url,
+                head_sha:.headSha,
+                conclusion:.conclusion,
+                created_at:.createdAt,
+                updated_at:.updatedAt
+              }' run.json)
+
+            node app/platform/event-worker.mjs \
+              --state runtime-state/aion-state.tmp.json \
+              --type executor_result \
+              --payload "$PAYLOAD"
+
+            if [ "$WATCH_EXIT" -ne 0 ]; then
+              echo "Safe Executor failed for $TASK_ID; QA will inspect FAIL evidence."
+            fi
+          done
+
+      - name: TB-01 opens QA tasks
+        run: |
+          node app/platform/agent-brains.mjs manager \
+            --state runtime-state/aion-state.tmp.json
+
+      - name: QA-TB-01 independently evaluates evidence
+        run: |
+          node app/platform/agent-brains.mjs qa \
+            --state runtime-state/aion-state.tmp.json
+
+      - name: TB-01 reviews QA and reports ATLAS
+        run: |
+          node app/platform/agent-brains.mjs manager \
+            --state runtime-state/aion-state.tmp.json
+
+      - name: Create non-sensitive pilot summary
+        run: |
+          node app/platform/agent-brains.mjs summary \
+            --state runtime-state/aion-state.tmp.json \
+            --task-id AION-AGENT-PILOT-001 \
+            --output aion-agent-pilot-summary.json
+          cat aion-agent-pilot-summary.json
+
+      - name: Encrypt updated runtime state
+        env:
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          node app/platform/state-crypto.mjs encrypt \
+            --input runtime-state/aion-state.tmp.json \
+            --output runtime-state/aion-state.enc.json
+          rm -f runtime-state/aion-state.tmp.json
+
+      - name: Persist encrypted Agent state
+        run: |
+          git -C runtime-state config user.name "AION Runtime"
+          git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
+          git -C runtime-state add aion-state.enc.json
+          if ! git -C runtime-state diff --cached --quiet; then
+            git -C runtime-state commit -m "runtime: TrainingBot agent team pilot"
+            git -C runtime-state push origin HEAD:aion-runtime-state
+          fi
+
+      - name: Upload pilot summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: aion-agent-pilot-summary-${{ github.run_id }}
+          path: aion-agent-pilot-summary.json
+          retention-days: 7
