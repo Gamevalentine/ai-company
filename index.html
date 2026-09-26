@@ -170,6 +170,18 @@
     .room h3{font-size:13px;margin:0}.desks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
     .desk{padding:11px;border-radius:12px;background:#12243b;font-size:11px}
     .desk span{display:block;font-size:18px;margin-bottom:4px}
+    .phase4-goal-grid{display:grid;gap:10px}
+    .phase4-goal{border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30}
+    .phase4-goal-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .phase4-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+    .phase4-meta div{padding:8px;border:1px solid rgba(31,53,82,.75);border-radius:9px;font-size:10px;color:var(--muted)}
+    .phase4-meta b{color:var(--text);font-weight:700}
+    .phase4-workflow{display:grid;gap:10px}
+    .phase4-work{border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30}
+    .phase4-work-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .phase4-evidence{margin-top:9px;padding:8px;border-radius:9px;background:#10243b;font-size:10px;color:#b9c9db;line-height:1.5}
+    .phase4-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    @media (max-width:760px){.phase4-meta{grid-template-columns:1fr}}
     .modal{
       position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
     }
@@ -312,45 +324,20 @@
           </div>
 
           <div class="card" style="margin-top:18px">
-            <div class="card-head"><div><h2>Nhiệm vụ CEO đã giao</h2><span>Demo dữ liệu vận hành</span></div><span>14 đang chạy</span></div>
-            <div class="card-body">
-              <div class="task"><div><strong>#1842 · Kiểm tra API Theo dõi truy cập</strong><small>TrainingBot · Lập trình viên AI</small></div><div class="progress"><small>68%</small><div class="bar"><i style="width:68%"></i></div></div></div>
-              <div class="task"><div><strong>#1843 · Kiểm thử giao diện mobile</strong><small>HMOOB MUSIC · Kiểm thử AI</small></div><div class="progress"><small>42%</small><div class="bar"><i style="width:42%"></i></div></div></div>
-              <div class="task"><div><strong>#1844 · Kiểm tra backup gần nhất</strong><small>Toolpick · Vận hành hệ thống AI</small></div><div class="progress"><small>92%</small><div class="bar"><i style="width:92%"></i></div></div></div>
-            </div>
+            <div class="card-head"><div><h2>Nhiệm vụ CEO đã giao</h2><span>Đồng bộ từ mục tiêu Giai đoạn 4</span></div><span id="ceoAssignedCount">0 đang chạy</span></div>
+            <div class="card-body" id="ceoAssignedList"></div>
           </div>
         </div>
 
         <div>
           <div class="card">
             <div class="card-head"><div><h2>Chờ bạn phê duyệt</h2><span>AI không được vượt quyền</span></div><span id="approvalHeader">3 yêu cầu</span></div>
-            <div class="card-body approval-list" id="approvalList">
-              <div class="approval">
-                <div class="approval-top"><div><strong>Deploy bản sửa #1842</strong><small>TrainingBot</small></div><span class="risk med">Rủi ro vừa</span></div>
-                <p>Lập trình viên và Kiểm thử đã hoàn thành bản sửa. CEO yêu cầu quyền triển khai production.</p>
-                <div class="approve-actions"><button class="small-btn approve">✓ Duyệt</button><button class="small-btn reject">✕ Từ chối</button></div>
-              </div>
-              <div class="approval">
-                <div class="approval-top"><div><strong>Thay đổi cấu hình cache</strong><small>HMOOB MUSIC</small></div><span class="risk high">Rủi ro cao</span></div>
-                <p>CTO đề xuất thay đổi cấu hình nhằm cải thiện tốc độ. Cần chủ sở hữu duyệt.</p>
-                <div class="approve-actions"><button class="small-btn approve">✓ Duyệt</button><button class="small-btn reject">✕ Từ chối</button></div>
-              </div>
-              <div class="approval">
-                <div class="approval-top"><div><strong>Xuất bản 2 bài SEO</strong><small>TrainingBot</small></div><span class="risk med">Rủi ro thấp</span></div>
-                <p>Nội dung đã qua Nội dung AI và Kiểm thử nội dung. Chưa xuất bản.</p>
-                <div class="approve-actions"><button class="small-btn approve">✓ Duyệt</button><button class="small-btn reject">✕ Từ chối</button></div>
-              </div>
-            </div>
+            <div class="card-body approval-list" id="approvalList"></div>
           </div>
 
           <div class="card" style="margin-top:18px">
             <div class="card-head"><div><h2>Nhật ký CEO</h2><span>Hoạt động gần đây</span></div></div>
-            <div class="card-body">
-              <div class="activity"><div class="time">22:01</div><p><b>CEO</b> giao Kiểm thử kiểm tra HMOOB MUSIC trên mobile.</p></div>
-              <div class="activity"><div class="time">21:54</div><p><b>TB Trưởng phòng</b> phát hiện 1 API cần kiểm tra lại.</p></div>
-              <div class="activity"><div class="time">21:42</div><p><b>Vận hành hệ thống AI</b> xác nhận Toolpick đang hoạt động bình thường.</p></div>
-              <div class="activity"><div class="time">21:30</div><p><b>CEO</b> tổng hợp mục tiêu vận hành trong ngày.</p></div>
-            </div>
+            <div class="card-body" id="ceoActivityList"></div>
           </div>
         </div>
       </div>
@@ -371,8 +358,8 @@
 
         <div class="grid-stats" style="margin-top:18px">
           <div class="stat"><div class="label">Website đang quan sát</div><div class="value">5</div><div class="sub">chưa tự can thiệp website thật</div></div>
-          <div class="stat"><div class="label">Mục tiêu CEO đang theo dõi</div><div class="value">3</div><div class="sub">do CEO tự đề xuất</div></div>
-          <div class="stat"><div class="label">Việc cần Chủ sở hữu duyệt</div><div class="value">3</div><div class="sub">mọi việc nhạy cảm đều dừng lại</div></div>
+          <div class="stat"><div class="label">Mục tiêu CEO đang theo dõi</div><div class="value" id="ceoGoalMetric">3</div><div class="sub">hồ sơ mục tiêu có căn cứ và tiêu chí</div></div>
+          <div class="stat"><div class="label">Việc cần Chủ sở hữu duyệt</div><div class="value" id="ceoApprovalMetric">3</div><div class="sub">mọi việc nhạy cảm đều dừng lại</div></div>
           <div class="stat"><div class="label">Hành động vượt quyền</div><div class="value">0</div><div class="sub">CEO không được vượt phạm vi cho phép</div></div>
         </div>
 
@@ -586,31 +573,21 @@
           <div style="display:grid;gap:16px">
             <div class="card" style="box-shadow:none">
               <div class="card-head">
-                <div><h2>Mục tiêu CEO đang đề xuất</h2><span>Mỗi mục tiêu phải có lý do rõ ràng</span></div>
-                <span>3 mục tiêu</span>
+                <div><h2>Hồ sơ mục tiêu CEO</h2><span>Mỗi mục tiêu có căn cứ, website, phụ trách, ưu tiên, thời hạn và tiêu chí hoàn thành</span></div>
+                <span id="ceoGoalCount">0 mục tiêu</span>
               </div>
               <div class="card-body">
-                <div class="task">
-                  <div>
-                    <strong>Giữ toàn bộ website hoạt động ổn định</strong>
-                    <small>Lý do: đây là điều kiện nền tảng trước khi cho AI tự vận hành sâu hơn.</small>
-                  </div>
-                  <div><span class="badge">Đang theo dõi</span></div>
-                </div>
-                <div class="task">
-                  <div>
-                    <strong>Phát hiện sớm lỗi ảnh hưởng người dùng</strong>
-                    <small>Lý do: ưu tiên phát hiện trước, chưa tự sửa production.</small>
-                  </div>
-                  <div><span class="badge">Đang theo dõi</span></div>
-                </div>
-                <div class="task">
-                  <div>
-                    <strong>Chuẩn hóa cách CEO tạo và giải thích mục tiêu</strong>
-                    <small>Lý do: mọi quyết định sau này phải truy được nguyên nhân và căn cứ.</small>
-                  </div>
-                  <div><span class="badge warn">Đang xây dựng</span></div>
-                </div>
+                <div class="phase4-goal-grid" id="ceoGoalProfiles"></div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="card-head">
+                <div><h2>Luồng giao việc & nghiệm thu</h2><span>CEO giao → Trưởng phòng nhận → cung cấp bằng chứng → CEO nghiệm thu</span></div>
+                <span id="ceoWorkflowCount">0 việc</span>
+              </div>
+              <div class="card-body">
+                <div class="phase4-workflow" id="ceoWorkflowList"></div>
               </div>
             </div>
 
@@ -726,10 +703,7 @@
         <h2>Báo cáo điều hành</h2>
         <table class="table">
           <thead><tr><th>Chu kỳ</th><th>CEO kết luận</th><th>Hoàn thành</th><th>Cần duyệt</th></tr></thead>
-          <tbody>
-            <tr><td>Hôm nay</td><td>Hệ thống ổn định, ưu tiên TrainingBot và HMOOB</td><td>9/14</td><td>3</td></tr>
-            <tr><td>7 ngày</td><td>Không có sự cố nghiêm trọng</td><td>48/52</td><td>7</td></tr>
-          </tbody>
+          <tbody id="reportBody"></tbody>
         </table>
       </div>
     </section>
@@ -753,12 +727,7 @@
         <h2>Nhật ký quyết định</h2>
         <table class="table">
           <thead><tr><th>Thời gian</th><th>AI</th><th>Hành động</th><th>Quyền</th></tr></thead>
-          <tbody>
-            <tr><td>22:01</td><td>ATLAS</td><td>Giao Kiểm thử kiểm tra HMOOB trên mobile</td><td>Tự động</td></tr>
-            <tr><td>21:54</td><td>TB-01</td><td>Tạo nhiệm vụ kiểm tra API</td><td>Tự động</td></tr>
-            <tr><td>21:43</td><td>DEV-TB-01</td><td>Chuẩn bị bản sửa</td><td>Sandbox</td></tr>
-            <tr><td>21:30</td><td>ATLAS</td><td>Tạo mục tiêu vận hành trong ngày</td><td>Tự động</td></tr>
-          </tbody>
+          <tbody id="decisionLogBody"></tbody>
         </table>
       </div>
     </section>
@@ -786,8 +755,8 @@
   <div class="modal-card">
     <div class="modal-head"><h3>🧠 Báo cáo nhanh từ ATLAS</h3><button class="close" id="ceoClose">×</button></div>
     <div class="modal-body">
-      <p style="line-height:1.7;margin-top:0">Tôi đang theo dõi 5 website. Hiện có một điểm cần chú ý ở HMOOB MUSIC và một thay đổi production của TrainingBot đang chờ Chủ sở hữu phê duyệt.</p>
-      <p style="color:var(--muted);line-height:1.7">Đây là dữ liệu mô phỏng cho bản giao diện V1. Chưa có AI nào được phép tự thay đổi website thật.</p>
+      <p id="ceoBriefSummary" style="line-height:1.7;margin-top:0"></p>
+      <p id="ceoBriefDetail" style="color:var(--muted);line-height:1.7"></p>
     </div>
   </div>
 </div>
@@ -834,44 +803,219 @@
   document.getElementById('openVăn phòng').onclick=()=>{modal.classList.remove('show');switchView('staff')};
 
   const ceoModal=document.getElementById('ceoModal');
-  document.getElementById('ceoBriefBtn').onclick=()=>ceoModal.classList.add('show');
+  document.getElementById('ceoBriefBtn').onclick=()=>{renderCeoBrief();ceoModal.classList.add('show')};
   document.getElementById('ceoClose').onclick=()=>ceoModal.classList.remove('show');
   ceoModal.addEventListener('click',e=>{if(e.target===ceoModal)ceoModal.classList.remove('show')});
 
-  let approvalCount=3;
-  function refreshApprovalCount(){
-    document.getElementById('approvalMetric').textContent=approvalCount;
-    document.getElementById('navApprovalCount').textContent=approvalCount;
-    document.getElementById('approvalHeader').textContent=approvalCount+' yêu cầu';
+  // CEO Giai đoạn 4: trạng thái dùng chung cho mục tiêu, giao việc, phê duyệt, báo cáo và nhật ký.
+  const phase4Key='aiCompany.ceo.phase4.v1';
+  const phase4Defaults={
+    goals:[
+      {id:'G-001',title:'Ổn định các luồng API quan trọng của TrainingBot',basis:'Kiểm tra nguồn thật cho thấy TrainingBot là tài sản đang hoạt động; các luồng API có ảnh hưởng trực tiếp người dùng.',website:'TrainingBot',owner:'TB-01',priority:'Cao',deadline:'Trong phiên kiểm tra hiện tại',criteria:'Có kết quả kiểm thử rõ ràng; nếu cần production thì phải tạo yêu cầu phê duyệt.',status:'Đã giao'},
+      {id:'G-002',title:'Theo dõi hiệu năng mobile của HMOOB MUSIC',basis:'Hiệu năng mobile đang được đánh dấu cần theo dõi trong bảng điều hành.',website:'HMOOB MUSIC',owner:'HM-01',priority:'Cao',deadline:'Trước khi mở thêm thay đổi giao diện',criteria:'Có bằng chứng kiểm thử mobile và kết luận đạt/chưa đạt; không tự đổi production.',status:'Đã giao'},
+      {id:'G-003',title:'Chuẩn hóa cách CEO tạo, giao và nghiệm thu mục tiêu',basis:'Bộ máy cần một luồng thống nhất để tránh giao việc mơ hồ hoặc báo hoàn thành khi chưa có bằng chứng.',website:'AION HQ',owner:'ATLAS',priority:'Trung bình',deadline:'Giai đoạn 4',criteria:'Mục tiêu có đủ hồ sơ; trạng thái giao việc, phê duyệt, báo cáo và nhật ký đồng bộ.',status:'Đang thực hiện'}
+    ],
+    tasks:[
+      {id:'CEO-1842',goalId:'G-001',title:'Kiểm tra API Theo dõi truy cập',website:'TrainingBot',assignee:'TB-01',status:'assigned',progress:25,evidence:''},
+      {id:'CEO-1843',goalId:'G-002',title:'Kiểm thử hiệu năng và giao diện mobile',website:'HMOOB MUSIC',assignee:'HM-01',status:'accepted',progress:50,evidence:''},
+      {id:'CEO-1844',goalId:'G-003',title:'Đối chiếu trạng thái giữa CEO, Phê duyệt, Báo cáo và Nhật ký',website:'AION HQ',assignee:'ATLAS',status:'evidence_ready',progress:85,evidence:'Đã dùng chung một state có ID/trạng thái; chờ nghiệm thu trên giao diện.'}
+    ],
+    approvals:[
+      {id:'APR-001',title:'Deploy bản sửa #1842',website:'TrainingBot',risk:'Vừa',description:'Lập trình viên và Kiểm thử đã hoàn thành bản sửa. CEO yêu cầu quyền triển khai production.',status:'pending',linkedTask:'CEO-1842'},
+      {id:'APR-002',title:'Thay đổi cấu hình cache',website:'HMOOB MUSIC',risk:'Cao',description:'Đề xuất thay đổi cấu hình nhằm cải thiện tốc độ. Cần Chủ sở hữu duyệt trước khi tác động production.',status:'pending',linkedTask:'CEO-1843'},
+      {id:'APR-003',title:'Xuất bản 2 bài SEO',website:'TrainingBot',risk:'Thấp',description:'Nội dung đã qua rà soát; việc xuất bản thật vẫn phải chờ Chủ sở hữu quyết định.',status:'pending',linkedTask:'CEO-1842'}
+    ],
+    logs:[
+      {time:'22:01',actor:'ATLAS',action:'Giao kiểm thử HMOOB MUSIC trên mobile.',permission:'Tự động'},
+      {time:'21:54',actor:'TB-01',action:'Nhận mục tiêu kiểm tra luồng API TrainingBot.',permission:'Tự động'},
+      {time:'21:43',actor:'ATLAS',action:'Tạo hồ sơ mục tiêu có căn cứ và tiêu chí hoàn thành.',permission:'Tự động'},
+      {time:'21:30',actor:'ATLAS',action:'Khởi tạo Giai đoạn 4 với trạng thái dùng chung.',permission:'Tự động'}
+    ]
+  };
+
+  function clonePhase4Defaults(){ return JSON.parse(JSON.stringify(phase4Defaults)); }
+  function getPhase4State(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(phase4Key)||'null');
+      if(!saved||!Array.isArray(saved.goals)||!Array.isArray(saved.tasks)||!Array.isArray(saved.approvals)||!Array.isArray(saved.logs)) return clonePhase4Defaults();
+      return saved;
+    }catch(e){ return clonePhase4Defaults(); }
   }
+  let phase4State=getPhase4State();
+  function savePhase4State(){
+    localStorage.setItem(phase4Key,JSON.stringify(phase4State));
+  }
+  function nowTime(){
+    return new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+  }
+  function addPhase4Log(actor,action,permission='Tự động'){
+    phase4State.logs.unshift({time:nowTime(),actor,action,permission});
+    phase4State.logs=phase4State.logs.slice(0,30);
+  }
+  function escapeHtml(value){
+    return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+  }
+  function statusLabel(status){
+    return ({assigned:'Đã giao',accepted:'Đã nhận',evidence_ready:'Chờ nghiệm thu',completed:'Hoàn thành'}[status]||status);
+  }
+  function statusBadgeClass(status){
+    return status==='completed'?'badge':(status==='assigned'||status==='evidence_ready'?'badge warn':'badge');
+  }
+  function pendingApprovals(){ return phase4State.approvals.filter(x=>x.status==='pending'); }
+
   function toast(msg){
     const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
     setTimeout(()=>t.classList.remove('show'),2200);
   }
-  function bindApprovalButtons(scope=document){
-    scope.querySelectorAll('.approval .approve').forEach(btn=>btn.onclick=()=>{
-      const item=btn.closest('.approval');
-      item.style.opacity='.45';item.style.pointerEvents='none';
-      approvalCount=Math.max(0,approvalCount-1);refreshApprovalCount();
-      toast('Đã duyệt trong bản demo — chưa tác động website thật.');
-      syncApprovalPage();
-    });
-    scope.querySelectorAll('.approval .reject').forEach(btn=>btn.onclick=()=>{
-      const item=btn.closest('.approval');
-      item.style.opacity='.45';item.style.pointerEvents='none';
-      approvalCount=Math.max(0,approvalCount-1);refreshApprovalCount();
-      toast('Đã từ chối trong bản demo.');
-      syncApprovalPage();
+
+  function renderPhase4Goals(){
+    const host=document.getElementById('ceoGoalProfiles');
+    if(!host) return;
+    document.getElementById('ceoGoalCount').textContent=phase4State.goals.length+' mục tiêu';
+    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
+    const metric=document.getElementById('ceoGoalMetric');
+    if(metric) metric.textContent=activeGoals;
+    host.innerHTML=phase4State.goals.map(g=>`
+      <div class="phase4-goal">
+        <div class="phase4-goal-top">
+          <div><b>${escapeHtml(g.id)} · ${escapeHtml(g.title)}</b><div class="role" style="margin-top:5px;line-height:1.5">${escapeHtml(g.basis)}</div></div>
+          <span class="badge ${g.priority==='Cao'?'warn':''}">${escapeHtml(g.status)}</span>
+        </div>
+        <div class="phase4-meta">
+          <div><b>Website</b><br>${escapeHtml(g.website)}</div>
+          <div><b>Phụ trách</b><br>${escapeHtml(g.owner)}</div>
+          <div><b>Ưu tiên</b><br>${escapeHtml(g.priority)}</div>
+          <div><b>Thời hạn</b><br>${escapeHtml(g.deadline)}</div>
+        </div>
+        <div class="phase4-evidence"><b>Tiêu chí hoàn thành:</b> ${escapeHtml(g.criteria)}</div>
+      </div>`).join('');
+  }
+
+  function renderPhase4Workflow(){
+    const host=document.getElementById('ceoWorkflowList');
+    if(!host) return;
+    const active=phase4State.tasks.filter(t=>t.status!=='completed').length;
+    document.getElementById('ceoWorkflowCount').textContent=active+' việc đang mở';
+    host.innerHTML=phase4State.tasks.map(t=>{
+      let action='';
+      if(t.status==='assigned') action=`<button class="small-btn approve" data-phase4-action="accept" data-task="${t.id}">Trưởng phòng nhận việc</button>`;
+      if(t.status==='accepted') action=`<button class="small-btn approve" data-phase4-action="evidence" data-task="${t.id}">Gửi bằng chứng nghiệm thu</button>`;
+      if(t.status==='evidence_ready') action=`<button class="small-btn approve" data-phase4-action="complete" data-task="${t.id}">CEO nghiệm thu</button>`;
+      return `<div class="phase4-work">
+        <div class="phase4-work-head">
+          <div><b>${escapeHtml(t.id)} · ${escapeHtml(t.title)}</b><div class="role" style="margin-top:5px">${escapeHtml(t.website)} · ${escapeHtml(t.assignee)} · Mục tiêu ${escapeHtml(t.goalId)}</div></div>
+          <span class="${statusBadgeClass(t.status)}">${escapeHtml(statusLabel(t.status))}</span>
+        </div>
+        <div class="progress" style="width:100%;margin-top:10px"><small>${Number(t.progress)||0}%</small><div class="bar"><i style="width:${Math.max(0,Math.min(100,Number(t.progress)||0))}%"></i></div></div>
+        ${t.evidence?`<div class="phase4-evidence"><b>Bằng chứng:</b> ${escapeHtml(t.evidence)}</div>`:''}
+        <div class="phase4-actions">${action}</div>
+      </div>`;
+    }).join('');
+    host.querySelectorAll('[data-phase4-action]').forEach(btn=>btn.onclick=()=>{
+      const task=phase4State.tasks.find(t=>t.id===btn.dataset.task);
+      if(!task) return;
+      const action=btn.dataset.phase4Action;
+      if(action==='accept'&&task.status==='assigned'){
+        task.status='accepted';task.progress=Math.max(task.progress,40);
+        addPhase4Log(task.assignee,'Đã nhận việc '+task.id+': '+task.title+'.','Tự động');
+        toast('Trưởng phòng đã nhận việc.');
+      }else if(action==='evidence'&&task.status==='accepted'){
+        task.status='evidence_ready';task.progress=Math.max(task.progress,85);
+        task.evidence='Đã hoàn thành bước kiểm tra trong môi trường an toàn và gửi kết quả để CEO nghiệm thu.';
+        addPhase4Log(task.assignee,'Đã gửi bằng chứng cho '+task.id+'.','Tự động');
+        toast('Đã gửi bằng chứng, chờ CEO nghiệm thu.');
+      }else if(action==='complete'&&task.status==='evidence_ready'){
+        task.status='completed';task.progress=100;
+        const goal=phase4State.goals.find(g=>g.id===task.goalId);
+        if(goal) goal.status='Hoàn thành';
+        addPhase4Log('ATLAS','Nghiệm thu '+task.id+' sau khi có bằng chứng.','Tự động');
+        toast('CEO đã nghiệm thu nhiệm vụ.');
+      }
+      savePhase4State();renderPhase4();
     });
   }
-  function syncApprovalPage(){
-    const src=document.getElementById('approvalList');
-    const dst=document.getElementById('approvalListFull');
-    dst.innerHTML=src.innerHTML || '<p style="color:var(--muted)">Không còn yêu cầu nào.</p>';
-    bindApprovalButtons(dst);
+
+  function approvalHtml(a){
+    const riskClass=a.risk==='Cao'?'high':'med';
+    return `<div class="approval" data-approval-id="${escapeHtml(a.id)}">
+      <div class="approval-top"><div><strong>${escapeHtml(a.title)}</strong><small>${escapeHtml(a.website)} · ${escapeHtml(a.id)}</small></div><span class="risk ${riskClass}">Rủi ro ${escapeHtml(a.risk.toLowerCase())}</span></div>
+      <p>${escapeHtml(a.description)}</p>
+      <div class="approve-actions"><button class="small-btn approve" data-approval-action="approved" data-id="${escapeHtml(a.id)}">✓ Duyệt</button><button class="small-btn reject" data-approval-action="rejected" data-id="${escapeHtml(a.id)}">✕ Từ chối</button></div>
+    </div>`;
   }
-  bindApprovalButtons();
-  syncApprovalPage();
+  function renderApprovals(){
+    const pending=pendingApprovals();
+    const html=pending.length?pending.map(approvalHtml).join(''):'<p style="color:var(--muted)">Không còn yêu cầu nào đang chờ.</p>';
+    ['approvalList','approvalListFull'].forEach(id=>{
+      const host=document.getElementById(id);
+      if(!host) return;
+      host.innerHTML=html;
+      host.querySelectorAll('[data-approval-action]').forEach(btn=>btn.onclick=()=>{
+        const item=phase4State.approvals.find(a=>a.id===btn.dataset.id);
+        if(!item||item.status!=='pending') return;
+        item.status=btn.dataset.approvalAction;
+        item.decidedAt=new Date().toISOString();
+        const word=item.status==='approved'?'duyệt':'từ chối';
+        addPhase4Log('Chủ sở hữu','Đã '+word+' '+item.id+' — '+item.title+'.','Phê duyệt');
+        savePhase4State();renderPhase4();
+        toast(item.status==='approved'?'Đã ghi nhận phê duyệt. Chưa tự tác động website thật.':'Đã ghi nhận từ chối.');
+      });
+    });
+    const count=pending.length;
+    ['approvalMetric','navApprovalCount','ceoApprovalMetric'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=count});
+    const header=document.getElementById('approvalHeader');if(header) header.textContent=count+' yêu cầu';
+  }
+
+  function renderOverviewAssigned(){
+    const host=document.getElementById('ceoAssignedList');
+    if(!host) return;
+    const active=phase4State.tasks.filter(t=>t.status!=='completed');
+    document.getElementById('ceoAssignedCount').textContent=active.length+' đang chạy';
+    host.innerHTML=(active.length?active:phase4State.tasks.slice(-3)).map(t=>`
+      <div class="task"><div><strong>${escapeHtml(t.id)} · ${escapeHtml(t.title)}</strong><small>${escapeHtml(t.website)} · ${escapeHtml(t.assignee)} · ${escapeHtml(statusLabel(t.status))}</small></div><div class="progress"><small>${t.progress}%</small><div class="bar"><i style="width:${t.progress}%"></i></div></div></div>
+    `).join('');
+  }
+
+  function renderLogs(){
+    const top=document.getElementById('ceoActivityList');
+    if(top) top.innerHTML=phase4State.logs.slice(0,4).map(l=>`<div class="activity"><div class="time">${escapeHtml(l.time)}</div><p><b>${escapeHtml(l.actor)}</b> ${escapeHtml(l.action)}</p></div>`).join('');
+    const table=document.getElementById('decisionLogBody');
+    if(table) table.innerHTML=phase4State.logs.map(l=>`<tr><td>${escapeHtml(l.time)}</td><td>${escapeHtml(l.actor)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.permission)}</td></tr>`).join('');
+  }
+
+  function renderReports(){
+    const body=document.getElementById('reportBody');
+    if(!body) return;
+    const completed=phase4State.tasks.filter(t=>t.status==='completed').length;
+    const total=phase4State.tasks.length;
+    const pending=pendingApprovals().length;
+    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
+    const conclusion=pending?'Có '+pending+' việc chờ Chủ sở hữu; '+activeGoals+' mục tiêu còn mở.':'Không còn yêu cầu phê duyệt; '+activeGoals+' mục tiêu còn mở.';
+    body.innerHTML=`<tr><td>Phiên hiện tại</td><td>${escapeHtml(conclusion)}</td><td>${completed}/${total}</td><td>${pending}</td></tr>
+      <tr><td>Giai đoạn 4</td><td>Dữ liệu mục tiêu, giao việc, phê duyệt và nhật ký đã dùng chung một trạng thái.</td><td>${completed}/${total} nghiệm thu</td><td>${pending}</td></tr>`;
+  }
+
+  function renderCeoBrief(){
+    const pending=pendingApprovals().length;
+    const active=phase4State.tasks.filter(t=>t.status!=='completed').length;
+    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
+    const summary=document.getElementById('ceoBriefSummary');
+    const detail=document.getElementById('ceoBriefDetail');
+    if(summary) summary.textContent='Tôi đang theo dõi '+phase4State.goals.length+' mục tiêu; còn '+activeGoals+' mục tiêu mở, '+active+' việc đang chạy và '+pending+' yêu cầu cần Chủ sở hữu quyết định.';
+    if(detail) detail.textContent='Giai đoạn 4 chỉ mô phỏng điều hành và ghi trạng thái trong trình duyệt. ATLAS chưa được tự deploy, sửa production, xóa dữ liệu, đổi DNS hoặc phát sinh chi phí.';
+  }
+
+  function renderPhase4(){
+    renderPhase4Goals();
+    renderPhase4Workflow();
+    renderApprovals();
+    renderOverviewAssigned();
+    renderLogs();
+    renderReports();
+    renderCeoBrief();
+  }
+  savePhase4State();
+  renderPhase4();
 
   // CEO Giai đoạn 2: bộ nhớ cục bộ + hệ thống ưu tiên.
   const ceoMemoryKey='aiCompany.ceo.memory.v1';
