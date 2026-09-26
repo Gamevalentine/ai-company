@@ -7,7 +7,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test runtime.test.mjs",
+    "test": "node --test *.test.mjs",
     "start": "node runtime.mjs"
   }
 }
