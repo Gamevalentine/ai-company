@@ -56,7 +56,8 @@
       "SECURITY-TB-01",
       "OPS-TB-01",
       "ANALYTICS-TB-01",
-      "PUBLISHER-TB-01"
+      "PUBLISHER-TB-01",
+      "COMMS-TB-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -271,6 +272,41 @@
       "change_account_credentials",
       "create_paid_campaign",
       "spend_money",
+      "production_deploy",
+      "production_merge",
+      "secret_change",
+      "delete_data"
+    ]
+  },
+  {
+    "agent_id": "COMMS-TB-01",
+    "role": "customer_communications",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "read_support_mail",
+      "triage_inbox",
+      "draft_mail_reply",
+      "send_approved_mail_reply",
+      "read_group_messages",
+      "draft_group_reply",
+      "send_approved_group_reply",
+      "escalate_to_manager",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "change_account_credentials",
+      "delete_mail",
+      "bulk_marketing_email",
+      "make_financial_commitment",
+      "issue_refund",
+      "make_legal_commitment",
+      "share_sensitive_data",
+      "change_security_settings",
       "production_deploy",
       "production_merge",
       "secret_change",
