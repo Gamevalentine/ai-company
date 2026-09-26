@@ -20,7 +20,7 @@ on:
           - compare-with-main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   execute:
@@ -55,7 +55,7 @@ jobs:
         id: collect
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          TASK_ID: ${{ inputs.task_id }}
+          TASK_ID: ${{ inputs.task_id || 'AION-AUTO-CHECK' }}
           STARTED_AT: ${{ steps.dispatch.outputs.started_at }}
         run: |
           set -euo pipefail
@@ -93,3 +93,54 @@ jobs:
           path: executor-result.json
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Checkout runtime code
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: app
+
+      - name: Checkout durable runtime state
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          ref: aion-runtime-state
+          path: runtime-state
+
+      - name: Persist executor result to durable state
+        if: always()
+        env:
+          TASK_ID: ${{ inputs.task_id || 'AION-AUTO-CHECK' }}
+          OPERATION: ${{ inputs.operation || 'validate-sandbox' }}
+        run: |
+          set -euo pipefail
+          if [ ! -f executor-result.json ]; then
+            echo "executor-result.json missing; no durable state update"
+            exit 0
+          fi
+          CONCLUSION=$(jq -r '.conclusion // "failure"' executor-result.json)
+          if [ "$CONCLUSION" = "success" ]; then RESULT="PASS"; else RESULT="FAIL"; fi
+          PAYLOAD=$(jq -c \
+            --arg task_id "$TASK_ID" \
+            --arg operation "$OPERATION" \
+            --arg result "$RESULT" \
+            '. + {task_id:$task_id,operation:$operation,result:$result}' \
+            executor-result.json)
+          node app/platform/event-worker.mjs \
+            --state runtime-state/aion-state.json \
+            --type executor_result \
+            --payload "$PAYLOAD"
+
+      - name: Commit durable runtime state
+        if: always()
+        run: |
+          git -C runtime-state config user.name "AION Runtime"
+          git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
+          git -C runtime-state add aion-state.json
+          if git -C runtime-state diff --cached --quiet; then
+            echo "No runtime state change."
+            exit 0
+          fi
+          git -C runtime-state commit -m "runtime: executor result"
+          git -C runtime-state push origin HEAD:aion-runtime-state
