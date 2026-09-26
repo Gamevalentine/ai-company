@@ -42,25 +42,39 @@ const QA_SCHEMA={
 };
 
 async function ollamaChat({system,user,schema,fetchImpl=fetch,url=DEFAULT_URL,model=DEFAULT_MODEL}){
-  const res=await fetchImpl(url+'/api/chat',{
-    method:'POST',
-    headers:{'content-type':'application/json'},
-    body:JSON.stringify({
-      model,
-      stream:false,
-      format:schema,
-      options:{temperature:0,num_predict:768},
-      messages:[
-        {role:'system',content:system},
-        {role:'user',content:user}
-      ]
-    })
-  });
-  if(!res.ok) throw new Error('Ollama '+res.status+': '+await res.text());
-  const out=await res.json();
-  const content=out?.message?.content;
-  if(!content) throw new Error('Ollama returned empty content');
-  return {parsed:JSON.parse(content),model:out.model||model,raw:content};
+  let lastError=null;
+  for(let attempt=1;attempt<=2;attempt++){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),120000);
+    try{
+      const res=await fetchImpl(url+'/api/chat',{
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        signal:controller.signal,
+        body:JSON.stringify({
+          model,
+          stream:false,
+          format:schema,
+          options:{temperature:0,num_predict:768},
+          messages:[
+            {role:'system',content:system},
+            {role:'user',content:user}
+          ]
+        })
+      });
+      if(!res.ok) throw new Error('Ollama '+res.status+': '+await res.text());
+      const out=await res.json();
+      const content=out?.message?.content;
+      if(!content) throw new Error('Ollama returned empty content');
+      return {parsed:JSON.parse(content),model:out.model||model,raw:content,attempt};
+    }catch(error){
+      lastError=error;
+      if(attempt<2) await new Promise(r=>setTimeout(r,1500));
+    }finally{
+      clearTimeout(timer);
+    }
+  }
+  throw new Error('Ollama failed after 2 attempts: '+(lastError?.message||String(lastError)));
 }
 
 export function validateManagerDecision(decision){
