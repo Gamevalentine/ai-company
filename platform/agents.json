@@ -50,7 +50,12 @@
     ],
     "can_assign_to": [
       "DEV-TB-01",
-      "QA-TB-01"
+      "QA-TB-01",
+      "SEO-TB-01",
+      "CONTENT-TB-01",
+      "SECURITY-TB-01",
+      "OPS-TB-01",
+      "ANALYTICS-TB-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -110,6 +115,137 @@
       "edit_source",
       "production_deploy",
       "change_acceptance_criteria"
+    ]
+  },
+  {
+    "agent_id": "SEO-TB-01",
+    "role": "seo",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_seo_reader"
+    ],
+    "permissions": [
+      "read_source",
+      "read_page_metadata",
+      "seo_audit",
+      "recommend_changes",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "publish_content",
+      "production_deploy",
+      "production_merge",
+      "secret_change"
+    ]
+  },
+  {
+    "agent_id": "CONTENT-TB-01",
+    "role": "content",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_content_reader"
+    ],
+    "permissions": [
+      "read_source",
+      "content_audit",
+      "draft_content",
+      "recommend_changes",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "publish_content",
+      "production_deploy",
+      "production_merge",
+      "secret_change"
+    ]
+  },
+  {
+    "agent_id": "SECURITY-TB-01",
+    "role": "security",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_security_reader"
+    ],
+    "permissions": [
+      "read_source",
+      "security_audit",
+      "recommend_changes",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "production_deploy",
+      "production_merge",
+      "secret_change",
+      "read_production_secret",
+      "delete_data"
+    ]
+  },
+  {
+    "agent_id": "OPS-TB-01",
+    "role": "ops",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_status_reader"
+    ],
+    "permissions": [
+      "read_status",
+      "read_logs",
+      "health_check",
+      "incident_triage",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "production_deploy",
+      "production_merge",
+      "dns_change",
+      "secret_change",
+      "delete_data"
+    ]
+  },
+  {
+    "agent_id": "ANALYTICS-TB-01",
+    "role": "analytics",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_analytics_reader"
+    ],
+    "permissions": [
+      "read_aggregated_analytics",
+      "analyze_access_patterns",
+      "report_metrics",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "production_deploy",
+      "production_merge",
+      "infer_sensitive_demographics",
+      "secret_change",
+      "delete_data"
     ]
   }
 ]
