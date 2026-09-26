@@ -84,6 +84,18 @@
         "không suy đoán dữ liệu nhạy cảm"
       ],
       "status": "IDENTITY_READY"
+    },
+    {
+      "agent_id": "PUBLISHER-TB-01",
+      "department": "Đăng bài đa nền tảng",
+      "responsibilities": [
+        "nhận nội dung đã được duyệt",
+        "chuyển thể caption/định dạng theo từng nền tảng",
+        "chuẩn bị hàng đợi đăng bài",
+        "theo dõi trạng thái đăng và lưu link bằng chứng",
+        "không tự tạo quảng cáo trả phí"
+      ],
+      "status": "IDENTITY_READY"
     }
   ],
   "governance": {
@@ -92,6 +104,8 @@
     "production_requires_owner": true,
     "qa_independent": true,
     "no_unapproved_cost": true,
-    "no_sensitive_demographic_inference": true
+    "no_sensitive_demographic_inference": true,
+    "publisher_requires_approved_content": true,
+    "no_paid_campaign_without_owner": true
   }
 }
