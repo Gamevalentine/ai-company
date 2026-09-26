@@ -201,3 +201,25 @@ Live verification:
 - Issue #3 và #4 đều tự đóng sau `READY_FOR_CEO_REVIEW`.
 - Reopen Issue #3 tạo run `36271511028`; duplicate guard skip toàn bộ AI/DEV/QA/executor, không tạo comment kết quả thứ hai, và tự đóng Issue lại.
 - State files: `tasks/ATLAS-ISSUE-3.enc.json` và `tasks/ATLAS-ISSUE-4.enc.json`.
+
+
+## TrainingBot Director Brain v2
+
+TB-01 đã được nâng từ technical-manager brain thành office-management director brain qua `trainingbot-director.mjs`.
+
+Khả năng mới:
+- nhận mục tiêu cấp văn phòng từ ATLAS;
+- chọn đúng một hoặc nhiều specialist trong 9 nhân viên TrainingBot;
+- tạo task song song, priority và dependency;
+- không tự làm specialist work;
+- gom trạng thái nhiều nhân viên qua director review;
+- chỉ báo `READY_FOR_CEO_REVIEW` khi toàn bộ child work đủ trạng thái thành công;
+- nếu có child fail thì chuyển root task sang `NEEDS_REWORK`;
+- owner gate chặn dispatch nếu kế hoạch đụng production/deploy/merge/DNS/secrets/credentials/delete/paid spend/refund/legal/sensitive-data release;
+- giữ tuyến ATLAS → TB-01 → specialist, không vượt cấp.
+
+Bộ specialist hiện TB-01 có thể điều phối:
+DEV, QA, SEO, Content, Security, Ops, Analytics, Publisher và Comms.
+
+Live test:
+- AION Agent Platform Tests run `36273095015` — success.
