@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Company — Trung tâm điều hành</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --panel:#0d1a2b;
+      --panel-2:#101f33;
+      --line:#1f3552;
+      --text:#eef5ff;
+      --muted:#91a4bd;
+      --accent:#6ee7ff;
+      --accent-2:#8b5cf6;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --danger:#fb7185;
+      --shadow:0 18px 60px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(110,231,255,.10), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(139,92,246,.12), transparent 28%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{
+      border-right:1px solid var(--line);
+      background:rgba(7,17,31,.82);
+      backdrop-filter:blur(18px);
+      padding:20px 16px;
+      position:sticky;
+      top:0;height:100vh;
+      display:flex;flex-direction:column;
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:4px 8px 22px}
+    .brand-mark{
+      width:42px;height:42px;border-radius:14px;
+      display:grid;place-items:center;font-size:22px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 8px 30px rgba(110,231,255,.18);
+    }
+    .brand b{display:block;font-size:17px}
+    .brand span{font-size:12px;color:var(--muted)}
+    .nav{display:grid;gap:6px}
+    .nav-btn{
+      border:0;background:transparent;color:var(--muted);
+      text-align:left;padding:11px 12px;border-radius:11px;
+      display:flex;align-items:center;gap:10px;
+      transition:.18s;
+    }
+    .nav-btn:hover,.nav-btn.active{background:rgba(110,231,255,.08);color:var(--text)}
+    .nav-btn.active{outline:1px solid rgba(110,231,255,.18)}
+    .nav-icon{width:22px;text-align:center}
+    .sidebar-footer{margin-top:auto;padding:12px}
+    .owner-chip{
+      border:1px solid var(--line);background:var(--panel);
+      border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px
+    }
+    .avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#162943}
+    .owner-chip b{font-size:13px;display:block}.owner-chip small{color:var(--muted)}
+    .main{padding:24px 28px 40px;min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+    .headline h1{font-size:26px;margin:0 0 5px}.headline p{margin:0;color:var(--muted)}
+    .top-actions{display:flex;align-items:center;gap:10px}
+    .status-pill,.ghost-btn,.primary-btn{
+      border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel);color:var(--text)
+    }
+    .status-pill{display:flex;align-items:center;gap:8px;font-size:13px}
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--ok);box-shadow:0 0 0 4px rgba(52,211,153,.08)}
+    .primary-btn{background:linear-gradient(135deg,#0ea5e9,#7c3aed);border:0;font-weight:700}
+    .grid-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .stat{
+      border:1px solid var(--line);background:linear-gradient(180deg,rgba(16,31,51,.9),rgba(13,26,43,.9));
+      border-radius:16px;padding:16px;box-shadow:var(--shadow)
+    }
+    .stat .label{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .stat .value{font-size:27px;font-weight:800}
+    .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
+    .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,.85fr);gap:18px}
+    .card{
+      border:1px solid var(--line);background:rgba(13,26,43,.90);
+      border-radius:18px;box-shadow:var(--shadow);overflow:hidden
+    }
+    .card-head{display:flex;justify-content:space-between;align-items:center;padding:17px 18px;border-bottom:1px solid var(--line)}
+    .card-head h2{font-size:16px;margin:0}.card-head span{font-size:12px;color:var(--muted)}
+    .card-body{padding:18px}
+    .org{display:flex;flex-direction:column;align-items:center;gap:14px}
+    .person{
+      background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px 14px;
+      display:flex;align-items:center;gap:11px;min-width:220px;position:relative
+    }
+    .person.ceo{outline:1px solid rgba(110,231,255,.35);box-shadow:0 0 36px rgba(110,231,255,.07)}
+    .person .face{width:42px;height:42px;border-radius:14px;background:#172f4d;display:grid;place-items:center;font-size:21px}
+    .person b{display:block;font-size:13px}.person small{color:var(--muted)}
+    .org-line{width:2px;height:18px;background:var(--line)}
+    .managers{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .manager{
+      border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px;
+      transition:.16s;cursor:pointer
+    }
+    .manager:hover{transform:translateY(-2px);border-color:#3b6b94}
+    .manager-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+    .manager-title{font-size:13px;font-weight:800}
+    .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:rgba(52,211,153,.10);color:#86efac;border:1px solid rgba(52,211,153,.18)}
+    .badge.warn{background:rgba(251,191,36,.10);color:#fde68a;border-color:rgba(251,191,36,.18)}
+    .manager p{font-size:11px;color:var(--muted);margin:0;line-height:1.5}
+    .approval-list{display:grid;gap:10px}
+    .approval{
+      border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:13px
+    }
+    .approval-top{display:flex;justify-content:space-between;gap:10px}
+    .approval strong{font-size:13px}.approval small{color:var(--muted)}
+    .risk{font-size:10px;padding:4px 7px;border-radius:999px;height:max-content}
+    .risk.high{background:rgba(251,113,133,.11);color:#fda4af}
+    .risk.med{background:rgba(251,191,36,.11);color:#fde68a}
+    .approval p{font-size:12px;color:var(--muted);line-height:1.5}
+    .approve-actions{display:flex;gap:8px}
+    .small-btn{border:1px solid var(--line);background:#12243b;color:var(--text);padding:7px 9px;border-radius:9px;font-size:11px}
+    .small-btn.approve{background:rgba(52,211,153,.12);color:#86efac;border-color:rgba(52,211,153,.25)}
+    .small-btn.reject{background:rgba(251,113,133,.10);color:#fda4af;border-color:rgba(251,113,133,.20)}
+    .section-title{font-size:14px;margin:20px 0 10px}
+    .websites{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .website{
+      border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30;cursor:pointer
+    }
+    .website-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .website strong{font-size:13px}.website small{display:block;color:var(--muted);margin-top:4px}
+    .mini-dot{width:8px;height:8px;border-radius:999px;background:var(--ok)}
+    .mini-dot.warn{background:var(--warn)}
+    .task{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid rgba(31,53,82,.65)}
+    .task:last-child{border-bottom:0}
+    .task strong{font-size:13px;display:block}.task small{color:var(--muted)}
+    .progress{width:110px}
+    .bar{height:6px;background:#13263d;border-radius:999px;overflow:hidden;margin-top:7px}
+    .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
+    .activity{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(31,53,82,.55)}
+    .activity:last-child{border-bottom:0}
+    .activity .time{width:46px;color:var(--muted);font-size:11px}.activity p{margin:0;font-size:12px;line-height:1.5}
+    .view{display:none}.view.active{display:block}
+    .page-card{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:18px}
+    .page-card h2{margin-top:0}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:12px}
+    .table th{color:var(--muted);font-weight:600}
+    .staff-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .staff-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#0d1c30}
+    .staff-card .role{color:var(--muted);font-size:11px;margin-top:3px}
+    .staff-card .now{margin-top:12px;font-size:12px;line-height:1.45}
+    .office{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px
+    }
+    .room{border:1px solid var(--line);border-radius:18px;background:#0c1a2b;padding:14px;min-height:180px}
+    .room h3{font-size:13px;margin:0 0 10px}.desks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .desk{padding:11px;border-radius:12px;background:#12243b;font-size:11px}
+    .desk span{display:block;font-size:18px;margin-bottom:4px}
+    .modal{
+      position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
+    }
+    .modal.show{display:flex}
+    .modal-card{width:min(620px,100%);border:1px solid var(--line);background:#0a1728;border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:17px;border-bottom:1px solid var(--line)}
+    .modal-head h3{margin:0}.close{border:0;background:transparent;color:var(--muted);font-size:22px}
+    .modal-body{padding:18px}
+    .modal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+    .mini-stat{border:1px solid var(--line);border-radius:12px;padding:11px;background:#0d1c30}
+    .mini-stat b{display:block;font-size:18px}.mini-stat small{color:var(--muted)}
+    .toast{position:fixed;right:22px;bottom:22px;background:#10233a;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);display:none;z-index:60;font-size:12px}
+    .toast.show{display:block}
+    .mobile-toggle{display:none}
+    @media (max-width:1100px){
+      .grid-stats{grid-template-columns:repeat(2,1fr)}
+      .dashboard-grid{grid-template-columns:1fr}
+      .managers{grid-template-columns:repeat(2,1fr)}
+      .staff-grid,.office{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:760px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:fixed;z-index:40;left:-280px;width:260px;transition:.2s}
+      .sidebar.open{left:0}
+      .main{padding:18px 14px 30px}
+      .mobile-toggle{display:block;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:8px 10px}
+      .topbar{align-items:flex-start}.top-actions .status-pill{display:none}
+      .grid-stats{grid-template-columns:repeat(2,1fr)}
+      .managers,.websites,.staff-grid,.office{grid-template-columns:1fr}
+      .modal-grid{grid-template-columns:1fr}
+      .headline h1{font-size:21px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">◈</div>
+      <div><b>AI COMPANY</b><span>Autonomous Command Center</span></div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav-btn active" data-view="overview"><span class="nav-icon">⌂</span>Tổng quan</button>
+      <button class="nav-btn" data-view="ceo"><span class="nav-icon">♛</span>AI CEO</button>
+      <button class="nav-btn" data-view="departments"><span class="nav-icon">▦</span>Trưởng phòng</button>
+      <button class="nav-btn" data-view="websites"><span class="nav-icon">◎</span>Website</button>
+      <button class="nav-btn" data-view="staff"><span class="nav-icon">♟</span>Nhân viên AI</button>
+      <button class="nav-btn" data-view="tasks"><span class="nav-icon">✓</span>Nhiệm vụ</button>
+      <button class="nav-btn" data-view="approvals"><span class="nav-icon">⚑</span>Phê duyệt <b id="navApprovalCount" style="margin-left:auto;color:#fde68a">3</b></button>
+      <button class="nav-btn" data-view="reports"><span class="nav-icon">▤</span>Báo cáo</button>
+      <button class="nav-btn" data-view="office"><span class="nav-icon">⌘</span>Văn phòng AI</button>
+      <button class="nav-btn" data-view="logs"><span class="nav-icon">≡</span>Nhật ký</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="owner-chip">
+        <div class="avatar">👤</div>
+        <div><b>Chủ sở hữu</b><small>Quyền phê duyệt tối cao</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <button class="mobile-toggle" id="mobileToggle">☰</button>
+        <div class="headline">
+          <h1 id="pageTitle">Trung tâm điều hành</h1>
+          <p id="pageSubtitle">CEO AI đang quản lý toàn bộ hệ sinh thái website.</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="status-pill"><span class="dot"></span> Hệ thống bình thường</div>
+        <button class="primary-btn" id="ceoBriefBtn">Hỏi CEO</button>
+      </div>
+    </div>
+
+    <section class="view active" id="view-overview">
+      <div class="grid-stats">
+        <div class="stat"><div class="label">Website đang quản lý</div><div class="value">5</div><div class="sub">5 trưởng phòng AI phụ trách</div></div>
+        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">26</div><div class="sub">18 đang làm việc · 8 chờ</div></div>
+        <div class="stat"><div class="label">Nhiệm vụ đang chạy</div><div class="value">14</div><div class="sub">4 ưu tiên cao</div></div>
+        <div class="stat"><div class="label">Chờ bạn phê duyệt</div><div class="value" id="approvalMetric">3</div><div class="sub">Không có chi phí phát sinh</div></div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div>
+          <div class="card">
+            <div class="card-head"><div><h2>Sơ đồ điều hành</h2><span>Chủ sở hữu → CEO → Trưởng phòng website</span></div><span>LIVE DEMO</span></div>
+            <div class="card-body">
+              <div class="org">
+                <div class="person">
+                  <div class="face">👤</div><div><b>Bạn — Chủ sở hữu</b><small>Duyệt quyết định quan trọng</small></div>
+                </div>
+                <div class="org-line"></div>
+                <div class="person ceo" id="ceoCard">
+                  <div class="face">🧠</div><div><b>ATLAS — AI CEO</b><small>🟢 Đang điều hành · 5 phòng ban</small></div>
+                </div>
+                <div class="org-line"></div>
+                <div class="managers">
+                  <div class="manager" data-name="TrainingBot" data-status="Bình thường" data-tasks="5" data-staff="6" data-goal="Ổn định API, cải thiện trải nghiệm và tăng nội dung hữu ích.">
+                    <div class="manager-top"><div class="manager-title">TrainingBot Manager</div><span class="badge">Online</span></div>
+                    <p>6 AI · 5 nhiệm vụ<br>Ưu tiên: API & nội dung</p>
+                  </div>
+                  <div class="manager" data-name="Toolpick" data-status="Bình thường" data-tasks="3" data-staff="5" data-goal="Giữ hệ sinh thái công cụ ổn định và tối ưu luồng người dùng.">
+                    <div class="manager-top"><div class="manager-title">Toolpick Manager</div><span class="badge">Online</span></div>
+                    <p>5 AI · 3 nhiệm vụ<br>Ưu tiên: ổn định hệ thống</p>
+                  </div>
+                  <div class="manager" data-name="HMOOB MUSIC" data-status="Cần theo dõi" data-tasks="4" data-staff="6" data-goal="Tối ưu trang sản phẩm, hiệu năng mobile và chất lượng trải nghiệm mua hàng.">
+                    <div class="manager-top"><div class="manager-title">HMOOB Manager</div><span class="badge warn">Theo dõi</span></div>
+                    <p>6 AI · 4 nhiệm vụ<br>Ưu tiên: tốc độ mobile</p>
+                  </div>
+                  <div class="manager" data-name="Toolpick Mail" data-status="Bình thường" data-tasks="1" data-staff="5" data-goal="Theo dõi đăng nhập, bảo mật, độ ổn định và luồng gửi nhận thư.">
+                    <div class="manager-top"><div class="manager-title">Mail Manager</div><span class="badge">Online</span></div>
+                    <p>5 AI · 1 nhiệm vụ<br>Ưu tiên: bảo mật</p>
+                  </div>
+                  <div class="manager" data-name="Mầm Kids" data-status="Bình thường" data-tasks="1" data-staff="4" data-goal="Giữ giao diện học tập rõ ràng, ổn định và thân thiện trên nhiều màn hình.">
+                    <div class="manager-top"><div class="manager-title">Mầm Kids Manager</div><span class="badge">Online</span></div>
+                    <p>4 AI · 1 nhiệm vụ<br>Ưu tiên: giao diện</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-title">Website</div>
+              <div class="websites">
+                <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small>Manager: TB-01 · 5 việc</small></div>
+                <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>Manager: TP-01 · 3 việc</small></div>
+                <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small>Manager: HM-01 · cần theo dõi</small></div>
+                <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>Manager: ML-01 · ổn định</small></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px">
+            <div class="card-head"><div><h2>Nhiệm vụ CEO đã giao</h2><span>Demo dữ liệu vận hành</span></div><span>14 đang chạy</span></div>
+            <div class="card-body">
+              <div class="task"><div><strong>#1842 · Kiểm tra API Theo dõi truy cập</strong><small>TrainingBot · Developer AI</small></div><div class="progress"><small>68%</small><div class="bar"><i style="width:68%"></i></div></div></div>
+              <div class="task"><div><strong>#1843 · Kiểm thử giao diện mobile</strong><small>HMOOB MUSIC · QA AI</small></div><div class="progress"><small>42%</small><div class="bar"><i style="width:42%"></i></div></div></div>
+              <div class="task"><div><strong>#1844 · Kiểm tra backup gần nhất</strong><small>Toolpick · DevOps AI</small></div><div class="progress"><small>92%</small><div class="bar"><i style="width:92%"></i></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-head"><div><h2>Chờ bạn phê duyệt</h2><span>AI không được vượt quyền</span></div><span id="approvalHeader">3 yêu cầu</span></div>
+            <div class="card-body approval-list" id="approvalList">
+              <div class="approval">
+                <div class="approval-top"><div><strong>Deploy bản sửa #1842</strong><small>TrainingBot</small></div><span class="risk med">Rủi ro vừa</span></div>
+                <p>Developer và QA đã hoàn thành bản sửa. CEO yêu cầu quyền triển khai production.</p>
+                <div class="approve-actions"><button class="small-btn approve">✓ Duyệt</button><button class="small-btn reject">✕ Từ chối</button></div>
+              </div>
+              <div class="approval">
+                <div class="approval-top"><div><strong>Thay đổi cấu hình cache</strong><small>HMOOB MUSIC</small></div><span class="risk high">Rủi ro cao</span></div>
+                <p>CTO đề xuất thay đổi cấu hình nhằm cải thiện tốc độ. Cần chủ sở hữu duyệt.</p>
+                <div class="approve-actions"><button class="small-btn approve">✓ Duyệt</button><button class="small-btn reject">✕ Từ chối</button></div>
+              </div>
+              <div class="approval">
+                <div class="approval-top"><div><strong>Xuất bản 2 bài SEO</strong><small>TrainingBot</small></div><span class="risk med">Rủi ro thấp</span></div>
+                <p>Nội dung đã qua Content AI và QA nội dung. Chưa xuất bản.</p>
+                <div class="approve-actions"><button class="small-btn approve">✓ Duyệt</button><button class="small-btn reject">✕ Từ chối</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px">
+            <div class="card-head"><div><h2>Nhật ký CEO</h2><span>Hoạt động gần đây</span></div></div>
+            <div class="card-body">
+              <div class="activity"><div class="time">22:01</div><p><b>CEO</b> giao QA kiểm tra HMOOB MUSIC trên mobile.</p></div>
+              <div class="activity"><div class="time">21:54</div><p><b>TB Manager</b> phát hiện 1 API cần kiểm tra lại.</p></div>
+              <div class="activity"><div class="time">21:42</div><p><b>DevOps AI</b> xác nhận Toolpick đang hoạt động bình thường.</p></div>
+              <div class="activity"><div class="time">21:30</div><p><b>CEO</b> tổng hợp mục tiêu vận hành trong ngày.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-ceo">
+      <div class="page-card">
+        <h2>🧠 ATLAS — AI CEO</h2>
+        <p style="color:var(--muted);line-height:1.7">CEO chịu trách nhiệm tự quan sát toàn hệ thống, đặt mục tiêu, giao việc cho các Trưởng phòng và chỉ đẩy lên Chủ sở hữu những việc cần quyền cao.</p>
+        <div class="grid-stats" style="margin-top:18px">
+          <div class="stat"><div class="label">Phòng ban</div><div class="value">5</div><div class="sub">5 website</div></div>
+          <div class="stat"><div class="label">Mục tiêu hôm nay</div><div class="value">7</div><div class="sub">4 đang đúng tiến độ</div></div>
+          <div class="stat"><div class="label">Quyết định tự động</div><div class="value">31</div><div class="sub">chỉ trong phạm vi an toàn</div></div>
+          <div class="stat"><div class="label">Vượt quyền</div><div class="value">0</div><div class="sub">mọi việc nhạy cảm đều chờ duyệt</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-departments">
+      <div class="page-card">
+        <h2>Trưởng phòng theo website</h2>
+        <table class="table">
+          <thead><tr><th>Website</th><th>Trưởng phòng</th><th>Nhân viên</th><th>Nhiệm vụ</th><th>Trạng thái</th></tr></thead>
+          <tbody>
+            <tr><td>TrainingBot</td><td>TB-01</td><td>6 AI</td><td>5</td><td>🟢 Bình thường</td></tr>
+            <tr><td>Toolpick</td><td>TP-01</td><td>5 AI</td><td>3</td><td>🟢 Bình thường</td></tr>
+            <tr><td>HMOOB MUSIC</td><td>HM-01</td><td>6 AI</td><td>4</td><td>🟡 Theo dõi</td></tr>
+            <tr><td>Toolpick Mail</td><td>ML-01</td><td>5 AI</td><td>1</td><td>🟢 Bình thường</td></tr>
+            <tr><td>Mầm Kids</td><td>MK-01</td><td>4 AI</td><td>1</td><td>🟢 Bình thường</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-websites">
+      <div class="page-card">
+        <h2>Danh mục website</h2>
+        <div class="websites">
+          <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small>6 AI · 5 nhiệm vụ · 1 yêu cầu duyệt</small></div>
+          <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>5 AI · 3 nhiệm vụ</small></div>
+          <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small>6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi</small></div>
+          <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>5 AI · bảo mật bình thường</small></div>
+          <div class="website"><div class="website-line"><strong>Mầm Kids</strong><span class="mini-dot"></span></div><small>4 AI · giao diện ổn định</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-staff">
+      <div class="page-card">
+        <h2>Nhân viên AI</h2>
+        <div class="staff-grid">
+          <div class="staff-card"><b>DEV-TB-01</b><div class="role">Frontend Developer · TrainingBot</div><div class="now">🟢 Đang làm: kiểm tra API Theo dõi truy cập.</div></div>
+          <div class="staff-card"><b>QA-TB-01</b><div class="role">QA · TrainingBot</div><div class="now">🟢 Đang chờ bản build mới để regression test.</div></div>
+          <div class="staff-card"><b>SEO-TB-01</b><div class="role">SEO · TrainingBot</div><div class="now">🟢 Đang đánh giá nội dung cần cập nhật.</div></div>
+          <div class="staff-card"><b>DEV-HM-01</b><div class="role">Frontend Developer · HMOOB</div><div class="now">🟡 Đang điều tra tốc độ mobile.</div></div>
+          <div class="staff-card"><b>SEC-ML-01</b><div class="role">Security · Toolpick Mail</div><div class="now">🟢 Không phát hiện bất thường.</div></div>
+          <div class="staff-card"><b>QA-MK-01</b><div class="role">UI QA · Mầm Kids</div><div class="now">⚪ Idle — sẵn sàng nhận việc.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-tasks">
+      <div class="page-card">
+        <h2>Nhiệm vụ toàn công ty</h2>
+        <table class="table">
+          <thead><tr><th>ID</th><th>Nhiệm vụ</th><th>Website</th><th>AI phụ trách</th><th>Tiến độ</th></tr></thead>
+          <tbody>
+            <tr><td>#1842</td><td>Kiểm tra API Theo dõi truy cập</td><td>TrainingBot</td><td>DEV-TB-01</td><td>68%</td></tr>
+            <tr><td>#1843</td><td>Kiểm thử mobile</td><td>HMOOB MUSIC</td><td>QA-HM-01</td><td>42%</td></tr>
+            <tr><td>#1844</td><td>Kiểm tra backup</td><td>Toolpick</td><td>OPS-TP-01</td><td>92%</td></tr>
+            <tr><td>#1845</td><td>Rà soát phiên đăng nhập</td><td>Toolpick Mail</td><td>SEC-ML-01</td><td>75%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-approvals">
+      <div class="page-card">
+        <h2>Trung tâm phê duyệt</h2>
+        <p style="color:var(--muted)">Mọi thao tác production, quyền cao, chi phí hoặc thay đổi nhạy cảm sẽ dừng ở đây để bạn quyết định.</p>
+        <div class="approval-list" id="approvalListFull" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-reports">
+      <div class="page-card">
+        <h2>Báo cáo điều hành</h2>
+        <table class="table">
+          <thead><tr><th>Chu kỳ</th><th>CEO kết luận</th><th>Hoàn thành</th><th>Cần duyệt</th></tr></thead>
+          <tbody>
+            <tr><td>Hôm nay</td><td>Hệ thống ổn định, ưu tiên TrainingBot và HMOOB</td><td>9/14</td><td>3</td></tr>
+            <tr><td>7 ngày</td><td>Không có sự cố nghiêm trọng</td><td>48/52</td><td>7</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-office">
+      <div class="page-card">
+        <h2>Văn phòng AI</h2>
+        <p style="color:var(--muted)">Chế độ trực quan để nhìn nhanh AI nào đang làm việc trong từng “phòng”.</p>
+        <div class="office" style="margin-top:16px">
+          <div class="room"><h3>TrainingBot Department</h3><div class="desks"><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🧪</span>QA · Waiting</div><div class="desk"><span>🔎</span>SEO · Working</div><div class="desk"><span>📊</span>Analytics · Working</div></div></div>
+          <div class="room"><h3>Toolpick Department</h3><div class="desks"><div class="desk"><span>🛠️</span>DEV · Working</div><div class="desk"><span>☁️</span>DevOps · Working</div><div class="desk"><span>🧪</span>QA · Idle</div><div class="desk"><span>🛡️</span>Security · Watching</div></div></div>
+          <div class="room"><h3>HMOOB MUSIC Department</h3><div class="desks"><div class="desk"><span>📱</span>Mobile QA · Working</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🛍️</span>Product · Idle</div><div class="desk"><span>🔎</span>SEO · Waiting</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-logs">
+      <div class="page-card">
+        <h2>Nhật ký quyết định</h2>
+        <table class="table">
+          <thead><tr><th>Thời gian</th><th>AI</th><th>Hành động</th><th>Quyền</th></tr></thead>
+          <tbody>
+            <tr><td>22:01</td><td>ATLAS</td><td>Giao QA kiểm tra HMOOB trên mobile</td><td>Tự động</td></tr>
+            <tr><td>21:54</td><td>TB-01</td><td>Tạo nhiệm vụ kiểm tra API</td><td>Tự động</td></tr>
+            <tr><td>21:43</td><td>DEV-TB-01</td><td>Chuẩn bị bản sửa</td><td>Sandbox</td></tr>
+            <tr><td>21:30</td><td>ATLAS</td><td>Tạo mục tiêu vận hành trong ngày</td><td>Tự động</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="detailModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="modalTitle">Department</h3><button class="close" id="modalClose">×</button></div>
+    <div class="modal-body">
+      <div id="modalStatus" style="color:var(--muted)"></div>
+      <div class="modal-grid">
+        <div class="mini-stat"><b id="modalStaff">0</b><small>Nhân viên AI</small></div>
+        <div class="mini-stat"><b id="modalTasks">0</b><small>Nhiệm vụ</small></div>
+        <div class="mini-stat"><b>1</b><small>Trưởng phòng</small></div>
+      </div>
+      <h4>Mục tiêu hiện tại</h4>
+      <p id="modalGoal" style="color:var(--muted);line-height:1.65"></p>
+      <button class="primary-btn" id="openDepartment">Mở phòng làm việc</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="ceoModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3>🧠 Báo cáo nhanh từ ATLAS</h3><button class="close" id="ceoClose">×</button></div>
+    <div class="modal-body">
+      <p style="line-height:1.7;margin-top:0">Tôi đang theo dõi 5 website. Hiện có một điểm cần chú ý ở HMOOB MUSIC và một thay đổi production của TrainingBot đang chờ Chủ sở hữu phê duyệt.</p>
+      <p style="color:var(--muted);line-height:1.7">Đây là dữ liệu mô phỏng cho bản giao diện V1. Chưa có AI nào được phép tự thay đổi website thật.</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const navButtons=[...document.querySelectorAll('.nav-btn')];
+  const views=[...document.querySelectorAll('.view')];
+  const titles={
+    overview:['Trung tâm điều hành','CEO AI đang quản lý toàn bộ hệ sinh thái website.'],
+    ceo:['AI CEO','Theo dõi mục tiêu, quyết định và quyền hạn của CEO.'],
+    departments:['Các Trưởng phòng','Mỗi Trưởng phòng chịu trách nhiệm một website.'],
+    websites:['Website','Toàn bộ tài sản số đang được công ty AI quản lý.'],
+    staff:['Nhân viên AI','Các Agent chuyên môn dưới quyền từng Trưởng phòng.'],
+    tasks:['Nhiệm vụ','Công việc AI đang thực hiện trên toàn công ty.'],
+    approvals:['Phê duyệt','Những việc AI bắt buộc phải xin quyền từ bạn.'],
+    reports:['Báo cáo','Kết quả điều hành do CEO tổng hợp.'],
+    office:['Văn phòng AI','Chế độ trực quan theo dõi AI đang làm việc.'],
+    logs:['Nhật ký','Lịch sử quyết định và hành động của các AI.']
+  };
+
+  function switchView(name){
+    navButtons.forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+    views.forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+    document.getElementById('pageTitle').textContent=titles[name][0];
+    document.getElementById('pageSubtitle').textContent=titles[name][1];
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  navButtons.forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+  document.getElementById('mobileToggle').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+
+  const modal=document.getElementById('detailModal');
+  document.querySelectorAll('.manager').forEach(m=>m.addEventListener('click',()=>{
+    document.getElementById('modalTitle').textContent=m.dataset.name+' Department';
+    document.getElementById('modalStatus').textContent='Trạng thái: '+m.dataset.status;
+    document.getElementById('modalStaff').textContent=m.dataset.staff;
+    document.getElementById('modalTasks').textContent=m.dataset.tasks;
+    document.getElementById('modalGoal').textContent=m.dataset.goal;
+    modal.classList.add('show');
+  }));
+  document.getElementById('modalClose').onclick=()=>modal.classList.remove('show');
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+  document.getElementById('openDepartment').onclick=()=>{modal.classList.remove('show');switchView('staff')};
+
+  const ceoModal=document.getElementById('ceoModal');
+  document.getElementById('ceoBriefBtn').onclick=()=>ceoModal.classList.add('show');
+  document.getElementById('ceoClose').onclick=()=>ceoModal.classList.remove('show');
+  ceoModal.addEventListener('click',e=>{if(e.target===ceoModal)ceoModal.classList.remove('show')});
+
+  let approvalCount=3;
+  function refreshApprovalCount(){
+    document.getElementById('approvalMetric').textContent=approvalCount;
+    document.getElementById('navApprovalCount').textContent=approvalCount;
+    document.getElementById('approvalHeader').textContent=approvalCount+' yêu cầu';
+  }
+  function toast(msg){
+    const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+  function bindApprovalButtons(scope=document){
+    scope.querySelectorAll('.approval .approve').forEach(btn=>btn.onclick=()=>{
+      const item=btn.closest('.approval');
+      item.style.opacity='.45';item.style.pointerEvents='none';
+      approvalCount=Math.max(0,approvalCount-1);refreshApprovalCount();
+      toast('Đã duyệt trong bản demo — chưa tác động website thật.');
+      syncApprovalPage();
+    });
+    scope.querySelectorAll('.approval .reject').forEach(btn=>btn.onclick=()=>{
+      const item=btn.closest('.approval');
+      item.style.opacity='.45';item.style.pointerEvents='none';
+      approvalCount=Math.max(0,approvalCount-1);refreshApprovalCount();
+      toast('Đã từ chối trong bản demo.');
+      syncApprovalPage();
+    });
+  }
+  function syncApprovalPage(){
+    const src=document.getElementById('approvalList');
+    const dst=document.getElementById('approvalListFull');
+    dst.innerHTML=src.innerHTML || '<p style="color:var(--muted)">Không còn yêu cầu nào.</p>';
+    bindApprovalButtons(dst);
+  }
+  bindApprovalButtons();
+  syncApprovalPage();
+</script>
+</body>
+</html>
