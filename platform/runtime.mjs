@@ -217,9 +217,28 @@ export class AionPlatform{
     return this.store.mutate(s=>{
       const ex=s.executions.find(x=>x.execution_id===executionId);
       if(!ex) throw new PlatformError('EXECUTION_NOT_FOUND','Không thấy execution',404);
-      ex.status=result==='PASS'?'SUCCESS':'FAILED'; ex.result=result; ex.evidence=evidence; ex.end_time=now();
+      ex.status=result==='PASS'?'SUCCESS':'FAILED';
+      ex.result=result;
+      ex.evidence=evidence;
+      ex.end_time=now();
       const t=s.tasks.find(x=>x.task_id===ex.task_id);
-      if(t) t.evidence.push({evidence_id:id('EVD'),agent_id:ex.agent_id,at:now(),type:'EXECUTOR_RESULT',execution_id:executionId,result,evidence});
+      if(t){
+        const ev={evidence_id:id('EVD'),agent_id:ex.agent_id,at:now(),type:'EXECUTOR_RESULT',execution_id:executionId,result,evidence};
+        t.evidence.push(ev);
+        t.outputs.execution={execution_id:executionId,result,evidence};
+        t.status=result==='PASS'?'EXECUTION_PASSED':'EXECUTION_FAILED';
+        t.updated_at=now();
+        s.messages.push({
+          message_id:id('MSG'),
+          task_id:ex.task_id,
+          from:'EXECUTOR',
+          to:ex.agent_id,
+          type:'EXECUTION_RESULT',
+          payload:{execution_id:executionId,result,evidence},
+          created_at:now(),
+          read_at:null
+        });
+      }
       this.store.audit({actor:'EXECUTOR',action:'EXECUTION_RESULT',task_id:ex.task_id,target:executionId,result});
       return clone(ex);
     });
