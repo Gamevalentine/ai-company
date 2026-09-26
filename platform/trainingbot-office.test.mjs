@@ -9,9 +9,9 @@ const __dirname=path.dirname(fileURLToPath(import.meta.url));
 const agents=JSON.parse(fs.readFileSync(path.join(__dirname,'agents.json'),'utf8'));
 const office=JSON.parse(fs.readFileSync(path.join(__dirname,'trainingbot-office.json'),'utf8'));
 
-const specialistIds=['DEV-TB-01','QA-TB-01','SEO-TB-01','CONTENT-TB-01','SECURITY-TB-01','OPS-TB-01','ANALYTICS-TB-01','PUBLISHER-TB-01'];
+const specialistIds=['DEV-TB-01','QA-TB-01','SEO-TB-01','CONTENT-TB-01','SECURITY-TB-01','OPS-TB-01','ANALYTICS-TB-01','PUBLISHER-TB-01','COMMS-TB-01'];
 
-test('TrainingBot office has one manager and eight direct specialists',()=>{
+test('TrainingBot office has one manager and nine direct specialists',()=>{
   assert.equal(office.manager,'TB-01');
   const direct=agents.filter(a=>a.reports_to==='TB-01').map(a=>a.agent_id).sort();
   assert.deepEqual(direct,specialistIds.slice().sort());
@@ -57,4 +57,19 @@ test('publisher role can prepare content but cannot publish unapproved content o
   assert.ok(a.prohibited_actions.includes('spend_money'));
   assert.equal(office.governance.publisher_requires_approved_content,true);
   assert.equal(office.governance.no_paid_campaign_without_owner,true);
+});
+
+
+test('communications role only auto-replies low-risk messages and escalates sensitive cases',()=>{
+  const a=agents.find(x=>x.agent_id==='COMMS-TB-01');
+  assert.ok(a.permissions.includes('read_support_mail'));
+  assert.ok(a.permissions.includes('send_approved_mail_reply'));
+  assert.ok(a.permissions.includes('read_group_messages'));
+  assert.ok(a.permissions.includes('send_approved_group_reply'));
+  assert.ok(a.permissions.includes('escalate_to_manager'));
+  assert.ok(a.prohibited_actions.includes('bulk_marketing_email'));
+  assert.ok(a.prohibited_actions.includes('make_financial_commitment'));
+  assert.ok(a.prohibited_actions.includes('share_sensitive_data'));
+  assert.equal(office.governance.comms_low_risk_auto_reply_only,true);
+  assert.equal(office.governance.comms_escalates_sensitive_cases,true);
 });
