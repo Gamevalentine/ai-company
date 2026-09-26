@@ -180,13 +180,18 @@
     ],
     "can_assign_to": [],
     "allowed_tools": [
-      "trainingbot_security_reader"
+      "trainingbot_security_reader",
+      "trainingbot_security_probe"
     ],
     "permissions": [
       "read_source",
       "security_audit",
       "recommend_changes",
-      "submit_evidence"
+      "submit_evidence",
+      "read_dependency_audit",
+      "read_public_security_headers",
+      "classify_security_risk",
+      "escalate_to_manager"
     ],
     "prohibited_actions": [
       "edit_source",
