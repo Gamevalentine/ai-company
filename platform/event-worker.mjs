@@ -15,7 +15,12 @@ export function createEmptyState(){
       {agent_id:'ATLAS',role:'ceo',reports_to:'OWNER'},
       {agent_id:'TB-01',role:'manager',reports_to:'ATLAS'},
       {agent_id:'DEV-TB-01',role:'developer',reports_to:'TB-01'},
-      {agent_id:'QA-TB-01',role:'qa',reports_to:'TB-01'}
+      {agent_id:'QA-TB-01',role:'qa',reports_to:'TB-01'},
+      {agent_id:'SEO-TB-01',role:'seo',reports_to:'TB-01'},
+      {agent_id:'CONTENT-TB-01',role:'content',reports_to:'TB-01'},
+      {agent_id:'SECURITY-TB-01',role:'security',reports_to:'TB-01'},
+      {agent_id:'OPS-TB-01',role:'ops',reports_to:'TB-01'},
+      {agent_id:'ANALYTICS-TB-01',role:'analytics',reports_to:'TB-01'}
     ],
     tasks:[],
     messages:[],
