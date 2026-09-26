@@ -96,6 +96,19 @@
         "không tự tạo quảng cáo trả phí"
       ],
       "status": "IDENTITY_READY"
+    },
+    {
+      "agent_id": "COMMS-TB-01",
+      "department": "Chăm sóc & liên lạc",
+      "responsibilities": [
+        "trực hộp thư hỗ trợ TrainingBot",
+        "phân loại email và ưu tiên xử lý",
+        "soạn và gửi phản hồi cho các tình huống đã được cho phép",
+        "theo dõi tin nhắn trong group/kênh cộng đồng đã kết nối",
+        "tự động trả lời các câu hỏi thông thường theo chính sách",
+        "chuyển các trường hợp nhạy cảm hoặc không chắc chắn lên TB-01"
+      ],
+      "status": "IDENTITY_READY"
     }
   ],
   "governance": {
@@ -106,6 +119,9 @@
     "no_unapproved_cost": true,
     "no_sensitive_demographic_inference": true,
     "publisher_requires_approved_content": true,
-    "no_paid_campaign_without_owner": true
+    "no_paid_campaign_without_owner": true,
+    "comms_low_risk_auto_reply_only": true,
+    "comms_escalates_sensitive_cases": true,
+    "no_mass_messaging_without_owner": true
   }
 }
