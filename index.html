@@ -430,6 +430,78 @@
           </div>
         </div>
 
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px" id="ceoStage2">
+          <div class="card" style="box-shadow:none">
+            <div class="card-head">
+              <div>
+                <h2>🧠 Bộ nhớ CEO</h2>
+                <span>Ghi nhớ lâu dài trong trình duyệt này</span>
+              </div>
+              <span id="ceoMemoryCount">0 mục</span>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:160px 1fr auto;gap:8px;margin-bottom:12px">
+                <select id="ceoMemoryType" class="small-btn" style="width:100%;padding:9px">
+                  <option value="Quy tắc Chủ sở hữu">Quy tắc Chủ sở hữu</option>
+                  <option value="Quyết định">Quyết định</option>
+                  <option value="Bài học">Bài học</option>
+                  <option value="Ghi chú">Ghi chú</option>
+                </select>
+                <input id="ceoMemoryInput" type="text" placeholder="Nhập điều CEO cần ghi nhớ..." style="min-width:0;border:1px solid var(--line);background:#0d1c30;color:var(--text);border-radius:9px;padding:9px 10px;outline:none">
+                <button id="ceoMemorySave" class="small-btn approve" type="button">Lưu nhớ</button>
+              </div>
+              <div id="ceoMemoryList" style="display:grid;gap:8px"></div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted)">
+                Bộ nhớ này hiện được lưu bằng localStorage trên trình duyệt; chưa đồng bộ lên máy chủ hay AI thật.
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="box-shadow:none">
+            <div class="card-head">
+              <div>
+                <h2>🎯 Hệ thống ưu tiên của CEO</h2>
+                <span>CEO phải giải thích vì sao một việc được xếp trước việc khác</span>
+              </div>
+              <span>Dữ liệu demo</span>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:12px;font-size:10px;color:var(--muted)">
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Ảnh hưởng</b><br>0–5 điểm</div>
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Khẩn cấp</b><br>0–5 điểm</div>
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Rủi ro</b><br>0–5 điểm</div>
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Điểm</b><br>Ảnh hưởng×2 + Khẩn×2 + Rủi ro</div>
+              </div>
+              <div id="ceoPriorityList" style="display:grid;gap:9px">
+                <div class="staff-card ceo-priority-item" data-impact="4" data-urgency="4" data-risk="3">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div><b>TrainingBot — tiếp tục kiểm tra các luồng API</b><div class="role" style="margin-top:5px">Lý do: có thể ảnh hưởng chức năng mà người dùng đang sử dụng.</div></div>
+                    <span class="badge ceo-priority-badge">—</span>
+                  </div>
+                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
+                </div>
+                <div class="staff-card ceo-priority-item" data-impact="4" data-urgency="3" data-risk="3">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div><b>HMOOB MUSIC — theo dõi hiệu năng di động</b><div class="role" style="margin-top:5px">Lý do: tốc độ chậm có thể ảnh hưởng trải nghiệm mua hàng.</div></div>
+                    <span class="badge ceo-priority-badge">—</span>
+                  </div>
+                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
+                </div>
+                <div class="staff-card ceo-priority-item" data-impact="3" data-urgency="2" data-risk="2">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div><b>Chuẩn hóa cách CEO tạo và giải thích mục tiêu</b><div class="role" style="margin-top:5px">Lý do: cần cho vận hành lâu dài nhưng chưa ảnh hưởng trực tiếp người dùng hiện tại.</div></div>
+                    <span class="badge ceo-priority-badge">—</span>
+                  </div>
+                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
+                </div>
+              </div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted)">
+                Ngưỡng hiện tại: 20–25 Khẩn cấp · 15–19 Cao · 9–14 Trung bình · 0–8 Thấp.
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:16px;margin-top:16px">
           <div style="display:grid;gap:16px">
             <div class="card" style="box-shadow:none">
@@ -720,6 +792,107 @@
   }
   bindApprovalButtons();
   syncApprovalPage();
+
+  // CEO Giai đoạn 2: bộ nhớ cục bộ + hệ thống ưu tiên.
+  const ceoMemoryKey='aiCompany.ceo.memory.v1';
+  const ceoDefaultMemories=[
+    {type:'Quy tắc Chủ sở hữu',text:'Không tự ý phát sinh chi phí nếu chưa được Chủ sở hữu đồng ý.'},
+    {type:'Quy tắc Chủ sở hữu',text:'Chỉ thay đổi đúng phạm vi công việc đã được giao; không sửa lan sang phần khác.'},
+    {type:'Bài học',text:'Mọi thay đổi mã nguồn phải được kiểm tra chức năng liên quan trước khi báo hoàn thành.'}
+  ];
+
+  function getCeoMemories(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(ceoMemoryKey)||'null');
+      return Array.isArray(saved)?saved:ceoDefaultMemories;
+    }catch(e){
+      return ceoDefaultMemories;
+    }
+  }
+
+  function saveCeoMemories(items){
+    localStorage.setItem(ceoMemoryKey,JSON.stringify(items));
+  }
+
+  function renderCeoMemories(){
+    const list=document.getElementById('ceoMemoryList');
+    const count=document.getElementById('ceoMemoryCount');
+    if(!list||!count) return;
+    const items=getCeoMemories();
+    count.textContent=items.length+' mục';
+    list.innerHTML='';
+    items.forEach((item,index)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:grid;grid-template-columns:140px 1fr auto;gap:8px;align-items:start;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0d1c30';
+      const type=document.createElement('div');
+      type.style.cssText='font-size:10px;color:#8bdcf0;font-weight:700';
+      type.textContent=item.type;
+      const body=document.createElement('div');
+      body.style.cssText='font-size:11px;line-height:1.5;color:#c6d4e5';
+      body.textContent=item.text;
+      const del=document.createElement('button');
+      del.type='button';
+      del.className='small-btn reject';
+      del.textContent='Xóa';
+      del.onclick=()=>{
+        const next=getCeoMemories();
+        next.splice(index,1);
+        saveCeoMemories(next);
+        renderCeoMemories();
+      };
+      row.append(type,body,del);
+      list.appendChild(row);
+    });
+  }
+
+  const ceoMemorySave=document.getElementById('ceoMemorySave');
+  if(ceoMemorySave){
+    ceoMemorySave.onclick=()=>{
+      const input=document.getElementById('ceoMemoryInput');
+      const type=document.getElementById('ceoMemoryType');
+      const value=(input.value||'').trim();
+      if(!value){ toast('Nhập nội dung CEO cần ghi nhớ trước.'); return; }
+      const items=getCeoMemories();
+      items.unshift({type:type.value,text:value});
+      saveCeoMemories(items);
+      input.value='';
+      renderCeoMemories();
+      toast('CEO đã lưu ghi nhớ trên trình duyệt này.');
+    };
+    document.getElementById('ceoMemoryInput').addEventListener('keydown',e=>{
+      if(e.key==='Enter') ceoMemorySave.click();
+    });
+    renderCeoMemories();
+  }
+
+  function renderCeoPriorities(){
+    const list=document.getElementById('ceoPriorityList');
+    if(!list) return;
+    const items=[...list.querySelectorAll('.ceo-priority-item')];
+    items.forEach(item=>{
+      const impact=Number(item.dataset.impact||0);
+      const urgency=Number(item.dataset.urgency||0);
+      const risk=Number(item.dataset.risk||0);
+      const score=impact*2+urgency*2+risk;
+      let level='Thấp';
+      if(score>=20) level='Khẩn cấp';
+      else if(score>=15) level='Cao';
+      else if(score>=9) level='Trung bình';
+      const badge=item.querySelector('.ceo-priority-badge');
+      const scoreText=item.querySelector('.ceo-priority-score');
+      badge.textContent=level;
+      badge.classList.toggle('warn',level==='Trung bình');
+      if(level==='Khẩn cấp'||level==='Cao'){
+        badge.style.background='rgba(251,113,133,.10)';
+        badge.style.color='#fda4af';
+        badge.style.borderColor='rgba(251,113,133,.20)';
+      }
+      scoreText.textContent='Điểm '+score+'/25 · Ảnh hưởng '+impact+'/5 · Khẩn cấp '+urgency+'/5 · Rủi ro '+risk+'/5';
+      item.dataset.score=String(score);
+    });
+    items.sort((a,b)=>Number(b.dataset.score)-Number(a.dataset.score)).forEach(item=>list.appendChild(item));
+  }
+  renderCeoPriorities();
 
   if(location.hash==='#office' || localStorage.getItem('aiCompanyView')==='office'){
     switchView('office');
