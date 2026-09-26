@@ -1,0 +1,63 @@
+name: AION Runtime Event
+
+on:
+  workflow_dispatch:
+    inputs:
+      event_type:
+        description: Runtime event
+        required: true
+        type: choice
+        options:
+          - create_task
+          - message_send
+          - memory_write
+          - qa_result
+      payload_json:
+        description: JSON payload for the event
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aion-runtime-state
+  cancel-in-progress: false
+
+jobs:
+  apply-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout runtime code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: app
+
+      - name: Checkout durable state
+        uses: actions/checkout@v4
+        with:
+          ref: aion-runtime-state
+          path: runtime-state
+
+      - name: Apply event
+        env:
+          EVENT_TYPE: ${{ inputs.event_type }}
+          PAYLOAD_JSON: ${{ inputs.payload_json }}
+        run: |
+          node app/platform/event-worker.mjs \
+            --state runtime-state/aion-state.json \
+            --type "$EVENT_TYPE" \
+            --payload "$PAYLOAD_JSON"
+
+      - name: Persist durable state
+        run: |
+          git -C runtime-state config user.name "AION Runtime"
+          git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
+          git -C runtime-state add aion-state.json
+          if git -C runtime-state diff --cached --quiet; then
+            echo "No state change."
+            exit 0
+          fi
+          git -C runtime-state commit -m "runtime: ${{ inputs.event_type }}"
+          git -C runtime-state push origin HEAD:aion-runtime-state
