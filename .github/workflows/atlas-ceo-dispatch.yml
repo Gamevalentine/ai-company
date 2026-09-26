@@ -2,7 +2,7 @@ name: ATLAS CEO Dispatch Bridge
 
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   contents: write
@@ -33,9 +33,9 @@ jobs:
 
       - name: Parse and validate ATLAS request
         env:
-          ISSUE_BODY: \${{ github.event.issue.body }}
-          ISSUE_NUMBER: \${{ github.event.issue.number }}
-          ISSUE_AUTHOR: \${{ github.event.issue.user.login }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
         run: |
           printf '%s' "$ISSUE_BODY" > atlas-issue-body.json
           node app/platform/atlas-issue-bridge.mjs parse \
@@ -47,7 +47,7 @@ jobs:
 
       - name: Decrypt runtime state
         env:
-          AION_STATE_PRIVATE_KEY: \${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
         run: |
           node app/platform/state-crypto.mjs decrypt \
             --input runtime-state/aion-state.enc.json \
@@ -99,14 +99,14 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
-          app-id: \${{ secrets.AION_GITHUB_APP_ID }}
-          private-key: \${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.AION_GITHUB_APP_ID }}
+          private-key: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
           owner: Gamevalentine
           repositories: trainingbot-cloudflare
 
       - name: DEV-TB-01 executes Safe Executor
         env:
-          GH_TOKEN: \${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
           COUNT=$(jq 'length' atlas-dev-queue.json)
@@ -202,13 +202,13 @@ jobs:
             --output atlas-result-summary.json
           node app/platform/atlas-issue-bridge.mjs render \
             --summary-file atlas-result-summary.json \
-            --issue-number "\${{ github.event.issue.number }}" \
+            --issue-number "${{ github.event.issue.number }}" \
             --output atlas-result-comment.md
           cat atlas-result-summary.json
 
       - name: Encrypt updated runtime state
         env:
-          AION_STATE_PRIVATE_KEY: \${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
         run: |
           node app/platform/state-crypto.mjs encrypt \
             --input runtime-state/aion-state.tmp.json \
@@ -221,22 +221,22 @@ jobs:
           git -C runtime-state config user.email "aion-runtime@users.noreply.github.com"
           git -C runtime-state add aion-state.enc.json
           if ! git -C runtime-state diff --cached --quiet; then
-            git -C runtime-state commit -m "runtime: ATLAS issue \${{ github.event.issue.number }}"
+            git -C runtime-state commit -m "runtime: ATLAS issue ${{ github.event.issue.number }}"
             git -C runtime-state push origin HEAD:aion-runtime-state
           fi
 
       - name: Return result to ATLAS mailbox
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue comment "\${{ github.event.issue.number }}" \
+          gh issue comment "${{ github.event.issue.number }}" \
             --repo Gamevalentine/ai-company \
             --body-file atlas-result-comment.md
 
       - name: Upload bridge evidence
         uses: actions/upload-artifact@v4
         with:
-          name: atlas-bridge-\${{ github.event.issue.number }}-\${{ github.run_id }}
+          name: atlas-bridge-${{ github.event.issue.number }}-${{ github.run_id }}
           path: |
             atlas-task.json
             atlas-result-summary.json
