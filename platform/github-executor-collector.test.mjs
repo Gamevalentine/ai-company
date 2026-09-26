@@ -20,9 +20,9 @@ test('collector normalizes successful executor run with jobs and artifacts',()=>
 
 test('collector rejects incomplete run',async()=>{
   const responses=[
-    {status:200,json:async()=>({id:123,status:'in_progress',conclusion:null}),text:async()=>''},
-    {status:200,json:async()=>({jobs:[]}),text:async()=>''},
-    {status:200,json:async()=>({artifacts:[]}),text:async()=>''}
+    {ok:true,status:200,json:async()=>({id:123,status:'in_progress',conclusion:null}),text:async()=>''},
+    {ok:true,status:200,json:async()=>({jobs:[]}),text:async()=>''},
+    {ok:true,status:200,json:async()=>({artifacts:[]}),text:async()=>''}
   ];
   let i=0;
   const fetchImpl=async()=>responses[i++];
