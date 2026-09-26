@@ -46,7 +46,7 @@ jobs:
           exit 1
 
       - name: Pull free local AI model
-        run: ollama pull qwen2.5:0.5b-instruct
+        run: ollama pull qwen2.5:1.5b-instruct
 
       - name: Decrypt runtime state
         env:
@@ -64,7 +64,7 @@ jobs:
 
       - name: TB-01 AI understands goal and plans work
         env:
-          AION_LOCAL_MODEL: qwen2.5:0.5b-instruct
+          AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
         run: |
           node app/platform/ai-brains.mjs manager-plan \
             --state runtime-state/aion-state.tmp.json \
@@ -166,7 +166,7 @@ jobs:
 
       - name: QA-TB-01 AI independently reviews real evidence
         env:
-          AION_LOCAL_MODEL: qwen2.5:0.5b-instruct
+          AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
         run: |
           node app/platform/ai-brains.mjs qa-review \
             --state runtime-state/aion-state.tmp.json \
