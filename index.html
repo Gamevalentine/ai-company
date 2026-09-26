@@ -246,7 +246,7 @@
     <section class="view active" id="view-overview">
       <div class="grid-stats">
         <div class="stat"><div class="label">Website đang quản lý</div><div class="value">5</div><div class="sub">5 trưởng phòng AI phụ trách</div></div>
-        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">26</div><div class="sub">18 đang làm việc · 8 chờ</div></div>
+        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">33</div><div class="sub">5 đội chuyên trách theo từng website</div></div>
         <div class="stat"><div class="label">Nhiệm vụ đang chạy</div><div class="value">14</div><div class="sub">4 ưu tiên cao</div></div>
         <div class="stat"><div class="label">Chờ bạn phê duyệt</div><div class="value" id="approvalMetric">3</div><div class="sub">Không có chi phí phát sinh</div></div>
       </div>
@@ -389,13 +389,13 @@
     <section class="view" id="view-staff">
       <div class="page-card">
         <h2>Nhân viên AI</h2>
+        <p style="color:var(--muted)">Nhân sự được tổ chức theo chuyên môn của từng website, không dùng một bộ vai trò giống nhau cho tất cả văn phòng.</p>
         <div class="staff-grid">
-          <div class="staff-card"><b>DEV-TB-01</b><div class="role">Frontend Developer · TrainingBot</div><div class="now">🟢 Đang làm: kiểm tra API Theo dõi truy cập.</div></div>
-          <div class="staff-card"><b>QA-TB-01</b><div class="role">QA · TrainingBot</div><div class="now">🟢 Đang chờ bản build mới để regression test.</div></div>
-          <div class="staff-card"><b>SEO-TB-01</b><div class="role">SEO · TrainingBot</div><div class="now">🟢 Đang đánh giá nội dung cần cập nhật.</div></div>
-          <div class="staff-card"><b>DEV-HM-01</b><div class="role">Frontend Developer · HMOOB</div><div class="now">🟡 Đang điều tra tốc độ mobile.</div></div>
-          <div class="staff-card"><b>SEC-ML-01</b><div class="role">Security · Toolpick Mail</div><div class="now">🟢 Không phát hiện bất thường.</div></div>
-          <div class="staff-card"><b>QA-MK-01</b><div class="role">UI QA · Mầm Kids</div><div class="now">⚪ Idle — sẵn sàng nhận việc.</div></div>
+          <div class="staff-card"><b>TrainingBot · 7 AI</b><div class="role">DEV · QA · Content · SEO · Analytics · News/Update · Community Support</div><div class="now">🟢 Đội nội dung, phân tích và phát triển chuyên cho TrainingBot.</div></div>
+          <div class="staff-card"><b>Toolpick · 6 AI</b><div class="role">Full-stack · DevOps · QA · Security · Tool Integration · Performance</div><div class="now">🟢 Đội kỹ thuật và hạ tầng chuyên cho hệ sinh thái công cụ.</div></div>
+          <div class="staff-card"><b>HMOOB MUSIC · 7 AI</b><div class="role">Developer · UI/UX · Product/Catalog · Sales · Customer Support · SEO/Content · Order QA</div><div class="now">🟡 Đội thương mại điện tử và hỗ trợ bán hàng.</div></div>
+          <div class="staff-card"><b>Toolpick Mail · 7 AI</b><div class="role">Backend · Mail Infrastructure · Security · Authentication · Deliverability · DevOps · QA</div><div class="now">🟢 Đội chuyên sâu email, xác thực và bảo mật.</div></div>
+          <div class="staff-card"><b>Mầm Kids · 6 AI</b><div class="role">UI/UX · Frontend · Education Content · Kids UX · Desktop/Mobile QA · Media/Animation</div><div class="now">🟢 Đội giáo dục trẻ em và trải nghiệm học tập.</div></div>
         </div>
       </div>
     </section>
@@ -439,28 +439,13 @@
     <section class="view" id="view-office">
       <div class="page-card">
         <h2>Văn phòng AI</h2>
-        <p style="color:var(--muted)">Mỗi website có một trang văn phòng riêng. Bấm vào từng văn phòng để quan sát Trưởng phòng, nhân viên AI, nhiệm vụ và nhật ký của đúng website đó.</p>
+        <p style="color:var(--muted)">Mỗi website có một đội nhân viên AI khác nhau, được thiết kế theo đúng loại công việc của website đó. Bấm vào văn phòng để quan sát chi tiết.</p>
         <div class="office" style="margin-top:16px">
-          <a class="room room-link" href="office/trainingbot/">
-            <div class="room-top"><h3>TrainingBot Department</h3><span class="room-open">Mở văn phòng →</span></div>
-            <div class="desks"><div class="desk"><span>👔</span>TB-01 · Manager</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🧪</span>QA · Waiting</div><div class="desk"><span>🔎</span>SEO · Working</div></div>
-          </a>
-          <a class="room room-link" href="office/toolpick/">
-            <div class="room-top"><h3>Toolpick Department</h3><span class="room-open">Mở văn phòng →</span></div>
-            <div class="desks"><div class="desk"><span>👔</span>TP-01 · Manager</div><div class="desk"><span>🛠️</span>DEV · Working</div><div class="desk"><span>☁️</span>DevOps · Working</div><div class="desk"><span>🛡️</span>Security · Watching</div></div>
-          </a>
-          <a class="room room-link" href="office/hmoob-music/">
-            <div class="room-top"><h3>HMOOB MUSIC Department</h3><span class="room-open">Mở văn phòng →</span></div>
-            <div class="desks"><div class="desk"><span>👔</span>HM-01 · Manager</div><div class="desk"><span>📱</span>Mobile QA · Working</div><div class="desk"><span>💻</span>DEV · Working</div><div class="desk"><span>🛍️</span>Product · Idle</div></div>
-          </a>
-          <a class="room room-link" href="office/toolpick-mail/">
-            <div class="room-top"><h3>Toolpick Mail Department</h3><span class="room-open">Mở văn phòng →</span></div>
-            <div class="desks"><div class="desk"><span>👔</span>ML-01 · Manager</div><div class="desk"><span>⚙️</span>Backend · Working</div><div class="desk"><span>🛡️</span>Security · Watching</div><div class="desk"><span>🧪</span>QA · Waiting</div></div>
-          </a>
-          <a class="room room-link" href="office/mam-kids/">
-            <div class="room-top"><h3>Mầm Kids Department</h3><span class="room-open">Mở văn phòng →</span></div>
-            <div class="desks"><div class="desk"><span>👔</span>MK-01 · Manager</div><div class="desk"><span>🎨</span>UI · Working</div><div class="desk"><span>✍️</span>Content · Idle</div><div class="desk"><span>🧪</span>QA · Waiting</div></div>
-          </a>
+          <a class="room room-link" href="office/trainingbot/"><div class="room-top"><h3>TrainingBot Department</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>💻</span>Developer</div><div class="desk"><span>✍️</span>Content</div><div class="desk"><span>🔎</span>SEO</div><div class="desk"><span>📊</span>Analytics</div><div class="desk"><span>📰</span>News/Update</div><div class="desk"><span>💬</span>Community</div></div></a>
+          <a class="room room-link" href="office/toolpick/"><div class="room-top"><h3>Toolpick Department</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🛠️</span>Full-stack</div><div class="desk"><span>☁️</span>DevOps</div><div class="desk"><span>🛡️</span>Security</div><div class="desk"><span>🔌</span>Integration</div><div class="desk"><span>⚡</span>Performance</div><div class="desk"><span>🧪</span>QA</div></div></a>
+          <a class="room room-link" href="office/hmoob-music/"><div class="room-top"><h3>HMOOB MUSIC Department</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🛍️</span>Catalog</div><div class="desk"><span>💰</span>Sales</div><div class="desk"><span>💬</span>Customer Support</div><div class="desk"><span>🎨</span>UI/UX</div><div class="desk"><span>🔎</span>SEO/Content</div><div class="desk"><span>📦</span>Order QA</div></div></a>
+          <a class="room room-link" href="office/toolpick-mail/"><div class="room-top"><h3>Toolpick Mail Department</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>⚙️</span>Backend</div><div class="desk"><span>📨</span>Mail Infrastructure</div><div class="desk"><span>🔐</span>Authentication</div><div class="desk"><span>📬</span>Deliverability</div><div class="desk"><span>🛡️</span>Security</div><div class="desk"><span>☁️</span>DevOps</div></div></a>
+          <a class="room room-link" href="office/mam-kids/"><div class="room-top"><h3>Mầm Kids Department</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🎨</span>UI/UX</div><div class="desk"><span>💻</span>Frontend</div><div class="desk"><span>📚</span>Education Content</div><div class="desk"><span>🧸</span>Kids UX</div><div class="desk"><span>🧪</span>QA đa thiết bị</div><div class="desk"><span>🎞️</span>Media/Animation</div></div></a>
         </div>
       </div>
     </section>
