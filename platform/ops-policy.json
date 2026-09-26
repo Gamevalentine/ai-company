@@ -1,0 +1,29 @@
+{
+  "agent_id": "OPS-TB-01",
+  "reports_to": "TB-01",
+  "mode": "READ_ONLY",
+  "brain": "ops-brain.mjs",
+  "workflow": "trainingbot-ops-check.yml",
+  "monitored_routes": [
+    "/",
+    "/news",
+    "/wiki",
+    "/ban-cap-nhat"
+  ],
+  "verdicts": [
+    "HEALTHY",
+    "DEGRADED",
+    "INCIDENT"
+  ],
+  "escalation": {
+    "application_issue": "DEV-TB-01",
+    "security_signal": "SECURITY-TB-01",
+    "unclear_issue": "TB-01"
+  },
+  "recurring_schedule_enabled": false,
+  "live_verification": {
+    "run_id": "36273620725",
+    "conclusion": "success",
+    "result": "HEALTHY"
+  }
+}
