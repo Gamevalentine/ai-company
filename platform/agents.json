@@ -206,14 +206,18 @@
     ],
     "can_assign_to": [],
     "allowed_tools": [
-      "trainingbot_status_reader"
+      "trainingbot_status_reader",
+      "trainingbot_ops_probe"
     ],
     "permissions": [
       "read_status",
       "read_logs",
       "health_check",
       "incident_triage",
-      "submit_evidence"
+      "submit_evidence",
+      "read_repository_status",
+      "classify_incident",
+      "escalate_to_manager"
     ],
     "prohibited_actions": [
       "edit_source",
