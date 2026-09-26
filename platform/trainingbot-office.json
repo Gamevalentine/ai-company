@@ -70,9 +70,15 @@
         "health check",
         "đọc trạng thái/log",
         "phân loại sự cố",
-        "báo cáo uptime"
+        "báo cáo uptime",
+        "kiểm tra các route công khai của TrainingBot",
+        "đọc trạng thái GitHub Actions",
+        "phân loại HEALTHY / DEGRADED / INCIDENT",
+        "chuyển sự cố cho DEV / Security / TB-01 dựa trên evidence"
       ],
-      "status": "IDENTITY_READY"
+      "status": "BRAIN_READY",
+      "brain": "ops-brain.mjs",
+      "workflow": "trainingbot-ops-check.yml"
     },
     {
       "agent_id": "ANALYTICS-TB-01",
