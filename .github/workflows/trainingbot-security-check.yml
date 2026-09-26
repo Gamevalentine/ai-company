@@ -1,0 +1,152 @@
+name: TrainingBot Security Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: Optional AION task ID
+        required: false
+        default: SECURITY-MANUAL
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trainingbot-security-check.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-security-check
+  cancel-in-progress: false
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+
+    steps:
+      - name: Checkout AION runtime
+        uses: actions/checkout@v4
+        with:
+          path: aion
+
+      - name: Create read-only TrainingBot app token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.AION_GITHUB_APP_ID }}
+          private-key: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
+          owner: Gamevalentine
+          repositories: trainingbot-cloudflare
+
+      - name: Checkout TrainingBot sandbox source
+        uses: actions/checkout@v4
+        with:
+          repository: Gamevalentine/trainingbot-cloudflare
+          ref: aion-sandbox
+          token: ${{ steps.app-token.outputs.token }}
+          path: trainingbot
+          persist-credentials: false
+
+      - name: Collect defensive source evidence
+        run: |
+          set -euo pipefail
+
+          PRIVATE_KEY_FILES=$(find trainingbot -type f \( -name '*.pem' -o -name '*.key' -o -name 'id_rsa' -o -name 'id_ed25519' \) | wc -l | tr -d ' ')
+          COMMITTED_ENV_FILES=$(git -C trainingbot ls-files | grep -E '(^|/)\.env($|\.)' | grep -Ev '\.(example|sample|template)$' | wc -l | tr -d ' ' || true)
+          CREDENTIAL_LIKE_FILES=$(git -C trainingbot ls-files | grep -Ei '(^|/)(credentials|service-account|service_account)(\.[^/]+)?$' | wc -l | tr -d ' ' || true)
+
+          jq -n             --argjson private_key_files "$PRIVATE_KEY_FILES"             --argjson committed_env_files "$COMMITTED_ENV_FILES"             --argjson credential_like_files "$CREDENTIAL_LIKE_FILES"             '{private_key_files:$private_key_files,committed_env_files:$committed_env_files,credential_like_files:$credential_like_files}'             > static-scan.json
+
+          if [ -f trainingbot/package-lock.json ]; then
+            (
+              cd trainingbot
+              npm audit --omit=dev --json > ../npm-audit-raw.json 2>/dev/null || true
+            )
+            jq '{
+              available:true,
+              critical:(.metadata.vulnerabilities.critical // 0),
+              high:(.metadata.vulnerabilities.high // 0),
+              moderate:(.metadata.vulnerabilities.moderate // 0),
+              low:(.metadata.vulnerabilities.low // 0)
+            }' npm-audit-raw.json > dependency-audit.json 2>/dev/null ||               printf '%s\n' '{"available":false,"critical":0,"high":0,"moderate":0,"low":0}' > dependency-audit.json
+            rm -f npm-audit-raw.json
+          else
+            printf '%s\n' '{"available":false,"critical":0,"high":0,"moderate":0,"low":0}' > dependency-audit.json
+          fi
+
+      - name: Read public security headers
+        run: |
+          set -euo pipefail
+          curl -sS -L -D response-headers.txt -o /dev/null --connect-timeout 10 --max-time 20 https://trainingbot.io.vn/ || true
+
+          has_header() {
+            NAME="$1"
+            if grep -Eiq "^$NAME:" response-headers.txt; then printf 'true'; else printf 'false'; fi
+          }
+
+          HSTS=$(has_header 'strict-transport-security')
+          CSP=$(has_header 'content-security-policy')
+          XCTO=$(has_header 'x-content-type-options')
+          REFERRER=$(has_header 'referrer-policy')
+          FRAME=$(has_header 'x-frame-options')
+
+          jq -n             --argjson hsts "$HSTS"             --argjson csp "$CSP"             --argjson xcto "$XCTO"             --argjson referrer "$REFERRER"             --argjson frame "$FRAME"             '{
+              strict_transport_security:$hsts,
+              content_security_policy:$csp,
+              x_content_type_options:$xcto,
+              referrer_policy:$referrer,
+              x_frame_options:$frame
+            }' > headers.json
+
+          rm -f response-headers.txt
+
+      - name: Build sanitized evidence
+        run: |
+          set -euo pipefail
+          COMMIT_SHA=$(git -C trainingbot rev-parse HEAD)
+          jq -n             --arg source "trainingbot-security-check"             --arg task_id "${{ inputs.task_id || 'SECURITY-AUTO-SMOKE' }}"             --arg branch "aion-sandbox"             --arg commit_sha "$COMMIT_SHA"             --slurpfile static static-scan.json             --slurpfile deps dependency-audit.json             --slurpfile headers headers.json             '{
+              source:$source,
+              task_id:$task_id,
+              branch:$branch,
+              commit_sha:$commit_sha,
+              checked_at:(now|todate),
+              static_scan:$static[0],
+              dependency_audit:$deps[0],
+              headers:$headers[0],
+              sensitive_values_included:false
+            }' > security-evidence.json
+          cat security-evidence.json
+
+      - name: Install local AI runtime
+        run: |
+          timeout 120s bash -c 'curl -fsSL https://ollama.com/install.sh | sh'
+          nohup ollama serve >/tmp/ollama.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/ollama.log
+          exit 1
+
+      - name: Pull security model
+        run: timeout 180s ollama pull qwen2.5:1.5b-instruct
+
+      - name: SECURITY-TB-01 reviews evidence
+        env:
+          AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
+        run: |
+          timeout 150s node aion/platform/security-brain.mjs review             --evidence security-evidence.json             --output security-report.json             --markdown security-report.md
+          cat security-report.json
+          cat security-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload security evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: trainingbot-security-${{ github.run_id }}
+          path: |
+            security-evidence.json
+            security-report.json
+            security-report.md
+          retention-days: 7
