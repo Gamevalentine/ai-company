@@ -2,7 +2,7 @@ name: ATLAS CEO Dispatch Bridge
 
 on:
   issues:
-    types: [opened]
+    types: [opened, reopened]
   workflow_dispatch:
     inputs:
       issue_number:
@@ -45,7 +45,7 @@ jobs:
           INPUT_ISSUE_NUMBER: ${{ inputs.issue_number }}
         run: |
           set -euo pipefail
-          ISSUE_NUMBER="\${EVENT_ISSUE_NUMBER:-$INPUT_ISSUE_NUMBER}"
+          ISSUE_NUMBER="${EVENT_ISSUE_NUMBER:-$INPUT_ISSUE_NUMBER}"
           test -n "$ISSUE_NUMBER"
 
           gh issue view "$ISSUE_NUMBER" \
@@ -69,6 +69,7 @@ jobs:
           if [ "$HAS_RESULT" -gt 0 ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "Issue already has AION_RESULT; duplicate execution blocked."
+            gh issue close "$ISSUE_NUMBER" --repo Gamevalentine/ai-company --reason completed || true
             exit 0
           fi
 
@@ -284,7 +285,7 @@ jobs:
           cat atlas-result-summary.json
 
       - name: Encrypt task state
-        if: always() && steps.guard.outputs.skip != 'true'
+        if: always() && steps.guard.outcome == 'success' && steps.guard.outputs.skip != 'true'
         env:
           AION_STATE_PRIVATE_KEY: ${{ secrets.AION_GITHUB_APP_PRIVATE_KEY }}
         run: |
@@ -298,7 +299,7 @@ jobs:
           rm -f "$STATE_TMP"
 
       - name: Persist sharded encrypted state
-        if: always() && steps.guard.outputs.skip != 'true'
+        if: always() && steps.guard.outcome == 'success' && steps.guard.outputs.skip != 'true'
         run: |
           set -euo pipefail
           if [ ! -f "$STATE_ENC" ]; then
@@ -332,7 +333,7 @@ jobs:
         if: success() && steps.guard.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-          ISSUE_NUMBER: ${{ steps.guard.outputs.issue_number }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
         run: |
           EXISTING=$(gh api \
             "repos/Gamevalentine/ai-company/issues/$ISSUE_NUMBER/comments?per_page=100" \
