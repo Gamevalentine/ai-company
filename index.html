@@ -346,13 +346,93 @@
 
     <section class="view" id="view-ceo">
       <div class="page-card">
-        <h2>🧠 ATLAS — AI CEO</h2>
-        <p style="color:var(--muted);line-height:1.7">CEO chịu trách nhiệm tự quan sát toàn hệ thống, đặt mục tiêu, giao việc cho các Trưởng phòng và chỉ đẩy lên Chủ sở hữu những việc cần quyền cao.</p>
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <h2 style="margin-bottom:6px">🧠 ATLAS — AI CEO</h2>
+            <p style="color:var(--muted);line-height:1.7;margin:0;max-width:850px">
+              ATLAS là AI điều hành cao nhất của công ty. Ở giai đoạn hiện tại, CEO chỉ được quan sát, phân tích,
+              tự đề xuất mục tiêu và chuẩn bị kế hoạch. CEO chưa được tự ý thay đổi website thật.
+            </p>
+          </div>
+          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát & lập kế hoạch</div>
+        </div>
+
         <div class="grid-stats" style="margin-top:18px">
-          <div class="stat"><div class="label">Phòng ban</div><div class="value">5</div><div class="sub">5 website</div></div>
-          <div class="stat"><div class="label">Mục tiêu hôm nay</div><div class="value">7</div><div class="sub">4 đang đúng tiến độ</div></div>
-          <div class="stat"><div class="label">Quyết định tự động</div><div class="value">31</div><div class="sub">chỉ trong phạm vi an toàn</div></div>
-          <div class="stat"><div class="label">Vượt quyền</div><div class="value">0</div><div class="sub">mọi việc nhạy cảm đều chờ duyệt</div></div>
+          <div class="stat"><div class="label">Website đang quan sát</div><div class="value">5</div><div class="sub">chưa tự can thiệp website thật</div></div>
+          <div class="stat"><div class="label">Mục tiêu CEO đang theo dõi</div><div class="value">3</div><div class="sub">do CEO tự đề xuất</div></div>
+          <div class="stat"><div class="label">Việc cần Chủ sở hữu duyệt</div><div class="value">3</div><div class="sub">mọi việc nhạy cảm đều dừng lại</div></div>
+          <div class="stat"><div class="label">Hành động vượt quyền</div><div class="value">0</div><div class="sub">CEO không được vượt phạm vi cho phép</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:16px;margin-top:16px">
+          <div style="display:grid;gap:16px">
+            <div class="card" style="box-shadow:none">
+              <div class="card-head">
+                <div><h2>Mục tiêu CEO đang đề xuất</h2><span>Mỗi mục tiêu phải có lý do rõ ràng</span></div>
+                <span>3 mục tiêu</span>
+              </div>
+              <div class="card-body">
+                <div class="task">
+                  <div>
+                    <strong>Giữ toàn bộ website hoạt động ổn định</strong>
+                    <small>Lý do: đây là điều kiện nền tảng trước khi cho AI tự vận hành sâu hơn.</small>
+                  </div>
+                  <div><span class="badge">Đang theo dõi</span></div>
+                </div>
+                <div class="task">
+                  <div>
+                    <strong>Phát hiện sớm lỗi ảnh hưởng người dùng</strong>
+                    <small>Lý do: ưu tiên phát hiện trước, chưa tự sửa production.</small>
+                  </div>
+                  <div><span class="badge">Đang theo dõi</span></div>
+                </div>
+                <div class="task">
+                  <div>
+                    <strong>Chuẩn hóa cách CEO tạo và giải thích mục tiêu</strong>
+                    <small>Lý do: mọi quyết định sau này phải truy được nguyên nhân và căn cứ.</small>
+                  </div>
+                  <div><span class="badge warn">Đang xây dựng</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="card-head">
+                <div><h2>Chu trình làm việc của CEO</h2><span>Khung điều hành sẽ được dùng khi ATLAS hoạt động thật</span></div>
+              </div>
+              <div class="card-body">
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+                  <div class="staff-card"><b>1. Quan sát</b><div class="role">Đọc trạng thái website, lỗi, hiệu năng và cảnh báo.</div></div>
+                  <div class="staff-card"><b>2. Phân tích</b><div class="role">Xác định vấn đề, nguyên nhân và mức độ ảnh hưởng.</div></div>
+                  <div class="staff-card"><b>3. Đặt mục tiêu</b><div class="role">Tự tạo mục tiêu có lý do, ưu tiên và tiêu chí hoàn thành.</div></div>
+                  <div class="staff-card"><b>4. Lập kế hoạch</b><div class="role">Chia mục tiêu thành các bước cần thực hiện.</div></div>
+                  <div class="staff-card"><b>5. Xin phê duyệt</b><div class="role">Dừng lại khi có production, chi phí hoặc quyền cao.</div></div>
+                  <div class="staff-card"><b>6. Đánh giá</b><div class="role">So sánh kết quả với mục tiêu rồi quyết định bước tiếp theo.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;gap:16px">
+            <div class="card" style="box-shadow:none">
+              <div class="card-head"><div><h2>Quyền hạn hiện tại</h2><span>Giai đoạn CEO số 1</span></div></div>
+              <div class="card-body">
+                <div class="activity"><div style="width:26px">✅</div><p><b>Được phép:</b> đọc dữ liệu, phân tích, đề xuất mục tiêu, lập kế hoạch và viết báo cáo.</p></div>
+                <div class="activity"><div style="width:26px">⛔</div><p><b>Chưa được phép:</b> sửa code production, deploy, xóa dữ liệu, đổi DNS hoặc tự chi tiền.</p></div>
+                <div class="activity"><div style="width:26px">👤</div><p><b>Phải xin bạn duyệt:</b> mọi hành động có thể ảnh hưởng website thật, tài khoản, dữ liệu hoặc chi phí.</p></div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="card-head"><div><h2>Nguyên tắc bắt buộc</h2><span>CEO không được tự thay đổi</span></div></div>
+              <div class="card-body">
+                <div class="activity"><div style="width:26px">01</div><p>Không được hành động nếu chưa giải thích được <b>vì sao cần làm</b>.</p></div>
+                <div class="activity"><div style="width:26px">02</div><p>Không được sửa một website chỉ vì vấn đề xuất hiện ở website khác.</p></div>
+                <div class="activity"><div style="width:26px">03</div><p>Không được coi nhiệm vụ là hoàn thành nếu chưa có kết quả kiểm tra.</p></div>
+                <div class="activity"><div style="width:26px">04</div><p>Không được tự phát sinh chi phí nếu chưa có Chủ sở hữu chấp thuận.</p></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
