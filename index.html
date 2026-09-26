@@ -353,7 +353,7 @@
               tự đề xuất mục tiêu và chuẩn bị kế hoạch. CEO chưa được tự ý thay đổi website thật.
             </p>
           </div>
-          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát dữ liệu thật & lập kế hoạch</div>
+          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát · lập mục tiêu · giao việc nội bộ</div>
         </div>
 
         <div class="grid-stats" style="margin-top:18px">
@@ -610,7 +610,7 @@
 
           <div style="display:grid;gap:16px">
             <div class="card" style="box-shadow:none">
-              <div class="card-head"><div><h2>Quyền hạn hiện tại</h2><span>Giai đoạn CEO số 1</span></div></div>
+              <div class="card-head"><div><h2>Quyền hạn hiện tại</h2><span>Giai đoạn 4 · không tự sửa production</span></div></div>
               <div class="card-body">
                 <div class="activity"><div style="width:26px">✅</div><p><b>Được phép:</b> đọc dữ liệu, phân tích, đề xuất mục tiêu, lập kế hoạch và viết báo cáo.</p></div>
                 <div class="activity"><div style="width:26px">⛔</div><p><b>Chưa được phép:</b> sửa code production, deploy, xóa dữ liệu, đổi DNS hoặc tự chi tiền.</p></div>
@@ -652,9 +652,9 @@
       <div class="page-card">
         <h2>Danh mục website</h2>
         <div class="websites">
-          <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small>6 AI · 5 nhiệm vụ · 1 yêu cầu duyệt</small></div>
+          <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small id="websiteSummaryTrainingBot">6 AI · 5 nhiệm vụ</small></div>
           <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>5 AI · 3 nhiệm vụ</small></div>
-          <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small>6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi</small></div>
+          <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small id="websiteSummaryHmoob">6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi</small></div>
           <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>5 AI · bảo mật bình thường</small></div>
           <div class="website"><div class="website-line"><strong>Mầm Kids</strong><span class="mini-dot"></span></div><small>4 AI · giao diện ổn định</small></div>
         </div>
@@ -983,6 +983,15 @@
     if(table) table.innerHTML=phase4State.logs.map(l=>`<tr><td>${escapeHtml(l.time)}</td><td>${escapeHtml(l.actor)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.permission)}</td></tr>`).join('');
   }
 
+  function renderWebsiteApprovalSummaries(){
+    const tb=pendingApprovals().filter(a=>a.website==='TrainingBot').length;
+    const hm=pendingApprovals().filter(a=>a.website==='HMOOB MUSIC').length;
+    const tbEl=document.getElementById('websiteSummaryTrainingBot');
+    const hmEl=document.getElementById('websiteSummaryHmoob');
+    if(tbEl) tbEl.textContent='6 AI · 5 nhiệm vụ'+(tb?' · '+tb+' yêu cầu duyệt':'');
+    if(hmEl) hmEl.textContent='6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi'+(hm?' · '+hm+' yêu cầu duyệt':'');
+  }
+
   function renderReports(){
     const body=document.getElementById('reportBody');
     if(!body) return;
@@ -1010,6 +1019,7 @@
     renderPhase4Workflow();
     renderApprovals();
     renderOverviewAssigned();
+    renderWebsiteApprovalSummaries();
     renderLogs();
     renderReports();
     renderCeoBrief();
