@@ -55,7 +55,8 @@
       "CONTENT-TB-01",
       "SECURITY-TB-01",
       "OPS-TB-01",
-      "ANALYTICS-TB-01"
+      "ANALYTICS-TB-01",
+      "PUBLISHER-TB-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -244,6 +245,34 @@
       "production_deploy",
       "production_merge",
       "infer_sensitive_demographics",
+      "secret_change",
+      "delete_data"
+    ]
+  },
+  {
+    "agent_id": "PUBLISHER-TB-01",
+    "role": "multiplatform_publisher",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "read_approved_content",
+      "adapt_content_per_platform",
+      "prepare_publish_queue",
+      "read_publish_status",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "publish_unapproved_content",
+      "change_account_credentials",
+      "create_paid_campaign",
+      "spend_money",
+      "production_deploy",
+      "production_merge",
       "secret_change",
       "delete_data"
     ]
