@@ -24,6 +24,7 @@ export function hardSecurityChecks(evidence={}){
   const privateKeyFiles=Number(scan.private_key_files||0);
   const envFiles=Number(scan.committed_env_files||0);
   const credentialLikeFiles=Number(scan.credential_like_files||0);
+  const dependencyAuditAvailable=deps.available===true;
   const criticalDeps=Number(deps.critical||0);
   const highDeps=Number(deps.high||0);
   const importantHeaders=['strict_transport_security','content_security_policy','x_content_type_options'];
@@ -34,11 +35,12 @@ export function hardSecurityChecks(evidence={}){
     private_key_files:privateKeyFiles,
     committed_env_files:envFiles,
     credential_like_files:credentialLikeFiles,
+    dependency_audit_available:dependencyAuditAvailable,
     critical_dependency_findings:criticalDeps,
     high_dependency_findings:highDeps,
     missing_important_headers:missingHeaders,
     hard_critical:privateKeyFiles>0||criticalDeps>0,
-    hard_attention:envFiles>0||credentialLikeFiles>0||highDeps>0||missingHeaders.length>=2
+    hard_attention:!dependencyAuditAvailable||envFiles>0||credentialLikeFiles>0||highDeps>0||missingHeaders.length>=2
   };
 }
 
