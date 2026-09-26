@@ -154,3 +154,27 @@ Live end-to-end pilot:
 - Encrypted durable state persisted on `aion-runtime-state` at commit `9b038e60a2f86c45000754db557401dc86d0c052`.
 
 Lưu ý: đây là operational/policy brain v0.1 để chứng minh tổ chức Agent hoạt động thật mà không phát sinh phí model. Chưa có LLM provider cho suy luận mở/ngôn ngữ tự nhiên.
+
+
+## Local AI brains (LLM)
+
+TB-01 và QA-TB-01 đã được nâng từ rule-only brain lên guarded local-LLM brain.
+
+- Model pilot: `qwen2.5:1.5b-instruct` chạy local qua Ollama trong GitHub Actions CPU runner.
+- Không thêm API key model, subscription AI, hoặc dịch vụ model trả phí.
+- TB-01 nhận mục tiêu ngôn ngữ tự nhiên, tạo structured plan và chỉ được chọn operation sandbox allowlist.
+- QA-TB-01 đọc execution evidence thật và đưa ra AI verdict độc lập.
+- AI verdict không có quyền vượt hard gates: thiếu run URL, commit SHA, sandbox branch, execution PASS hoặc operation hợp lệ thì PASS của model bị override thành FAIL.
+- Production/secret/DNS/delete/paid-service vẫn bị chặn bằng policy/code, không phụ thuộc prompt.
+
+Live AI pilot:
+- AION Local AI Agent Pilot run: 36269708019 — success.
+- TrainingBot Safe Executor run: 36269795869.
+- Root task: `AION-AI-PILOT-001` → `READY_FOR_CEO_REVIEW`.
+- TB-01 AI selected `validate-sandbox` and `needs_owner_approval=false`.
+- QA model verdict: PASS.
+- Hard evidence gate: PASS; did not override model.
+- TB-01 emitted `AI_MANAGER_REPORT` to ATLAS.
+- Encrypted state persisted at commit `d07601f2d4cc53d2cfde8bb7f37e36b9ff225c68`.
+
+The first 0.5B model attempt was rejected after malformed/truncated structured output. The runtime was hardened with bounded JSON schemas and upgraded to the 1.5B local model before accepting the successful pilot.
