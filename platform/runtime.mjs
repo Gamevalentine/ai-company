@@ -231,10 +231,11 @@ export class AionPlatform{
     const parent=this.task(parentTaskId);
     if(parent.assigned_to!==managerId) throw new PlatformError('MANAGER_TASK_DENIED','Task không thuộc Manager',403);
     const children=this.state().tasks.filter(x=>x.parent_task_id===parentTaskId);
-    const qa=children.filter(x=>this.agent(x.assigned_to).role==='qa');
-    const hasPass=qa.some(x=>x.status==='QA_PASS');
-    const hasFail=qa.some(x=>x.status==='QA_FAIL');
-    const status=hasFail?'NEEDS_REWORK':hasPass?'MANAGER_REVIEW':'WAITING_EVIDENCE';
+    const qa=children
+      .filter(x=>this.agent(x.assigned_to).role==='qa')
+      .sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+    const latestQa=qa.at(-1);
+    const status=!latestQa?'WAITING_EVIDENCE':latestQa.status==='QA_FAIL'?'NEEDS_REWORK':latestQa.status==='QA_PASS'?'MANAGER_REVIEW':'WAITING_EVIDENCE';
     this.store.mutate(s=>{const x=s.tasks.find(v=>v.task_id===parentTaskId);x.status=status;x.updated_at=now();});
     this.store.audit({actor:managerId,action:'MANAGER_REVIEW',task_id:parentTaskId,result:status});
     return clone(this.task(parentTaskId));
