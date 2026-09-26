@@ -181,6 +181,17 @@
     .phase4-work-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
     .phase4-evidence{margin-top:9px;padding:8px;border-radius:9px;background:#10243b;font-size:10px;color:#b9c9db;line-height:1.5}
     .phase4-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .executor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .executor-card{border:1px solid var(--line);background:#0d1c30;border-radius:15px;padding:14px}
+    .executor-card h3{font-size:13px;margin:0 0 6px}.executor-card p{font-size:11px;color:var(--muted);line-height:1.55;margin:5px 0}
+    .executor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .executor-link{display:inline-flex;align-items:center;text-decoration:none}
+    .execution-queue{display:grid;gap:10px}
+    .execution-item{border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px}
+    .execution-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .execution-meta{font-size:10px;color:var(--muted);line-height:1.6;margin-top:7px}
+    .safety-box{border:1px solid rgba(52,211,153,.24);background:rgba(52,211,153,.06);border-radius:12px;padding:11px;font-size:11px;line-height:1.6}
+    @media (max-width:1100px){.executor-grid{grid-template-columns:1fr}}
     @media (max-width:760px){.phase4-meta{grid-template-columns:1fr}}
     .modal{
       position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
@@ -240,6 +251,7 @@
       <button class="nav-btn" data-view="staff"><span class="nav-icon">♟</span>Nhân viên AI</button>
       <button class="nav-btn" data-view="tasks"><span class="nav-icon">✓</span>Nhiệm vụ</button>
       <button class="nav-btn" data-view="approvals"><span class="nav-icon">⚑</span>Phê duyệt <b id="navApprovalCount" style="margin-left:auto;color:#fde68a">3</b></button>
+      <button class="nav-btn" data-view="execution"><span class="nav-icon">▶</span>Thực thi <b id="navExecutionCount" style="margin-left:auto;color:#86efac">0</b></button>
       <button class="nav-btn" data-view="reports"><span class="nav-icon">▤</span>Báo cáo</button>
       <button class="nav-btn" data-view="office"><span class="nav-icon">⌘</span>Văn phòng AI</button>
       <button class="nav-btn" data-view="logs"><span class="nav-icon">≡</span>Nhật ký</button>
@@ -698,6 +710,49 @@
       </div>
     </section>
 
+    <section class="view" id="view-execution">
+      <div class="page-card">
+        <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <h2 style="margin-bottom:6px">▶ Bộ thực thi có kiểm soát — Giai đoạn 5</h2>
+            <p style="color:var(--muted);line-height:1.65;margin:0;max-width:900px">AION HQ đã có kênh thực thi thật đầu tiên cho TrainingBot bằng GitHub Actions. Việc an toàn chạy trên nhánh <b>aion-sandbox</b>; production vẫn bị khóa và không có token bí mật nào được đặt trong trình duyệt.</p>
+          </div>
+          <button class="small-btn" id="executorRefresh" type="button">Kiểm tra trạng thái thật</button>
+        </div>
+
+        <div class="executor-grid" style="margin-top:18px">
+          <div class="executor-card">
+            <div style="display:flex;justify-content:space-between;gap:8px"><h3>TrainingBot</h3><span class="badge">Đã kết nối</span></div>
+            <p>GitHub: Gamevalentine/trainingbot-cloudflare</p>
+            <p>Nhánh an toàn: <b style="color:var(--text)">aion-sandbox</b></p>
+            <p>Cho phép: kiểm tra shell, build sandbox, so sánh với main.</p>
+            <div class="executor-actions">
+              <a class="small-btn approve executor-link" target="_blank" rel="noopener" href="https://github.com/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml">Mở bộ thực thi GitHub ↗</a>
+            </div>
+          </div>
+          <div class="executor-card">
+            <div style="display:flex;justify-content:space-between;gap:8px"><h3>Production</h3><span class="badge warn">Đang khóa</span></div>
+            <p>Không deploy, đổi DNS, xóa dữ liệu hoặc dùng secret production từ trang AION HQ.</p>
+            <p>Muốn mở production phải có một cổng backend an toàn và một lần phê duyệt riêng cho từng hành động.</p>
+          </div>
+          <div class="executor-card">
+            <div style="display:flex;justify-content:space-between;gap:8px"><h3>Trạng thái GitHub Actions</h3><span class="badge" id="executorLiveBadge">Chưa kiểm tra</span></div>
+            <p id="executorLiveDetail">Bấm “Kiểm tra trạng thái thật” để đọc lần chạy gần nhất.</p>
+            <p id="executorLiveTime"></p>
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;margin-top:18px">
+          <div class="card-head"><div><h2>Hàng đợi thực thi</h2><span>Chỉ tạo sau khi Chủ sở hữu đã phê duyệt</span></div><span id="executionQueueCount">0 việc</span></div>
+          <div class="card-body execution-queue" id="executionQueue"></div>
+        </div>
+
+        <div class="safety-box" style="margin-top:16px">
+          <b>Cơ chế an toàn:</b> workflow hiện có quyền GitHub chỉ đọc, checkout đúng nhánh <b>aion-sandbox</b>, yêu cầu nhập câu xác nhận <b>AION-SANDBOX</b>, và không chứa bước deploy production.
+        </div>
+      </div>
+    </section>
+
     <section class="view" id="view-reports">
       <div class="page-card">
         <h2>Báo cáo điều hành</h2>
@@ -774,6 +829,7 @@
     staff:['Nhân viên AI','Các Agent chuyên môn dưới quyền từng Trưởng phòng.'],
     tasks:['Nhiệm vụ','Công việc AI đang thực hiện trên toàn công ty.'],
     approvals:['Phê duyệt','Những việc AI bắt buộc phải xin quyền từ bạn.'],
+    execution:['Thực thi','Các hành động thật được đưa qua cổng an toàn sau khi bạn phê duyệt.'],
     reports:['Báo cáo','Kết quả điều hành do CEO tổng hợp.'],
     office:['Văn phòng AI','Chế độ trực quan theo dõi AI đang làm việc.'],
     logs:['Nhật ký','Lịch sử quyết định và hành động của các AI.']
@@ -842,6 +898,26 @@
     }catch(e){ return clonePhase4Defaults(); }
   }
   let phase4State=getPhase4State();
+
+  const phase5Key='aiCompany.ceo.phase5.v1';
+  const executorConfig={
+    TrainingBot:{
+      repo:'Gamevalentine/trainingbot-cloudflare',
+      branch:'aion-sandbox',
+      workflow:'aion-safe-executor.yml',
+      workflowUrl:'https://github.com/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml',
+      runsApi:'https://api.github.com/repos/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml/runs?per_page=5'
+    }
+  };
+  function getPhase5State(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(phase5Key)||'null');
+      return saved&&Array.isArray(saved.executions)?saved:{executions:[],lastRun:null};
+    }catch(e){ return {executions:[],lastRun:null}; }
+  }
+  let phase5State=getPhase5State();
+  function savePhase5State(){ localStorage.setItem(phase5Key,JSON.stringify(phase5State)); }
+
   function savePhase4State(){
     localStorage.setItem(phase4Key,JSON.stringify(phase4State));
   }
@@ -935,6 +1011,88 @@
     });
   }
 
+  function queueExecutionForApproval(a){
+    if(a.status!=='approved') return;
+    if(phase5State.executions.some(x=>x.approvalId===a.id)) return;
+    const cfg=executorConfig[a.website];
+    const safeAction=(a.id==='APR-001'&&cfg)?'validate-sandbox':null;
+    phase5State.executions.unshift({
+      id:'EXE-'+a.id,
+      approvalId:a.id,
+      taskId:a.linkedTask||'',
+      website:a.website,
+      title:a.title,
+      status:safeAction?'ready':'blocked',
+      safeAction:safeAction||'',
+      environment:safeAction?cfg.branch:'production',
+      createdAt:new Date().toISOString()
+    });
+    savePhase5State();
+    addPhase4Log('ATLAS',safeAction?'Đã đưa '+a.id+' vào hàng đợi thực thi an toàn trên '+cfg.branch+'.':'Đã ghi nhận '+a.id+' nhưng chưa có executor an toàn phù hợp; production tiếp tục bị khóa.','Thực thi');
+  }
+
+  function executionStatusLabel(status){
+    return ({ready:'Sẵn sàng chạy',blocked:'Bị khóa',running:'Đang chạy',success:'Đã kiểm tra',failed:'Kiểm tra lỗi'}[status]||status);
+  }
+
+  function renderExecutionQueue(){
+    const host=document.getElementById('executionQueue');
+    if(!host) return;
+    const ready=phase5State.executions.filter(x=>x.status==='ready'||x.status==='running').length;
+    const nav=document.getElementById('navExecutionCount');if(nav)nav.textContent=ready;
+    const count=document.getElementById('executionQueueCount');if(count)count.textContent=phase5State.executions.length+' việc';
+    if(!phase5State.executions.length){
+      host.innerHTML='<p style="color:var(--muted);margin:0">Chưa có hành động nào được đưa vào hàng đợi. Khi bạn duyệt một yêu cầu phù hợp, ATLAS sẽ tạo lệnh thực thi ở đây.</p>';
+      return;
+    }
+    host.innerHTML=phase5State.executions.map(x=>{
+      const cfg=executorConfig[x.website];
+      const action=x.status==='ready'&&cfg?'<a class="small-btn approve executor-link" target="_blank" rel="noopener" href="'+cfg.workflowUrl+'">Mở GitHub để chạy ↗</a><button class="small-btn" data-copy-execution="'+escapeHtml(x.id)+'">Chép thông số</button>':'';
+      return '<div class="execution-item"><div class="execution-top"><div><b>'+escapeHtml(x.id)+' · '+escapeHtml(x.title)+'</b><div class="execution-meta">'+escapeHtml(x.website)+' · '+escapeHtml(x.environment)+' · từ '+escapeHtml(x.approvalId)+'</div></div><span class="'+(x.status==='blocked'?'badge warn':'badge')+'">'+escapeHtml(executionStatusLabel(x.status))+'</span></div>'+(x.status==='blocked'?'<div class="phase4-evidence"><b>Đang khóa:</b> hành động này có thể tác động production hoặc chưa có executor an toàn tương ứng.</div>':'<div class="phase4-evidence"><b>Thao tác:</b> validate-sandbox · <b>Task ID:</b> '+escapeHtml(x.taskId)+' · <b>Xác nhận:</b> AION-SANDBOX</div>')+'<div class="executor-actions">'+action+'</div></div>';
+    }).join('');
+    host.querySelectorAll('[data-copy-execution]').forEach(btn=>btn.onclick=async()=>{
+      const x=phase5State.executions.find(e=>e.id===btn.dataset.copyExecution);
+      if(!x) return;
+      const text='task_id='+x.taskId+' | operation=validate-sandbox | confirm=AION-SANDBOX';
+      try{ await navigator.clipboard.writeText(text); toast('Đã chép thông số thực thi.'); }
+      catch(e){ toast(text); }
+    });
+  }
+
+  async function refreshExecutorStatus(){
+    const badge=document.getElementById('executorLiveBadge');
+    const detail=document.getElementById('executorLiveDetail');
+    const time=document.getElementById('executorLiveTime');
+    const button=document.getElementById('executorRefresh');
+    if(!badge||!detail) return;
+    if(button){button.disabled=true;button.textContent='Đang kiểm tra...'}
+    badge.textContent='Đang đọc';
+    try{
+      const res=await fetch(executorConfig.TrainingBot.runsApi,{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data=await res.json();
+      const run=(data.workflow_runs||[])[0];
+      if(!run){
+        badge.textContent='Chưa có lần chạy';
+        detail.textContent='Workflow đã kết nối nhưng chưa có lịch sử thực thi.';
+      }else{
+        const label=run.status==='completed'?(run.conclusion==='success'?'Thành công':'Lỗi'):'Đang chạy';
+        badge.textContent=label;
+        badge.classList.toggle('warn',label==='Lỗi');
+        detail.textContent='Lần chạy #'+run.run_number+' · '+(run.name||'AION HQ Safe Executor')+' · '+label;
+        if(time) time.textContent='Cập nhật: '+new Date(run.updated_at||run.created_at).toLocaleString('vi-VN');
+        phase5State.lastRun={id:run.id,status:run.status,conclusion:run.conclusion,updatedAt:run.updated_at||run.created_at};
+        savePhase5State();
+      }
+    }catch(error){
+      badge.textContent='Không đọc được';
+      badge.classList.add('warn');
+      detail.textContent='Không lấy được trạng thái GitHub Actions ở lần kiểm tra này.';
+    }finally{
+      if(button){button.disabled=false;button.textContent='Kiểm tra trạng thái thật'}
+    }
+  }
+
   function approvalHtml(a){
     const riskClass=a.risk==='Cao'?'high':'med';
     return `<div class="approval" data-approval-id="${escapeHtml(a.id)}">
@@ -957,8 +1115,9 @@
         item.decidedAt=new Date().toISOString();
         const word=item.status==='approved'?'duyệt':'từ chối';
         addPhase4Log('Chủ sở hữu','Đã '+word+' '+item.id+' — '+item.title+'.','Phê duyệt');
+        if(item.status==='approved') queueExecutionForApproval(item);
         savePhase4State();renderPhase4();
-        toast(item.status==='approved'?'Đã ghi nhận phê duyệt. Chưa tự tác động website thật.':'Đã ghi nhận từ chối.');
+        toast(item.status==='approved'?'Đã duyệt. Nếu có executor an toàn, việc đã được đưa vào hàng đợi thực thi.':'Đã ghi nhận từ chối.');
       });
     });
     const count=pending.length;
@@ -1011,7 +1170,7 @@
     const summary=document.getElementById('ceoBriefSummary');
     const detail=document.getElementById('ceoBriefDetail');
     if(summary) summary.textContent='Tôi đang theo dõi '+phase4State.goals.length+' mục tiêu; còn '+activeGoals+' mục tiêu mở, '+active+' việc đang chạy và '+pending+' yêu cầu cần Chủ sở hữu quyết định.';
-    if(detail) detail.textContent='Giai đoạn 4 chỉ mô phỏng điều hành và ghi trạng thái trong trình duyệt. ATLAS chưa được tự deploy, sửa production, xóa dữ liệu, đổi DNS hoặc phát sinh chi phí.';
+    if(detail) detail.textContent='Giai đoạn 5 đã nối TrainingBot với bộ thực thi GitHub Actions trên nhánh aion-sandbox. Production, DNS, xóa dữ liệu, secret và chi phí vẫn bị khóa cho tới khi có cổng an toàn và phê duyệt riêng.';
   }
 
   function renderPhase4(){
@@ -1020,6 +1179,7 @@
     renderApprovals();
     renderOverviewAssigned();
     renderWebsiteApprovalSummaries();
+    renderExecutionQueue();
     renderLogs();
     renderReports();
     renderCeoBrief();
@@ -1190,6 +1350,9 @@
     ceoLiveRefresh.addEventListener('click',refreshCeoLiveData);
     refreshCeoLiveData();
   }
+
+  const executorRefresh=document.getElementById('executorRefresh');
+  if(executorRefresh) executorRefresh.addEventListener('click',refreshExecutorStatus);
 
   if(location.hash==='#office' || localStorage.getItem('aiCompanyView')==='office'){
     switchView('office');
