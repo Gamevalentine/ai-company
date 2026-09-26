@@ -1,0 +1,115 @@
+[
+  {
+    "agent_id": "OWNER",
+    "role": "owner",
+    "reports_to": null,
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [
+      "ATLAS"
+    ],
+    "allowed_tools": [],
+    "permissions": [
+      "owner_approve",
+      "read_all_audit"
+    ],
+    "prohibited_actions": []
+  },
+  {
+    "agent_id": "ATLAS",
+    "role": "ceo",
+    "reports_to": "OWNER",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [
+      "TB-01"
+    ],
+    "allowed_tools": [],
+    "permissions": [
+      "create_goal",
+      "assign_manager",
+      "ceo_review",
+      "read_manager_shared_memory"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "qa_pass",
+      "production_deploy"
+    ]
+  },
+  {
+    "agent_id": "TB-01",
+    "role": "manager",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [
+      "DEV-TB-01",
+      "QA-TB-01"
+    ],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_goal",
+      "create_subtask",
+      "manager_review",
+      "read_subordinate_shared_memory"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "qa_pass",
+      "production_deploy"
+    ]
+  },
+  {
+    "agent_id": "DEV-TB-01",
+    "role": "developer",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_safe_executor"
+    ],
+    "permissions": [
+      "read_source",
+      "sandbox_patch",
+      "sandbox_build",
+      "sandbox_compare",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "qa_pass",
+      "production_deploy",
+      "production_merge"
+    ]
+  },
+  {
+    "agent_id": "QA-TB-01",
+    "role": "qa",
+    "reports_to": "TB-01",
+    "project_scope": [
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [
+      "trainingbot_test_reader"
+    ],
+    "permissions": [
+      "read_artifact",
+      "run_qa",
+      "qa_result",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "production_deploy",
+      "change_acceptance_criteria"
+    ]
+  }
+]
