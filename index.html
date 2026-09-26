@@ -515,8 +515,8 @@
   function switchView(name){
     navButtons.forEach(b=>b.classList.toggle('active',b.dataset.view===name));
     views.forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
-    document.getElementById('pageTitle').textNội dung=titles[name][0];
-    document.getElementById('pageSubtitle').textNội dung=titles[name][1];
+    document.getElementById('pageTitle').textContent=titles[name][0];
+    document.getElementById('pageSubtitle').textContent=titles[name][1];
     document.getElementById('sidebar').classList.remove('open');
   }
   navButtons.forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
@@ -524,11 +524,11 @@
 
   const modal=document.getElementById('detailModal');
   document.querySelectorAll('.manager').forEach(m=>m.addEventListener('click',()=>{
-    document.getElementById('modalTitle').textNội dung=m.dataset.name+' Văn phòng';
-    document.getElementById('modalStatus').textNội dung='Trạng thái: '+m.dataset.status;
-    document.getElementById('modalStaff').textNội dung=m.dataset.staff;
-    document.getElementById('modalTasks').textNội dung=m.dataset.tasks;
-    document.getElementById('modalGoal').textNội dung=m.dataset.goal;
+    document.getElementById('modalTitle').textContent=m.dataset.name+' Văn phòng';
+    document.getElementById('modalStatus').textContent='Trạng thái: '+m.dataset.status;
+    document.getElementById('modalStaff').textContent=m.dataset.staff;
+    document.getElementById('modalTasks').textContent=m.dataset.tasks;
+    document.getElementById('modalGoal').textContent=m.dataset.goal;
     modal.classList.add('show');
   }));
   document.getElementById('modalClose').onclick=()=>modal.classList.remove('show');
@@ -542,12 +542,12 @@
 
   let approvalCount=3;
   function refreshApprovalCount(){
-    document.getElementById('approvalMetric').textNội dung=approvalCount;
-    document.getElementById('navApprovalCount').textNội dung=approvalCount;
-    document.getElementById('approvalHeader').textNội dung=approvalCount+' yêu cầu';
+    document.getElementById('approvalMetric').textContent=approvalCount;
+    document.getElementById('navApprovalCount').textContent=approvalCount;
+    document.getElementById('approvalHeader').textContent=approvalCount+' yêu cầu';
   }
   function toast(msg){
-    const t=document.getElementById('toast');t.textNội dung=msg;t.classList.add('show');
+    const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
     setTimeout(()=>t.classList.remove('show'),2200);
   }
   function bindApprovalButtons(scope=document){
