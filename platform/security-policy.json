@@ -31,5 +31,18 @@
     "exploit_execution": false
   },
   "recurring_schedule_enabled": false,
-  "status": "BRAIN_READY"
+  "status": "OPERATIONAL",
+  "live_verification": {
+    "run_id": "36273973588",
+    "conclusion": "success",
+    "result": "NEEDS_ATTENTION",
+    "critical_findings": 0,
+    "high_dependency_findings": 0,
+    "private_key_files": 0,
+    "committed_env_files": 0,
+    "attention_reason": [
+      "missing strict-transport-security header",
+      "missing content-security-policy header"
+    ]
+  }
 }
