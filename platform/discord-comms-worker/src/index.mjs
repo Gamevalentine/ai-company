@@ -1,3 +1,4 @@
+import { DurableObject } from 'cloudflare:workers';
 import {
   DEFAULT_CHANNEL_NAMES,
   hardGate,
@@ -135,9 +136,10 @@ async function classifyWithAi(env,message,context){
   catch{return {classification:'UNCERTAIN_OR_SENSITIVE',confidence:0,proposed_reply:'',reason:'invalid-ai-json'};}
 }
 
-export class DiscordCommsState {
-  constructor(state,env){
-    this.state=state;
+export class DiscordCommsState extends DurableObject {
+  constructor(ctx,env){
+    super(ctx,env);
+    this.state=ctx;
     this.env=env;
   }
 
