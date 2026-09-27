@@ -124,12 +124,14 @@
         "tự động trả lời các câu hỏi thông thường theo chính sách",
         "chuyển các trường hợp nhạy cảm hoặc không chắc chắn lên TB-01"
       ],
-      "status": "BRAIN_READY",
+      "status": "CONNECTOR_CODE_READY",
       "brain": "comms-brain.mjs",
       "workflow": "trainingbot-comms-check.yml",
       "live_run": "36290716872",
       "last_live_result": "CLASSIFIED_AND_ROUTED",
-      "external_connectors_status": "PENDING_AUTHORIZATION"
+      "external_connectors_status": "WAITING_ACCOUNT_AUTHORIZATION",
+      "connector_module": "comms-connectors.mjs",
+      "connector_status_run": "36291190844"
     }
   ],
   "governance": {
