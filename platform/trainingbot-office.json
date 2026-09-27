@@ -124,15 +124,16 @@
         "tự động trả lời các câu hỏi thông thường theo chính sách",
         "chuyển các trường hợp nhạy cảm hoặc không chắc chắn lên TB-01"
       ],
-      "status": "GMAIL_OPERATIONAL",
+      "status": "GMAIL_DISCORD_OPERATIONAL",
       "brain": "comms-brain.mjs",
       "workflow": "trainingbot-comms-check.yml",
       "live_run": "36290716872",
       "last_live_result": "CLASSIFIED_AND_ROUTED",
-      "external_connectors_status": "GMAIL_AUTHORIZED_FACEBOOK_DISCORD_PENDING",
+      "external_connectors_status": "GMAIL_DISCORD_AUTHORIZED_FACEBOOK_PENDING",
       "connector_module": "comms-connectors.mjs",
       "connector_status_run": "36291190844",
-      "gmail_live_run": "36294450644"
+      "gmail_live_run": "36294450644",
+      "discord_live_run": "36297271907"
     }
   ],
   "governance": {
