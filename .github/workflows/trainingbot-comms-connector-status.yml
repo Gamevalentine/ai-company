@@ -1,0 +1,40 @@
+name: TrainingBot COMMS Connector Status
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  connector-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout AION runtime
+        uses: actions/checkout@v4
+
+      - name: Check connector authorization state
+        env:
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+          META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { connectorStatus } from './platform/comms-connectors.mjs';
+          const status=connectorStatus(process.env);
+          console.log(JSON.stringify(status,null,2));
+          const summary=[
+            '# COMMS connector status',
+            '',
+            '- Gmail: **'+(status.gmail.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
+            '- Facebook: **'+(status.facebook.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
+            '- Discord: **'+(status.discord.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
+            '',
+            'No secret values are printed.'
+          ].join('\n');
+          await import('node:fs').then(fs=>fs.writeFileSync(process.env.GITHUB_STEP_SUMMARY,summary+'\n',{flag:'a'}));
+          NODE
