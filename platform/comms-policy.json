@@ -225,6 +225,24 @@
   "discord_connection": {
     "runtime_connector_wired": true,
     "authorization_status": "AUTHORIZED",
-    "live_smoke_run": "36297271907"
+    "live_smoke_run": "36297271907",
+    "inbound_worker": {
+      "status": "CODE_READY_DEPLOY_AUTH_REQUIRED",
+      "runtime": "Cloudflare Worker scheduled polling",
+      "path": "platform/discord-comms-worker",
+      "test_run": "36297765599",
+      "test_conclusion": "success",
+      "deploy_run": "36297805808",
+      "deploy_conclusion": "failure",
+      "deploy_blocker": "CLOUDFLARE_API_TOKEN missing",
+      "auto_reply_gate": "USER_GAME_OR_TRAININGBOT_QUESTION && confidence >= 0.90",
+      "max_ai_calls_per_day": 40,
+      "allowed_channels": [
+        "chung",
+        "beta-pubg-mobile",
+        "pubg-mobile-flash",
+        "nhóm-chat-cộng-đồng"
+      ]
+    }
   }
 }
