@@ -66,7 +66,7 @@
     "telegram",
     "other_approved_group"
   ],
-  "status": "CHANNELS_DECLARED",
+  "status": "BRAIN_READY",
   "channels": {
     "email": {
       "address": "trainingbot.ai2@gmail.com",
@@ -154,5 +154,24 @@
       "source": "discord_community",
       "reply_channel": "same_discord_channel"
     }
-  ]
+  ],
+  "brain": "comms-brain.mjs",
+  "workflow": "trainingbot-comms-check.yml",
+  "live_verification": {
+    "run_id": "36290716872",
+    "conclusion": "success",
+    "result": "USER_GAME_OR_TRAININGBOT_QUESTION -> AUTO_REPLY -> gmail",
+    "external_send_performed": false
+  },
+  "gmail_connection": {
+    "authenticated_account": "trainingbot.ai2@gmail.com",
+    "verified_in_chat": true,
+    "runtime_connector_wired": false,
+    "labels_created": [
+      "TB-HOI-GAME",
+      "TB-THONG-BAO",
+      "TB-CAN-XEM",
+      "TB-DA-TRA-LOI"
+    ]
+  }
 }
