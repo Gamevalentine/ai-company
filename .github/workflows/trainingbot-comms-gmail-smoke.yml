@@ -1,0 +1,73 @@
+name: TrainingBot COMMS Gmail Smoke Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trainingbot-comms-gmail-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-comms-gmail-smoke
+  cancel-in-progress: false
+
+jobs:
+  gmail-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout AION runtime
+        uses: actions/checkout@v4
+
+      - name: Run Gmail live read-send-label smoke test
+        env:
+          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          GMAIL_FROM: trainingbot.ai2@gmail.com
+        run: |
+          node --input-type=module <<'NODE'
+          import {
+            getGmailProfile,
+            sendGmailReply,
+            searchGmailMessages,
+            applyGmailLabel
+          } from './platform/comms-connectors.mjs';
+
+          const expected='trainingbot.ai2@gmail.com';
+          const profile=await getGmailProfile();
+          if(profile.email_address!==expected){
+            throw new Error('Unexpected Gmail identity');
+          }
+
+          const subject='AION COMMS Gmail smoke '+process.env.GITHUB_RUN_ID;
+          const sent=await sendGmailReply({
+            to:expected,
+            subject,
+            body:'Đây là thư kiểm tra kết nối Gmail của COMMS-TB-01. Không cần trả lời.'
+          });
+
+          let found=[];
+          for(let i=0;i<6;i++){
+            found=await searchGmailMessages('subject:"'+subject.replaceAll('"','')+'"');
+            if(found.length) break;
+            await new Promise(r=>setTimeout(r,5000));
+          }
+          if(!found.length) throw new Error('Smoke-test message was sent but not found by Gmail search');
+
+          const labeled=await applyGmailLabel(found[0].id,'TB-DA-TRA-LOI');
+
+          console.log(JSON.stringify({
+            gmail_authorized:true,
+            identity:profile.email_address,
+            send_ok:Boolean(sent.sent),
+            search_ok:true,
+            label_ok:Boolean(labeled.labeled),
+            label:'TB-DA-TRA-LOI',
+            secret_values_printed:false
+          },null,2));
+          NODE
