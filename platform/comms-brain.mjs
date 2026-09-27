@@ -32,6 +32,22 @@ const SCHEMA={
 
 function norm(v){ return String(v||'').toLowerCase(); }
 
+function sanitizeReply(value){
+  const text=String(value||'').trim();
+  if(!text) return '';
+  const parts=text.split(/(?<=[.!?])\s+/).map(x=>x.trim()).filter(Boolean);
+  const seen=new Set();
+  const kept=[];
+  for(const part of parts){
+    const key=part.toLowerCase().replace(/\s+/g,' ');
+    if(seen.has(key)) continue;
+    seen.add(key);
+    kept.push(part);
+    if(kept.join(' ').length>=650) break;
+  }
+  return kept.join(' ').slice(0,700).trim();
+}
+
 export function routeForSource(source){
   const map={
     'trainingbot.io.vn':{reply_channel:'gmail',reply_identity:'trainingbot.ai2@gmail.com'},
@@ -143,7 +159,7 @@ export function applyCommsGate(ai,message={}){
       confidence,
       route,
       reason:'Low confidence or sensitive/uncertain content',
-      proposed_reply:ai?.proposed_reply||'',
+      proposed_reply:sanitizeReply(ai?.proposed_reply),
       sensitive_flags:ai?.sensitive_flags||[],
       overridden:false
     };
@@ -158,7 +174,7 @@ export function applyCommsGate(ai,message={}){
       reason:!approvedContext
         ? 'No approved public context was supplied for safe automatic answering'
         : 'Confidence is below the automatic-reply threshold',
-      proposed_reply:ai?.proposed_reply||'',
+      proposed_reply:sanitizeReply(ai?.proposed_reply),
       sensitive_flags:ai?.sensitive_flags||[],
       overridden:false
     };
@@ -170,7 +186,7 @@ export function applyCommsGate(ai,message={}){
     confidence,
     route,
     reason:'High-confidence user question grounded in approved context',
-    proposed_reply:ai?.proposed_reply||'',
+    proposed_reply:sanitizeReply(ai?.proposed_reply),
     sensitive_flags:ai?.sensitive_flags||[],
     overridden:false
   };
