@@ -28,7 +28,7 @@ export function connectorStatus(env=process.env){
   };
 }
 
-async function gmailAccessToken(env,fetchImpl){
+export async function gmailAccessToken(env,fetchImpl){
   const clientId=required(env,'GMAIL_CLIENT_ID');
   const clientSecret=required(env,'GMAIL_CLIENT_SECRET');
   const refreshToken=required(env,'GMAIL_REFRESH_TOKEN');
@@ -49,6 +49,51 @@ async function gmailAccessToken(env,fetchImpl){
   const json=await res.json();
   if(!json.access_token) throw new Error('Gmail OAuth refresh returned no access token');
   return json.access_token;
+}
+
+export async function getGmailProfile({env=process.env,fetchImpl=fetch}={}){
+  const token=await gmailAccessToken(env,fetchImpl);
+  const res=await fetchImpl('https://gmail.googleapis.com/gmail/v1/users/me/profile',{
+    headers:{authorization:'Bearer '+token}
+  });
+  if(!res.ok) throw new Error('Gmail profile read failed: '+res.status);
+  const out=await res.json();
+  return {email_address:out.emailAddress||null,messages_total:out.messagesTotal??null,threads_total:out.threadsTotal??null};
+}
+
+export async function listGmailLabels({env=process.env,fetchImpl=fetch}={}){
+  const token=await gmailAccessToken(env,fetchImpl);
+  const res=await fetchImpl('https://gmail.googleapis.com/gmail/v1/users/me/labels',{
+    headers:{authorization:'Bearer '+token}
+  });
+  if(!res.ok) throw new Error('Gmail label list failed: '+res.status);
+  const out=await res.json();
+  return Array.isArray(out.labels)?out.labels.map(x=>({id:x.id,name:x.name,type:x.type||null})):[];
+}
+
+export async function searchGmailMessages(query,{env=process.env,fetchImpl=fetch}={}){
+  const token=await gmailAccessToken(env,fetchImpl);
+  const res=await fetchImpl('https://gmail.googleapis.com/gmail/v1/users/me/messages?q='+encodeURIComponent(query)+'&maxResults=10',{
+    headers:{authorization:'Bearer '+token}
+  });
+  if(!res.ok) throw new Error('Gmail search failed: '+res.status);
+  const out=await res.json();
+  return Array.isArray(out.messages)?out.messages:[];
+}
+
+export async function applyGmailLabel(messageId,labelName,{env=process.env,fetchImpl=fetch}={}){
+  const labels=await listGmailLabels({env,fetchImpl});
+  const label=labels.find(x=>x.name===labelName);
+  if(!label) throw new Error('Gmail label not found: '+labelName);
+  const token=await gmailAccessToken(env,fetchImpl);
+  const res=await fetchImpl('https://gmail.googleapis.com/gmail/v1/users/me/messages/'+encodeURIComponent(messageId)+'/modify',{
+    method:'POST',
+    headers:{authorization:'Bearer '+token,'content-type':'application/json'},
+    body:JSON.stringify({addLabelIds:[label.id]})
+  });
+  if(!res.ok) throw new Error('Gmail label apply failed: '+res.status);
+  const out=await res.json();
+  return {message_id:out.id||messageId,label_name:labelName,labeled:true};
 }
 
 export async function sendGmailReply(action,{env=process.env,fetchImpl=fetch}={}){
