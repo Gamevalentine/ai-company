@@ -227,13 +227,13 @@
     "authorization_status": "AUTHORIZED",
     "live_smoke_run": "36297271907",
     "inbound_worker": {
-      "status": "CODE_READY_DEPLOY_AUTH_REQUIRED",
+      "status": "DEPLOYED_AND_INITIALIZED",
       "runtime": "Cloudflare Worker scheduled polling",
       "path": "platform/discord-comms-worker",
       "test_run": "36297765599",
       "test_conclusion": "success",
-      "deploy_run": "36297805808",
-      "deploy_conclusion": "failure",
+      "deploy_run": "36299310896",
+      "deploy_conclusion": "success",
       "deploy_blocker": "CLOUDFLARE_API_TOKEN missing",
       "auto_reply_gate": "USER_GAME_OR_TRAININGBOT_QUESTION && confidence >= 0.90",
       "max_ai_calls_per_day": 40,
@@ -242,7 +242,26 @@
         "beta-pubg-mobile",
         "pubg-mobile-flash",
         "nhóm-chat-cộng-đồng"
-      ]
+      ],
+      "url": "https://trainingbot-comms-discord.ai-vn.workers.dev",
+      "smoke_run": "36299341602",
+      "smoke_conclusion": "success",
+      "bot": "TrainingBot COMMS",
+      "guild": "TrainingBot",
+      "channels": [
+        "chung",
+        "beta-pubg-mobile",
+        "pubg-mobile-flash",
+        "nhóm-chat-cộng-đồng"
+      ],
+      "first_cursor_initialized": true,
+      "last_smoke_counts": {
+        "seen": 0,
+        "replied": 0,
+        "escalated": 0,
+        "ignored": 0,
+        "ai_calls": 0
+      }
     }
   }
 }
