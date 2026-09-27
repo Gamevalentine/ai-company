@@ -295,7 +295,9 @@
       "TrainingBot"
     ],
     "can_assign_to": [],
-    "allowed_tools": [],
+    "allowed_tools": [
+      "trainingbot_comms_classifier"
+    ],
     "permissions": [
       "read_support_mail",
       "triage_inbox",
@@ -305,7 +307,10 @@
       "draft_group_reply",
       "send_approved_group_reply",
       "escalate_to_manager",
-      "submit_evidence"
+      "submit_evidence",
+      "classify_inbound_message",
+      "route_reply_channel",
+      "apply_comms_labels"
     ],
     "prohibited_actions": [
       "change_account_credentials",
