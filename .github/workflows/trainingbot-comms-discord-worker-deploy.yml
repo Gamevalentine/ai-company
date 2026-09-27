@@ -1,4 +1,5 @@
 name: TrainingBot COMMS Discord Worker Deploy
+# redeploy durable object fix
 
 on:
   push:
