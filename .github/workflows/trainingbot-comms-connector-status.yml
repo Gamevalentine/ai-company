@@ -2,6 +2,10 @@ name: TrainingBot COMMS Connector Status
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trainingbot-comms-connector-status.yml
 
 permissions:
   contents: read
