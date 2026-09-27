@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "trainingbot-comms-discord",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-09-27",
+  "workers_dev": true,
+  "ai": {
+    "binding": "AI"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "DISCORD_COMMS_STATE",
+        "class_name": "DiscordCommsState"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DiscordCommsState"]
+    }
+  ],
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
+  "vars": {
+    "AI_MODEL": "@cf/meta/llama-3.2-1b-instruct",
+    "MAX_AI_CALLS_PER_DAY": "40",
+    "DISCORD_CHANNEL_NAMES": "chung,beta-pubg-mobile,pubg-mobile-flash,nhóm-chat-cộng-đồng"
+  }
+}
