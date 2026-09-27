@@ -1,0 +1,50 @@
+name: TrainingBot COMMS Discord Inbound Smoke v3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trainingbot-comms-discord-inbound-smoke-v3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve Cloudflare account
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID="$(curl -fsS https://api.cloudflare.com/client/v4/accounts             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"             -H "Content-Type: application/json"             | jq -r '.result[0].id // empty')"
+          test -n "$ACCOUNT_ID"
+          echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
+
+      - name: Install Wrangler
+        working-directory: platform/discord-comms-worker
+        run: npm install --no-audit --no-fund
+
+      - name: Health check
+        run: |
+          set -euo pipefail
+          curl -fsS https://trainingbot-comms-discord.ai-vn.workers.dev/health | tee health.json
+          jq -e '.ok == true and .service == "trainingbot-comms-discord"' health.json >/dev/null
+
+      - name: Initialize inbound cursor safely
+        working-directory: platform/discord-comms-worker
+        run: |
+          set -euo pipefail
+          ADMIN_KEY="$(openssl rand -hex 32)"
+          printf '%s' "$ADMIN_KEY" | npx wrangler secret put ADMIN_KEY >/dev/null
+          sleep 10
+          HTTP_CODE="$(curl -sS -o response.json -w '%{http_code}' https://trainingbot-comms-discord.ai-vn.workers.dev/run             -H "Authorization: Bearer $ADMIN_KEY")"
+          jq . response.json
+          test "$HTTP_CODE" = "200"
+          jq -e '.ok == true and .bot == "TrainingBot COMMS" and .guild == "TrainingBot"' response.json >/dev/null
