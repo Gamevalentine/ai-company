@@ -89,7 +89,7 @@
     },
     "discord": {
       "invite_url": "https://discord.gg/fSWdn7CdMm",
-      "status": "ROUTING_DEFINED_NOT_CONNECTED",
+      "status": "AUTHORIZED",
       "reply_mode": "community_channel_chat",
       "behavior": [
         "Theo dõi các kênh cộng đồng đã được cấp quyền",
@@ -178,7 +178,7 @@
   },
   "connector_runtime": {
     "module": "comms-connectors.mjs",
-    "status": "GMAIL_AUTHORIZED_FACEBOOK_DISCORD_PENDING",
+    "status": "GMAIL_DISCORD_AUTHORIZED_FACEBOOK_PENDING",
     "github_status_run": "36294381801",
     "github_status_result": {
       "gmail": "WAITING_AUTHORIZATION",
@@ -210,6 +210,21 @@
       "label_ok": true,
       "label": "TB-DA-TRA-LOI",
       "secret_values_printed": false
+    },
+    "discord_smoke_run": "36297271907",
+    "discord_smoke_result": {
+      "authorized": true,
+      "bot_username": "TrainingBot COMMS",
+      "guild_name": "TrainingBot",
+      "guild_id_match": true,
+      "channel_name": "chung",
+      "send_ok": true,
+      "secret_values_printed": false
     }
+  },
+  "discord_connection": {
+    "runtime_connector_wired": true,
+    "authorization_status": "AUTHORIZED",
+    "live_smoke_run": "36297271907"
   }
 }
