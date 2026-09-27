@@ -173,5 +173,31 @@
       "TB-CAN-XEM",
       "TB-DA-TRA-LOI"
     ]
+  },
+  "connector_runtime": {
+    "module": "comms-connectors.mjs",
+    "status": "CODE_READY_AUTH_REQUIRED",
+    "github_status_run": "36291190844",
+    "github_status_result": {
+      "gmail": "WAITING_AUTHORIZATION",
+      "facebook": "WAITING_AUTHORIZATION",
+      "discord": "WAITING_AUTHORIZATION"
+    },
+    "secret_names": {
+      "gmail": [
+        "GMAIL_CLIENT_ID",
+        "GMAIL_CLIENT_SECRET",
+        "GMAIL_REFRESH_TOKEN"
+      ],
+      "facebook": [
+        "META_PAGE_ID",
+        "META_PAGE_ACCESS_TOKEN"
+      ],
+      "discord": [
+        "DISCORD_BOT_TOKEN",
+        "DISCORD_GUILD_ID"
+      ]
+    },
+    "note": "Không lưu giá trị secret trong source hoặc log."
   }
 }
