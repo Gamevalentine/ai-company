@@ -1,0 +1,22 @@
+name: TrainingBot COMMS Discord Worker Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "platform/discord-comms-worker/**"
+      - ".github/workflows/trainingbot-comms-discord-worker-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test inbound safety and reply gates
+        working-directory: platform/discord-comms-worker
+        run: npm test
