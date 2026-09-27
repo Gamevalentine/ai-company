@@ -52,7 +52,12 @@
     "no_paid_actions": true,
     "no_credential_changes": true,
     "no_sensitive_data_sharing": true,
-    "manager_escalation_required_for_sensitive_cases": true
+    "manager_escalation_required_for_sensitive_cases": true,
+    "same_channel_reply_preferred": true,
+    "website_support_uses_gmail_only": true,
+    "facebook_comment_stays_in_comment_thread": true,
+    "messenger_stays_in_messenger": true,
+    "discord_stays_in_same_community_channel": true
   },
   "supported_channel_slots": [
     "trainingbot_support_email",
@@ -65,15 +70,44 @@
   "channels": {
     "email": {
       "address": "trainingbot.ai2@gmail.com",
-      "status": "READY_FOR_OAUTH"
+      "status": "READY_FOR_OAUTH",
+      "role": "TrainingBot support mailbox",
+      "reply_mode": "direct_email_reply"
     },
     "facebook": {
       "url": "https://www.facebook.com/profile.php?id=61594602669110",
-      "status": "REFERENCE_ADDED_NOT_CONNECTED"
+      "status": "ROUTING_DEFINED_NOT_CONNECTED",
+      "reply_modes": [
+        "comment_reply",
+        "messenger_direct_reply"
+      ],
+      "behavior": [
+        "Nếu khách bình luận câu hỏi phù hợp thì trả lời ngay tại luồng bình luận",
+        "Nếu khách nhắn Messenger thì trả lời trực tiếp trong Messenger",
+        "Không tự chuyển sang kênh khác trừ khi cần bảo mật hoặc người dùng yêu cầu"
+      ]
     },
     "discord": {
       "invite_url": "https://discord.gg/fSWdn7CdMm",
-      "status": "REFERENCE_ADDED_NOT_CONNECTED"
+      "status": "ROUTING_DEFINED_NOT_CONNECTED",
+      "reply_mode": "community_channel_chat",
+      "behavior": [
+        "Theo dõi các kênh cộng đồng đã được cấp quyền",
+        "Trả lời trực tiếp trong kênh chat nơi câu hỏi xuất hiện",
+        "Không tự nhắn riêng thành viên trừ khi chính sách cho phép hoặc người dùng yêu cầu"
+      ]
+    },
+    "website_support": {
+      "source": "https://trainingbot.io.vn/",
+      "reply_via": "email",
+      "outbound_identity": "trainingbot.ai2@gmail.com",
+      "behavior": [
+        "Nhận yêu cầu/liên hệ phát sinh từ website TrainingBot",
+        "Phân loại nội dung trước khi phản hồi",
+        "Gửi câu trả lời bằng trainingbot.ai2@gmail.com",
+        "Không gửi từ địa chỉ khác nếu chưa được Chủ sở hữu cho phép"
+      ],
+      "status": "ROUTING_DEFINED"
     }
   },
   "classification": {
@@ -101,5 +135,24 @@
       "TB-CAN-XEM",
       "TB-DA-TRA-LOI"
     ]
-  }
+  },
+  "routing_rules": [
+    {
+      "source": "trainingbot.io.vn",
+      "reply_channel": "gmail",
+      "reply_identity": "trainingbot.ai2@gmail.com"
+    },
+    {
+      "source": "facebook_comment",
+      "reply_channel": "facebook_comment_thread"
+    },
+    {
+      "source": "facebook_messenger",
+      "reply_channel": "facebook_messenger"
+    },
+    {
+      "source": "discord_community",
+      "reply_channel": "same_discord_channel"
+    }
+  ]
 }
