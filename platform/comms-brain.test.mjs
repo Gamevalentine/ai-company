@@ -105,3 +105,18 @@ test('AI classification is still constrained by confidence threshold',async()=>{
   assert.equal(r.decision,'DRAFT_ONLY');
   assert.equal(r.route.reply_identity,'trainingbot.ai2@gmail.com');
 });
+
+
+test('COMMS removes repeated reply sentences',()=>{
+  const r=applyCommsGate({
+    classification:'USER_GAME_OR_TRAININGBOT_QUESTION',
+    confidence:0.95,
+    proposed_reply:'Xin chào bạn. Xin chào bạn. Đây là câu trả lời.',
+    sensitive_flags:[]
+  },{
+    source:'trainingbot.io.vn',
+    approved_context:'Thông tin công khai đã được duyệt.'
+  });
+  assert.equal(r.decision,'AUTO_REPLY');
+  assert.equal(r.proposed_reply,'Xin chào bạn. Đây là câu trả lời.');
+});
