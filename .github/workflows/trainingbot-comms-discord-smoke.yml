@@ -1,0 +1,75 @@
+name: TrainingBot COMMS Discord Smoke Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trainingbot-comms-discord-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-comms-discord-smoke
+  cancel-in-progress: false
+
+jobs:
+  discord-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout AION runtime
+        uses: actions/checkout@v4
+
+      - name: Verify bot in guild and send safe test message
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+        run: |
+          node --input-type=module <<'NODE'
+          const token=process.env.DISCORD_BOT_TOKEN;
+          const guildId=process.env.DISCORD_GUILD_ID;
+          if(!token||!guildId) throw new Error('Missing Discord secret(s)');
+
+          const headers={authorization:'Bot '+token,'content-type':'application/json'};
+
+          const meRes=await fetch('https://discord.com/api/v10/users/@me',{headers});
+          if(!meRes.ok) throw new Error('Discord bot identity check failed: '+meRes.status);
+          const me=await meRes.json();
+
+          const guildRes=await fetch('https://discord.com/api/v10/guilds/'+guildId,{headers});
+          if(!guildRes.ok) throw new Error('Discord guild access failed: '+guildRes.status);
+          const guild=await guildRes.json();
+
+          const channelsRes=await fetch('https://discord.com/api/v10/guilds/'+guildId+'/channels',{headers});
+          if(!channelsRes.ok) throw new Error('Discord channel list failed: '+channelsRes.status);
+          const channels=await channelsRes.json();
+
+          // Prefer the normal text channel named "chung". Fallback to another writable text channel.
+          const textChannels=channels.filter(c=>c.type===0);
+          const target=textChannels.find(c=>String(c.name).toLowerCase()==='chung') || textChannels[0];
+          if(!target) throw new Error('No standard text channel available for smoke test');
+
+          const msgRes=await fetch('https://discord.com/api/v10/channels/'+target.id+'/messages',{
+            method:'POST',
+            headers,
+            body:JSON.stringify({content:'[AION TEST] TrainingBot COMMS đã kết nối Discord thành công. Đây là tin nhắn kiểm tra hệ thống, không cần trả lời.'})
+          });
+          if(!msgRes.ok){
+            const body=await msgRes.text();
+            throw new Error('Discord send failed: '+msgRes.status+' '+body.slice(0,200));
+          }
+          const msg=await msgRes.json();
+
+          console.log(JSON.stringify({
+            discord_authorized:true,
+            bot_username:me.username,
+            guild_name:guild.name,
+            guild_id_match:guild.id===guildId,
+            channel_name:target.name,
+            send_ok:Boolean(msg.id),
+            secret_values_printed:false
+          },null,2));
+          NODE
