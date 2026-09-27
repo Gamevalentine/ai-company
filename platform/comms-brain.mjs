@@ -62,7 +62,6 @@ export function hardClassify(message={}){
     /cảnh báo đăng nhập/,
     /new sign[- ]in/,
     /password (changed|reset)/,
-    /đổi mật khẩu/,
     /security alert/,
     /auto-submitted/,
     /precedence bulk/,
