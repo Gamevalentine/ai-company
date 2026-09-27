@@ -1,0 +1,60 @@
+name: TrainingBot COMMS Discord Worker Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trainingbot-comms-discord-worker-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-comms-discord-worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: platform/discord-comms-worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard deploy authorization
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+        run: |
+          set -euo pipefail
+          for k in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID DISCORD_BOT_TOKEN DISCORD_GUILD_ID; do
+            if [ -z "${!k:-}" ]; then
+              echo "::error::Missing required repository secret: $k"
+              exit 1
+            fi
+          done
+          echo "Required deployment credentials are present. Values are masked and were not printed."
+
+      - name: Install Wrangler
+        run: npm install --no-audit --no-fund
+
+      - name: Test policy gates
+        run: npm test
+
+      - name: Deploy isolated Worker
+        run: npx wrangler deploy
+
+      - name: Sync Discord connector secrets
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+        run: |
+          printf '%s' "$DISCORD_BOT_TOKEN" | npx wrangler secret put DISCORD_BOT_TOKEN
+          printf '%s' "$DISCORD_GUILD_ID" | npx wrangler secret put DISCORD_GUILD_ID
+          echo "Discord Worker secrets synchronized without printing values."
