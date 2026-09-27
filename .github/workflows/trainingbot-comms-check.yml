@@ -1,0 +1,118 @@
+name: TrainingBot COMMS Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: Message source
+        required: false
+        default: trainingbot.io.vn
+        type: choice
+        options:
+          - trainingbot.io.vn
+          - email
+          - facebook_comment
+          - facebook_messenger
+          - discord_community
+      sender:
+        description: Sender identifier
+        required: false
+        default: player@example.com
+        type: string
+      subject:
+        description: Optional subject
+        required: false
+        default: Hỏi về TrainingBot
+        type: string
+      body:
+        description: Inbound message
+        required: false
+        default: Cho mình hỏi thông tin bản cập nhật mới?
+        type: string
+      approved_context:
+        description: Approved public context for reply grounding
+        required: false
+        default: TrainingBot chỉ trả lời dựa trên nội dung công khai đã được duyệt.
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/trainingbot-comms-check.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-comms-check
+  cancel-in-progress: false
+
+jobs:
+  comms-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout AION runtime
+        uses: actions/checkout@v4
+
+      - name: Build inbound message fixture
+        env:
+          SOURCE: ${{ inputs.source || 'trainingbot.io.vn' }}
+          SENDER: ${{ inputs.sender || 'player@example.com' }}
+          SUBJECT: ${{ inputs.subject || 'Hỏi về TrainingBot' }}
+          BODY: ${{ inputs.body || 'Cho mình hỏi thông tin bản cập nhật mới?' }}
+          APPROVED_CONTEXT: ${{ inputs.approved_context || 'TrainingBot chỉ trả lời dựa trên nội dung công khai đã được duyệt.' }}
+        run: |
+          set -euo pipefail
+          jq -n             --arg source "$SOURCE"             --arg sender "$SENDER"             --arg subject "$SUBJECT"             --arg body "$BODY"             --arg approved_context "$APPROVED_CONTEXT"             '{
+              source:$source,
+              sender:$sender,
+              subject:$subject,
+              body:$body,
+              approved_context:$approved_context,
+              headers:{},
+              fixture:true
+            }' > comms-input.json
+          cat comms-input.json
+
+      - name: Install local AI runtime
+        run: |
+          timeout 120s bash -c 'curl -fsSL https://ollama.com/install.sh | sh'
+          nohup ollama serve >/tmp/ollama.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/ollama.log
+          exit 1
+
+      - name: Pull COMMS model
+        run: timeout 180s ollama pull qwen2.5:1.5b-instruct
+
+      - name: COMMS-TB-01 classifies and routes
+        env:
+          AION_LOCAL_MODEL: qwen2.5:1.5b-instruct
+        run: |
+          timeout 150s node platform/comms-brain.mjs process             --input comms-input.json             --output comms-report.json             --markdown comms-report.md
+          cat comms-report.json
+          cat comms-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Assert outbound connectors remain locked
+        run: |
+          set -euo pipefail
+          if jq -e '.external_send_performed == false' comms-report.json >/dev/null; then
+            echo "No external send performed during COMMS validation."
+          else
+            echo "Unexpected external send flag."
+            exit 1
+          fi
+
+      - name: Upload COMMS evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: trainingbot-comms-${{ github.run_id }}
+          path: |
+            comms-input.json
+            comms-report.json
+            comms-report.md
+          retention-days: 7
