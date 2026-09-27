@@ -61,5 +61,45 @@
     "telegram",
     "other_approved_group"
   ],
-  "status": "IDENTITY_READY"
+  "status": "CHANNELS_DECLARED",
+  "channels": {
+    "email": {
+      "address": "trainingbot.ai2@gmail.com",
+      "status": "READY_FOR_OAUTH"
+    },
+    "facebook": {
+      "url": "https://www.facebook.com/profile.php?id=61594602669110",
+      "status": "REFERENCE_ADDED_NOT_CONNECTED"
+    },
+    "discord": {
+      "invite_url": "https://discord.gg/fSWdn7CdMm",
+      "status": "REFERENCE_ADDED_NOT_CONNECTED"
+    }
+  },
+  "classification": {
+    "classes": [
+      "USER_GAME_OR_TRAININGBOT_QUESTION",
+      "ACCOUNT_OR_SYSTEM_NOTIFICATION",
+      "UNCERTAIN_OR_SENSITIVE"
+    ],
+    "hard_filters": [
+      "no-reply/noreply senders",
+      "OTP or verification code",
+      "login/security alert",
+      "password/account notification",
+      "billing/receipt/system notification",
+      "automated bulk/newsletter headers"
+    ],
+    "confidence_rules": {
+      "auto_reply_min": 0.9,
+      "draft_only_min": 0.6,
+      "below_draft": "ESCALATE_TO_TB-01"
+    },
+    "labels": [
+      "TB-HOI-GAME",
+      "TB-THONG-BAO",
+      "TB-CAN-XEM",
+      "TB-DA-TRA-LOI"
+    ]
+  }
 }
