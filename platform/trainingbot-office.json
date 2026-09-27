@@ -124,7 +124,7 @@
         "tự động trả lời các câu hỏi thông thường theo chính sách",
         "chuyển các trường hợp nhạy cảm hoặc không chắc chắn lên TB-01"
       ],
-      "status": "GMAIL_DISCORD_OUTBOUND_OPERATIONAL_INBOUND_CODE_READY",
+      "status": "GMAIL_DISCORD_INBOUND_RUNTIME_READY",
       "brain": "comms-brain.mjs",
       "workflow": "trainingbot-comms-check.yml",
       "live_run": "36290716872",
@@ -134,9 +134,10 @@
       "connector_status_run": "36291190844",
       "gmail_live_run": "36294450644",
       "discord_live_run": "36297271907",
-      "discord_inbound_status": "DEPLOY_AUTH_REQUIRED",
+      "discord_inbound_status": "DEPLOYED_INITIALIZED_AWAITING_REAL_USER_REPLY_TEST",
       "discord_inbound_test_run": "36297765599",
-      "discord_inbound_deploy_run": "36297805808"
+      "discord_inbound_deploy_run": "36299310896",
+      "discord_inbound_smoke_run": "36299341602"
     }
   ],
   "governance": {
