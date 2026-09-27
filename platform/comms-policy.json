@@ -70,7 +70,7 @@
   "channels": {
     "email": {
       "address": "trainingbot.ai2@gmail.com",
-      "status": "READY_FOR_OAUTH",
+      "status": "AUTHORIZED",
       "role": "TrainingBot support mailbox",
       "reply_mode": "direct_email_reply"
     },
@@ -166,18 +166,20 @@
   "gmail_connection": {
     "authenticated_account": "trainingbot.ai2@gmail.com",
     "verified_in_chat": true,
-    "runtime_connector_wired": false,
+    "runtime_connector_wired": true,
     "labels_created": [
       "TB-HOI-GAME",
       "TB-THONG-BAO",
       "TB-CAN-XEM",
       "TB-DA-TRA-LOI"
-    ]
+    ],
+    "authorization_status": "AUTHORIZED",
+    "live_smoke_run": "36294450644"
   },
   "connector_runtime": {
     "module": "comms-connectors.mjs",
-    "status": "CODE_READY_AUTH_REQUIRED",
-    "github_status_run": "36291190844",
+    "status": "GMAIL_AUTHORIZED_FACEBOOK_DISCORD_PENDING",
+    "github_status_run": "36294381801",
     "github_status_result": {
       "gmail": "WAITING_AUTHORIZATION",
       "facebook": "WAITING_AUTHORIZATION",
@@ -198,6 +200,16 @@
         "DISCORD_GUILD_ID"
       ]
     },
-    "note": "Không lưu giá trị secret trong source hoặc log."
+    "note": "Không lưu giá trị secret trong source hoặc log.",
+    "gmail_smoke_run": "36294450644",
+    "gmail_smoke_result": {
+      "authorized": true,
+      "identity": "trainingbot.ai2@gmail.com",
+      "send_ok": true,
+      "search_ok": true,
+      "label_ok": true,
+      "label": "TB-DA-TRA-LOI",
+      "secret_values_printed": false
+    }
   }
 }
