@@ -1,0 +1,33 @@
+{
+  "agent_id": "IDEA-01",
+  "task_id": "string",
+  "status": "READY_FOR_CEO_REVIEW | NEEDS_DECISION",
+  "summary": "string",
+  "problem": "string",
+  "goal": "string",
+  "target_users": ["string"],
+  "scope": {
+    "in": ["string"],
+    "out": ["string"],
+    "non_goals": ["string"]
+  },
+  "requirements": [
+    {
+      "id": "REQ-01",
+      "priority": "must | should | could",
+      "description": "string"
+    }
+  ],
+  "user_flow": ["string"],
+  "acceptance_criteria": ["string"],
+  "assumptions": ["string"],
+  "dependencies": ["string"],
+  "risks": [
+    {
+      "risk": "string",
+      "mitigation": "string"
+    }
+  ],
+  "recommended_assignees": ["string"],
+  "decisions_required": ["string"]
+}
