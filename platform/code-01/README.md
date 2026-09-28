@@ -2,7 +2,7 @@
 
 Standalone independent AI coding employee.
 
-CODE-01 is visible in AION HQ's employee directory for convenience, but is not part of the AION HQ reporting chain. It reports directly to the Owner.
+CODE-01 is an independent coding employee inside AION HQ. It does not belong to any website department and reports directly to CEO ATLAS. The Owner remains the ultimate approval authority for production risk, destructive actions, and spending.
 
 ## Files
 - SYSTEM_PROMPT.md — main engineering brain
