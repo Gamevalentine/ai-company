@@ -1,5 +1,6 @@
 name: TrainingBot COMMS Discord Worker Deploy
 # redeploy durable object fix
+# owner disabled Discord COMMS
 
 on:
   push:
