@@ -1,0 +1,65 @@
+name: TrainingBot COMMS Telegram Worker Deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trainingbot-comms-telegram-worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: platform/telegram-comms-worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard required secrets
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_CHAT_ID: ${{ secrets.TELEGRAM_ALLOWED_CHAT_ID }}
+        run: |
+          set -euo pipefail
+          for k in CLOUDFLARE_API_TOKEN TELEGRAM_BOT_TOKEN TELEGRAM_ALLOWED_CHAT_ID; do
+            if [ -z "${!k:-}" ]; then
+              echo "::error::Missing required repository secret: $k"
+              exit 1
+            fi
+          done
+          echo "Required Telegram deployment credentials are present. Values were not printed."
+
+      - name: Resolve Cloudflare account ID safely
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID="$(curl -fsS https://api.cloudflare.com/client/v4/accounts             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"             -H "Content-Type: application/json"             | jq -r '.result[0].id // empty')"
+          test -n "$ACCOUNT_ID"
+          echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
+
+      - name: Install Wrangler
+        run: npm install --no-audit --no-fund
+
+      - name: Test
+        run: npm test
+
+      - name: Deploy Telegram Worker
+        run: npx wrangler deploy
+
+      - name: Sync Telegram secrets to Worker
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_CHAT_ID: ${{ secrets.TELEGRAM_ALLOWED_CHAT_ID }}
+        run: |
+          printf '%s' "$TELEGRAM_BOT_TOKEN" | npx wrangler secret put TELEGRAM_BOT_TOKEN
+          printf '%s' "$TELEGRAM_ALLOWED_CHAT_ID" | npx wrangler secret put TELEGRAM_ALLOWED_CHAT_ID
+          ADMIN_KEY="$(openssl rand -hex 32)"
+          printf '%s' "$ADMIN_KEY" | npx wrangler secret put ADMIN_KEY
+          echo "Telegram Worker secrets synchronized without printing values."
