@@ -806,9 +806,6 @@ $('#themeBtn').onclick=()=>toast('AION HQ v2 đang dùng giao diện tối làm 
 function safeRender(name,fn){
  try{fn()}catch(error){console.error('[AION]',name,error)}
 }
-function safeRender(name,fn){
- try{fn()}catch(error){console.error('[AION]',name,error)}
-}
 function boot(){
  // Đội AI phải luôn render được, kể cả bộ não lãnh đạo hoặc module khác có dữ liệu cũ bị lỗi.
  safeRender('brains',ensureBrains);
