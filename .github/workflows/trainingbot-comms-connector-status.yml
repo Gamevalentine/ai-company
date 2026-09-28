@@ -1,6 +1,7 @@
 name: TrainingBot COMMS Connector Status
 # auth recheck 2026-09-27
 # telegram migration 2026-09-28
+# telegram token recheck 2026-09-28
 
 on:
   workflow_dispatch:
