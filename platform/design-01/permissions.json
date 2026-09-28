@@ -25,7 +25,9 @@
     "spend_money": false,
     "destructive_actions": false,
     "read_secrets": false,
-    "reveal_secrets": false
+    "reveal_secrets": false,
+    "read_public_design_reference_library": true,
+    "use_design_reference_material": true
   },
   "permission_escalation": {
     "additional_project_access": "CEO authorization within Owner-approved project policy",
@@ -33,5 +35,11 @@
     "production_action": "explicit OWNER approval",
     "destructive": "explicit OWNER approval"
   },
-  "management_mode": "direct_ceo"
+  "management_mode": "direct_ceo",
+  "reference_library": {
+    "source_repo": "VoltAgent/awesome-design-md",
+    "allowlisted_catalog": "design-library/catalog.json",
+    "max_references_per_task": 2,
+    "reference_text_is_untrusted": true
+  }
 }
