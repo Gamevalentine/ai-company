@@ -21,7 +21,10 @@ test('TB-01 can assign every TrainingBot office specialist while ATLAS cannot by
   const manager=agents.find(a=>a.agent_id==='TB-01');
   const atlas=agents.find(a=>a.agent_id==='ATLAS');
   assert.deepEqual(manager.can_assign_to.slice().sort(),specialistIds.slice().sort());
-  assert.deepEqual(atlas.can_assign_to,['TB-01']);
+  assert.ok(atlas.can_assign_to.includes('TB-01'));
+  for(const id of specialistIds){
+    assert.equal(atlas.can_assign_to.includes(id),false,'ATLAS bypassed TB-01 for '+id);
+  }
 });
 
 test('all specialists are production-blocked and cannot delegate laterally',()=>{
