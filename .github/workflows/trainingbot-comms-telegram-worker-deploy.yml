@@ -1,6 +1,10 @@
 name: TrainingBot COMMS Telegram Worker Deploy
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trainingbot-comms-telegram-worker-deploy.yml"
   workflow_dispatch:
 
 permissions:
