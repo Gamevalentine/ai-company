@@ -124,7 +124,7 @@
         "tự động trả lời các câu hỏi thông thường theo chính sách",
         "chuyển các trường hợp nhạy cảm hoặc không chắc chắn lên TB-01"
       ],
-      "status": "GMAIL_OPERATIONAL_TELEGRAM_TOKEN_AUTHORIZED",
+      "status": "GMAIL_TELEGRAM_INBOUND_RUNTIME_READY",
       "brain": "comms-brain.mjs",
       "workflow": "trainingbot-comms-check.yml",
       "live_run": "36290716872",
@@ -138,9 +138,11 @@
       "discord_inbound_test_run": "36297765599",
       "discord_inbound_deploy_run": "36299310896",
       "discord_inbound_smoke_run": "36299341602",
-      "telegram_status": "BOT_IN_GROUP_AWAITING_WORKER_DEPLOY",
+      "telegram_status": "DEPLOYED_INITIALIZED_AWAITING_REAL_USER_REPLY_TEST",
       "telegram_community": "https://t.me/TraininggBott",
-      "telegram_connector_status_run": "36378231335"
+      "telegram_connector_status_run": "36378231335",
+      "telegram_deploy_run": "36379856506",
+      "telegram_smoke_run": "36379923381"
     }
   ],
   "governance": {
