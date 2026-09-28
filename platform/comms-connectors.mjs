@@ -21,9 +21,9 @@ export function connectorStatus(env=process.env){
       configured:Boolean(env.META_PAGE_ID&&env.META_PAGE_ACCESS_TOKEN),
       page_id:env.META_PAGE_ID||null
     },
-    discord:{
-      configured:Boolean(env.DISCORD_BOT_TOKEN),
-      guild_id:env.DISCORD_GUILD_ID||null
+    telegram:{
+      configured:Boolean(env.TELEGRAM_BOT_TOKEN),
+      allowed_chat_id:env.TELEGRAM_ALLOWED_CHAT_ID||null
     }
   };
 }
@@ -170,6 +170,28 @@ export async function replyFacebookMessenger(action,{env=process.env,fetchImpl=f
   return {channel:'facebook_messenger',sent:true,message_id:out.message_id||null,recipient_id:out.recipient_id||recipientId};
 }
 
+export async function sendTelegramReply(action,{env=process.env,fetchImpl=fetch}={}){
+  const token=required(env,'TELEGRAM_BOT_TOKEN');
+  const chatId=String(action.chat_id||'').trim();
+  const body=String(action.body||'').trim();
+  if(!chatId||!body) throw new Error('Telegram reply requires chat_id and body');
+  const allowed=String(env.TELEGRAM_ALLOWED_CHAT_ID||'').trim();
+  if(allowed && chatId!==allowed) throw new Error('Telegram chat is outside the approved TrainingBot community');
+  const res=await fetchImpl('https://api.telegram.org/bot'+token+'/sendMessage',{
+    method:'POST',
+    headers:{'content-type':'application/json'},
+    body:JSON.stringify({
+      chat_id:chatId,
+      text:body.slice(0,4000),
+      ...(action.reply_to_message_id?{reply_parameters:{message_id:Number(action.reply_to_message_id)}}:{})
+    })
+  });
+  if(!res.ok) throw new Error('Telegram send failed: '+res.status);
+  const out=await res.json();
+  if(!out.ok) throw new Error('Telegram API rejected send');
+  return {channel:'same_telegram_chat',sent:true,message_id:out.result?.message_id||null,chat_id:String(out.result?.chat?.id||chatId)};
+}
+
 export async function sendDiscordChannelReply(action,{env=process.env,fetchImpl=fetch}={}){
   const token=required(env,'DISCORD_BOT_TOKEN');
   const channelId=String(action.channel_id||'').trim();
@@ -195,14 +217,14 @@ export async function executeCommsOutbound(action,options={}){
   if(action.channel==='gmail') return sendGmailReply(action,options);
   if(action.channel==='facebook_comment_thread') return replyFacebookComment(action,options);
   if(action.channel==='facebook_messenger') return replyFacebookMessenger(action,options);
-  if(action.channel==='same_discord_channel') return sendDiscordChannelReply(action,options);
+  if(action.channel==='same_telegram_chat') return sendTelegramReply(action,options);
   throw new Error('Unsupported COMMS outbound channel: '+action.channel);
 }
 
 export function createActionId(action){
   const raw=JSON.stringify({
     channel:action.channel,
-    target:action.to||action.comment_id||action.recipient_id||action.channel_id||'',
+    target:action.to||action.comment_id||action.recipient_id||action.chat_id||action.channel_id||'',
     body:action.body||'',
     thread:action.thread_id||action.reply_to_message_id||''
   });
