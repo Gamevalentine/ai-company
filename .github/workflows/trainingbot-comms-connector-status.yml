@@ -1,6 +1,6 @@
 name: TrainingBot COMMS Connector Status
 # auth recheck 2026-09-27
-# discord auth recheck 2026-09-27
+# telegram migration 2026-09-28
 
 on:
   workflow_dispatch:
@@ -26,8 +26,8 @@ jobs:
           GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
           META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
           META_PAGE_ACCESS_TOKEN: ${{ secrets.META_PAGE_ACCESS_TOKEN }}
-          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
-          DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_ALLOWED_CHAT_ID: ${{ secrets.TELEGRAM_ALLOWED_CHAT_ID }}
         run: |
           node --input-type=module <<'NODE'
           import { connectorStatus } from './platform/comms-connectors.mjs';
@@ -38,7 +38,7 @@ jobs:
             '',
             '- Gmail: **'+(status.gmail.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
             '- Facebook: **'+(status.facebook.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
-            '- Discord: **'+(status.discord.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
+            '- Telegram: **'+(status.telegram.configured?'AUTHORIZED':'WAITING_AUTHORIZATION')+'**',
             '',
             'No secret values are printed.'
           ].join('\n');
