@@ -57,7 +57,8 @@
     "website_support_uses_gmail_only": true,
     "facebook_comment_stays_in_comment_thread": true,
     "messenger_stays_in_messenger": true,
-    "discord_stays_in_same_community_channel": true
+    "discord_stays_in_same_community_channel": false,
+    "telegram_stays_in_same_community_chat": true
   },
   "supported_channel_slots": [
     "trainingbot_support_email",
@@ -89,12 +90,10 @@
     },
     "discord": {
       "invite_url": "https://discord.gg/fSWdn7CdMm",
-      "status": "AUTHORIZED",
+      "status": "DISABLED_REPLACED_BY_TELEGRAM",
       "reply_mode": "community_channel_chat",
       "behavior": [
-        "Theo dõi các kênh cộng đồng đã được cấp quyền",
-        "Trả lời trực tiếp trong kênh chat nơi câu hỏi xuất hiện",
-        "Không tự nhắn riêng thành viên trừ khi chính sách cho phép hoặc người dùng yêu cầu"
+        "Không còn dùng làm kênh COMMS tự động của TrainingBot."
       ]
     },
     "website_support": {
@@ -108,6 +107,16 @@
         "Không gửi từ địa chỉ khác nếu chưa được Chủ sở hữu cho phép"
       ],
       "status": "ROUTING_DEFINED"
+    },
+    "telegram": {
+      "url": "https://t.me/TraininggBott",
+      "status": "WAITING_BOT_AUTHORIZATION",
+      "reply_mode": "same_telegram_chat",
+      "behavior": [
+        "Theo dõi câu hỏi mới trong nhóm cộng đồng TrainingBot đã kết nối",
+        "Trả lời trực tiếp trong cùng chat nơi câu hỏi xuất hiện",
+        "Không tự nhắn riêng thành viên trừ khi chính sách cho phép hoặc người dùng yêu cầu"
+      ]
     }
   },
   "classification": {
@@ -151,8 +160,8 @@
       "reply_channel": "facebook_messenger"
     },
     {
-      "source": "discord_community",
-      "reply_channel": "same_discord_channel"
+      "source": "telegram_community",
+      "reply_channel": "same_telegram_chat"
     }
   ],
   "brain": "comms-brain.mjs",
@@ -178,7 +187,7 @@
   },
   "connector_runtime": {
     "module": "comms-connectors.mjs",
-    "status": "GMAIL_DISCORD_AUTHORIZED_FACEBOOK_PENDING",
+    "status": "GMAIL_AUTHORIZED_TELEGRAM_PENDING_FACEBOOK_PENDING",
     "github_status_run": "36294381801",
     "github_status_result": {
       "gmail": "WAITING_AUTHORIZATION",
@@ -195,9 +204,9 @@
         "META_PAGE_ID",
         "META_PAGE_ACCESS_TOKEN"
       ],
-      "discord": [
-        "DISCORD_BOT_TOKEN",
-        "DISCORD_GUILD_ID"
+      "telegram": [
+        "TELEGRAM_BOT_TOKEN",
+        "TELEGRAM_ALLOWED_CHAT_ID"
       ]
     },
     "note": "Không lưu giá trị secret trong source hoặc log.",
@@ -224,7 +233,7 @@
   },
   "discord_connection": {
     "runtime_connector_wired": true,
-    "authorization_status": "AUTHORIZED",
+    "authorization_status": "DISABLED_BY_OWNER",
     "live_smoke_run": "36297271907",
     "inbound_worker": {
       "status": "DEPLOYED_AND_INITIALIZED",
@@ -262,6 +271,14 @@
         "ignored": 0,
         "ai_calls": 0
       }
-    }
+    },
+    "replacement": "telegram",
+    "disabled_at": "2026-09-28"
+  },
+  "telegram_connection": {
+    "community_url": "https://t.me/TraininggBott",
+    "authorization_status": "WAITING_BOT_TOKEN_AND_CHAT_ID",
+    "runtime_connector_wired": true,
+    "inbound_worker_status": "CODE_BUILDING"
   }
 }
