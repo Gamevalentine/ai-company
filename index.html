@@ -178,6 +178,34 @@ button:disabled{opacity:.55;cursor:not-allowed}
 }
  /* end readability pass */
 
+
+/* AI Team brain system */
+.brain-summary{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 12px}
+.brain-chip{border:1px solid #214a72;background:#0c2037;color:#b9d0e5;border-radius:999px;padding:6px 10px;font-size:10px}
+.brain-chip strong{color:#fff}
+.ai-brain-card{position:relative;overflow:hidden}
+.ai-brain-card::after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-80px;top:-75px;background:radial-gradient(circle,rgba(54,139,255,.16),transparent 68%);pointer-events:none}
+.brain-status{display:flex;align-items:center;gap:6px;font-size:9px;color:#42e8a7}
+.brain-dot{width:7px;height:7px;border-radius:50%;background:#20da91;box-shadow:0 0 0 4px rgba(32,218,145,.08),0 0 14px rgba(32,218,145,.45)}
+.brain-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px}
+.brain-meta div{border:1px solid #193b5d;background:#0a1a2e;border-radius:8px;padding:7px}
+.brain-meta b{display:block;font-size:11px}.brain-meta span{font-size:8.5px;color:#718da7}
+.brain-actions{display:flex;gap:7px;margin-top:11px;position:relative;z-index:2}
+.brain-actions button{flex:1}
+.brain-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.brain-box{border:1px solid var(--line);background:#0b2037;border-radius:11px;padding:11px}
+.brain-box h4{font-size:11px;margin:0 0 7px;color:#dfeeff}.brain-box p,.brain-box li{font-size:10px;color:#94abc1;line-height:1.55}
+.brain-box ul{padding-left:17px;margin:0}
+.brain-memory{display:grid;gap:6px;max-height:145px;overflow:auto}
+.memory-item{border:1px solid #1d4266;border-radius:8px;padding:7px 8px;background:#0d233b;font-size:9.5px;color:#a7bdd1}
+.brain-console{margin-top:10px;border:1px solid #24517c;border-radius:11px;background:#071827;overflow:hidden}
+.brain-console-head{padding:8px 10px;border-bottom:1px solid #1c3d5f;display:flex;justify-content:space-between;align-items:center;font-size:10px}
+.brain-output{padding:10px;min-height:90px;white-space:pre-wrap;font-size:10.5px;line-height:1.6;color:#c7d8e8}
+.brain-input{display:grid;grid-template-columns:1fr 105px;gap:7px;padding:8px;border-top:1px solid #1c3d5f}
+.brain-input textarea{min-height:62px;resize:vertical;border:1px solid #244d75;background:#0b2138;color:white;border-radius:8px;padding:8px;font-size:10.5px;outline:0}
+.brain-input button{border:0;border-radius:8px;background:linear-gradient(180deg,#267ff0,#4b4ce7);color:white;font-weight:800;font-size:10px}
+@media(max-width:700px){.brain-modal-grid{grid-template-columns:1fr}.brain-meta{grid-template-columns:1fr 1fr}.brain-input{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -322,7 +350,13 @@ button:disabled{opacity:.55;cursor:not-allowed}
     </section>
 
     <section class="view" id="view-team">
-      <div class="page-title"><div><h1>Đội AI</h1><p>Không đếm “nhân viên cho đẹp”. Mỗi AI có năng lực, quyền hạn và đầu ra rõ ràng.</p></div><button class="secondary" data-open-atlas>Hỏi ATLAS</button></div>
+      <div class="page-title"><div><h1>Đội AI</h1><p>Mỗi AI có một “bộ não” riêng: vai trò, kỹ năng, quyền hạn, bộ nhớ và hàng đợi công việc.</p></div><button class="secondary" data-open-atlas>Hỏi ATLAS</button></div>
+      <div class="brain-summary">
+        <span class="brain-chip"><strong id="brainOnlineCount">8</strong> não đã khởi tạo</span>
+        <span class="brain-chip"><strong id="brainActiveCount">0</strong> đang xử lý</span>
+        <span class="brain-chip"><strong id="brainMemoryCount">0</strong> ký ức đã lưu</span>
+        <span class="brain-chip">Quyền nguy hiểm: <strong style="color:#ff8da0">luôn cần bạn duyệt</strong></span>
+      </div>
       <div class="grid-3" id="teamGrid"></div>
     </section>
 
@@ -444,15 +478,15 @@ const defaults={
   {icon:'🔐',title:'Approval guard',desc:'Chặn thay đổi rủi ro cho tới khi Chủ sở hữu phê duyệt.',status:'Prototype'}
  ],
  team:[
-  {icon:'◈',title:'ATLAS — Điều phối',desc:'Nhận mục tiêu, chia việc, ưu tiên và tổng hợp báo cáo.',out:'Đầu ra: kế hoạch & quyết định cần duyệt'},
-  {icon:'⌘',title:'Developer AI',desc:'Đọc source, sửa code và chuẩn bị thay đổi kỹ thuật.',out:'Đầu ra: patch / commit'},
-  {icon:'✓',title:'QA AI',desc:'Test luồng, tìm regression và kiểm tra sau khi sửa.',out:'Đầu ra: báo cáo pass/fail'},
-  {icon:'⌕',title:'Research AI',desc:'Tìm mã nguồn mở, đọc tài liệu và so sánh công nghệ.',out:'Đầu ra: shortlist có bằng chứng'},
-  {icon:'♜',title:'Security AI',desc:'Rà quyền, secret, dependency và thay đổi có rủi ro.',out:'Đầu ra: cảnh báo & yêu cầu duyệt'},
-  {icon:'✎',title:'Content AI',desc:'SEO, bài viết, nội dung sản phẩm và tài liệu.',out:'Đầu ra: bản nháp chờ duyệt'},
-  {icon:'⚙',title:'DevOps AI',desc:'Build, deploy, log, monitoring và cấu hình môi trường.',out:'Đầu ra: build/deploy plan'},
-  {icon:'▤',title:'Knowledge AI',desc:'Tóm tắt bài học và đưa vào kho kiến thức có cấu trúc.',out:'Đầu ra: note / playbook'}
- ],
+  {id:'atlas',icon:'◈',title:'ATLAS — Điều phối',desc:'Nhận mục tiêu, chia việc, ưu tiên và tổng hợp báo cáo.',out:'Đầu ra: kế hoạch & quyết định cần duyệt',brain:{mission:'Điều phối toàn hệ thống, giữ tối đa 3 dự án Focus và chuyển đúng việc cho đúng AI.',skills:['Lập kế hoạch','Ưu tiên','Phân rã nhiệm vụ','Tổng hợp báo cáo'],permissions:['Đọc toàn bộ trạng thái','Tạo và giao nhiệm vụ','Đề xuất phê duyệt'],blocked:['Không tự duyệt thay Chủ sở hữu','Không tự phát sinh chi phí'],memory:['Ưu tiên blocker trước tính năng mới','Không mở quá 3 dự án Focus']}},
+  {id:'developer',icon:'⌘',title:'Developer AI',desc:'Đọc source, sửa code và chuẩn bị thay đổi kỹ thuật.',out:'Đầu ra: patch / commit',brain:{mission:'Biến yêu cầu kỹ thuật thành thay đổi mã nguồn nhỏ, rõ phạm vi và có thể rollback.',skills:['Đọc code','Debug','Refactor','Patch','Git'],permissions:['Đọc source','Đề xuất patch','Tạo task kỹ thuật'],blocked:['Không deploy production','Không sửa ngoài phạm vi'],memory:['Luôn kiểm tra file liên quan trước khi sửa','Mọi thay đổi phải có cách rollback']}},
+  {id:'qa',icon:'✓',title:'QA AI',desc:'Test luồng, tìm regression và kiểm tra sau khi sửa.',out:'Đầu ra: báo cáo pass/fail',brain:{mission:'Tìm lỗi trước người dùng và xác nhận bản sửa không làm hỏng luồng cũ.',skills:['Functional test','Regression','Mobile QA','Checklist','Bug reproduction'],permissions:['Đọc build/test','Tạo bug task','Đề nghị chặn release'],blocked:['Không tự sửa production','Không tự bỏ qua lỗi nghiêm trọng'],memory:['Bug phải có bước tái hiện','Không báo pass nếu chưa test luồng liên quan']}},
+  {id:'research',icon:'⌕',title:'Research AI',desc:'Tìm mã nguồn mở, đọc tài liệu và so sánh công nghệ.',out:'Đầu ra: shortlist có bằng chứng',brain:{mission:'Tìm giải pháp đáng thử nhưng không biến mọi repo hay thành dự án mới.',skills:['GitHub research','License check','Docs','So sánh stack','Risk scan'],permissions:['Tìm và lưu nguồn','Đưa nguồn vào Lab','Đề xuất shortlist'],blocked:['Không tự cài source lạ vào production','Không nâng Idea thành Focus'],memory:['Ưu tiên nguồn còn được duy trì','Kiểm tra license trước khi tái sử dụng']}},
+  {id:'security',icon:'♜',title:'Security AI',desc:'Rà quyền, secret, dependency và thay đổi có rủi ro.',out:'Đầu ra: cảnh báo & yêu cầu duyệt',brain:{mission:'Giảm rủi ro bảo mật và chặn hành động nguy hiểm trước khi chúng chạm production.',skills:['Permission review','Secret hygiene','Dependency risk','Threat review','Access control'],permissions:['Đọc cấu hình an toàn','Tạo cảnh báo','Yêu cầu phê duyệt'],blocked:['Không đọc/hiển thị secret thô','Không tự thay quyền admin'],memory:['Quyền tối thiểu trước tiện lợi','Secret không được nhúng frontend']}},
+  {id:'content',icon:'✎',title:'Content AI',desc:'SEO, bài viết, nội dung sản phẩm và tài liệu.',out:'Đầu ra: bản nháp chờ duyệt',brain:{mission:'Tạo nội dung đúng mục tiêu, đúng giọng điệu và có thể kiểm tra trước khi xuất bản.',skills:['SEO','Biên tập','Product copy','Documentation','Social content'],permissions:['Tạo bản nháp','Đề xuất lịch đăng','Sửa nội dung nháp'],blocked:['Không tự xuất bản nội dung nhạy cảm','Không bịa dữ kiện'],memory:['Ưu tiên tiếng Việt tự nhiên','Nội dung công khai cần kiểm tra trước khi đăng']}},
+  {id:'devops',icon:'⚙',title:'DevOps AI',desc:'Build, deploy, log, monitoring và cấu hình môi trường.',out:'Đầu ra: build/deploy plan',brain:{mission:'Giữ build, deploy và monitoring ổn định, luôn tách sandbox khỏi production.',skills:['CI/CD','Build','Logs','Monitoring','Rollback'],permissions:['Đọc trạng thái build','Chuẩn bị deploy plan','Chạy kiểm tra sandbox'],blocked:['Production cần phê duyệt','Không đổi DNS/secret tự động'],memory:['Test sandbox trước production','Deploy phải có rollback']}},
+  {id:'knowledge',icon:'▤',title:'Knowledge AI',desc:'Tóm tắt bài học và đưa vào kho kiến thức có cấu trúc.',out:'Đầu ra: note / playbook',brain:{mission:'Biến trải nghiệm đã làm thành kiến thức có thể tìm lại và tái sử dụng.',skills:['Tóm tắt','Phân loại','Playbook','Decision log','Knowledge retrieval'],permissions:['Đọc log và task','Tạo note','Gắn tag kiến thức'],blocked:['Không lưu secret/mật khẩu','Không coi suy đoán là sự thật'],memory:['Ghi cả nguyên nhân và cách sửa','Mỗi bài học nên gắn với dự án nguồn']}}
+
  knowledge:[
   {icon:'🐳',title:'Docker',desc:'Volume, image, container, backup và phục hồi.'},
   {icon:'☁️',title:'Cloudflare',desc:'Pages, Workers, DNS và cách triển khai an toàn.'},
@@ -513,7 +547,59 @@ function renderKanban(){
 function renderIdeas(){$('#ideaGrid').innerHTML=state.ideas.map(i=>'<div class="feature-card"><div class="big">💡</div><h3>'+esc(i.title)+'</h3><p>'+esc(i.desc)+'</p><div class="foot"><span class="score '+(i.score==='Trung bình'?'med':'')+'">'+esc(i.score)+'</span><span style="font-size:9px;color:#738da7">'+esc(i.date)+'</span></div></div>').join('')}
 function renderSources(){$('#sourceTable').innerHTML='<table class="table"><thead><tr><th>Source</th><th>Loại</th><th>Công nghệ</th><th>Trạng thái</th><th>Có thể dùng cho</th></tr></thead><tbody>'+state.sources.map(r=>'<tr>'+r.map((v,i)=>'<td>'+(i===3?'<span class="tag '+(v==='Đã test'?'green':'blue')+'">'+esc(v)+'</span>':esc(v))+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
 function renderLab(){$('#labGrid').innerHTML=state.lab.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><span class="tag purple">'+esc(x.status)+'</span><button class="secondary" style="padding:5px 8px">Mở</button></div></div>').join('')}
-function renderTeam(){$('#teamGrid').innerHTML=state.team.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><span class="tag blue">'+esc(x.out)+'</span></div></div>').join('')}
+function ensureBrains(){
+ if(!state.agentBrains) state.agentBrains={};
+ state.team.forEach(a=>{
+  if(!state.agentBrains[a.id]) state.agentBrains[a.id]={status:'ready',currentTask:'',history:[],memory:[...(a.brain?.memory||[])]};
+ });
+ save();
+}
+function brainCounts(){
+ ensureBrains();
+ const brains=Object.values(state.agentBrains);
+ const online=document.getElementById('brainOnlineCount'),active=document.getElementById('brainActiveCount'),mem=document.getElementById('brainMemoryCount');
+ if(online) online.textContent=brains.length;
+ if(active) active.textContent=brains.filter(b=>b.status==='working').length;
+ if(mem) mem.textContent=brains.reduce((n,b)=>n+(b.memory?.length||0),0);
+}
+function renderTeam(){
+ ensureBrains();
+ $('#teamGrid').innerHTML=state.team.map(x=>{
+  const b=state.agentBrains[x.id]||{status:'ready',memory:[],history:[]};
+  return '<div class="feature-card ai-brain-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px"><div class="big">'+esc(x.icon)+'</div><div class="brain-status"><i class="brain-dot"></i>'+(b.status==='working'?'Đang xử lý':'Não Online')+'</div></div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="brain-meta"><div><b>'+((x.brain?.skills||[]).length)+'</b><span>Kỹ năng</span></div><div><b>'+(b.memory?.length||0)+'</b><span>Ký ức</span></div><div><b>'+(b.history?.length||0)+'</b><span>Lần xử lý</span></div></div><div class="brain-actions"><button class="secondary" data-open-brain="'+esc(x.id)+'">🧠 Mở não</button><button class="primary" data-assign-brain="'+esc(x.id)+'">Giao việc</button></div></div>';
+ }).join('');
+ $('[data-open-brain]').forEach(btn=>btn.onclick=()=>openBrain(btn.dataset.openBrain,false));
+ $('[data-assign-brain]').forEach(btn=>btn.onclick=()=>openBrain(btn.dataset.assignBrain,true));
+ brainCounts();
+}
+function agentPlan(agent,instruction){
+ const q=instruction.trim();
+ const plans={
+  atlas:['Xác định mục tiêu và tiêu chí hoàn thành.','Kiểm tra việc này thuộc dự án/Idea/Lab nào.','Chia thành các nhiệm vụ nhỏ và gán đúng AI.','Đưa hành động rủi ro sang Trung tâm phê duyệt.','Tổng hợp kết quả về cho Chủ sở hữu.'],
+  developer:['Khoanh đúng phạm vi file/chức năng liên quan.','Đọc code hiện tại và tái hiện vấn đề trước khi sửa.','Tạo thay đổi nhỏ nhất có thể, tránh sửa lan.','Chạy kiểm tra liên quan và chuẩn bị rollback.','Chuyển QA kiểm tra trước khi coi là hoàn thành.'],
+  qa:['Xác định expected behavior và môi trường test.','Tái hiện lỗi/luồng chính.','Test happy path, edge case và regression liên quan.','Ghi bằng chứng pass/fail rõ ràng.','Nếu có lỗi nghiêm trọng, đề nghị chặn release.'],
+  research:['Làm rõ nhu cầu thực tế thay vì chỉ tìm repo nhiều sao.','Tìm 3–5 nguồn phù hợp và còn được duy trì.','Kiểm tra license, stack, cập nhật gần đây và issue nổi bật.','So sánh độ khó triển khai, rủi ro và khả năng tái sử dụng.','Đưa nguồn tốt nhất vào Source Library/Lab, chưa tạo project mới.'],
+  security:['Xác định dữ liệu/quyền/secret có liên quan.','Kiểm tra nguyên tắc quyền tối thiểu và bề mặt tấn công.','Rà dependency/cấu hình có rủi ro.','Đánh dấu phần bắt buộc Chủ sở hữu phê duyệt.','Đưa ra cách giảm rủi ro trước khi triển khai.'],
+  content:['Xác định người đọc, mục tiêu và kênh xuất bản.','Lập dàn ý ngắn gọn, ưu tiên thông tin kiểm chứng được.','Soạn bản nháp tiếng Việt tự nhiên.','Kiểm tra SEO/CTA khi phù hợp.','Chuyển bản nháp sang chờ duyệt trước khi công khai.'],
+  devops:['Xác định môi trường: local/sandbox/production.','Kiểm tra build, log và dependency trước thay đổi.','Chạy thử trên sandbox.','Chuẩn bị deploy plan và rollback plan.','Nếu chạm production/DNS/secret, tạo yêu cầu phê duyệt.'],
+  knowledge:['Thu thập task, log và kết quả liên quan.','Tách dữ kiện, nguyên nhân, cách sửa và bài học.','Loại bỏ secret/thông tin không nên lưu.','Gắn tag dự án/chủ đề để tìm lại.','Tạo playbook ngắn cho lần sau.']
+ };
+ const steps=plans[agent.id]||plans.atlas;
+ return 'NHIỆM VỤ: '+q+'\n\nKẾ HOẠCH CỦA '+agent.title.toUpperCase()+':\n'+steps.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\nGIỚI HẠN: '+(agent.brain?.blocked||[]).join(' · ')+'\n\nTrạng thái: Đã phân tích, chưa thực hiện hành động nguy hiểm.';
+}
+function openBrain(id,focusInput){
+ const agent=state.team.find(x=>x.id===id); if(!agent) return;
+ ensureBrains(); const b=state.agentBrains[id];
+ const skills=(agent.brain?.skills||[]).map(s=>'<span class="tag blue">'+esc(s)+'</span>').join(' ');
+ const perms=(agent.brain?.permissions||[]).map(s=>'<li>✓ '+esc(s)+'</li>').join('');
+ const blocked=(agent.brain?.blocked||[]).map(s=>'<li style="color:#ff8da0">⛔ '+esc(s)+'</li>').join('');
+ const memory=(b.memory||[]).map(m=>'<div class="memory-item">'+esc(m)+'</div>').join('')||'<div class="memory-item">Chưa có ký ức.</div>';
+ const last=b.history?.[0];
+ openModal('🧠 '+agent.title,'<div class="brain-modal-grid"><div class="brain-box"><h4>Nhiệm vụ cốt lõi</h4><p>'+esc(agent.brain?.mission||agent.desc)+'</p><h4>Kỹ năng</h4><div>'+skills+'</div></div><div class="brain-box"><h4>Quyền được phép</h4><ul>'+perms+'</ul><h4>Hàng rào an toàn</h4><ul>'+blocked+'</ul></div><div class="brain-box"><h4>Bộ nhớ riêng · '+(b.memory?.length||0)+' mục</h4><div class="brain-memory" id="brainMemoryList">'+memory+'</div><div style="display:flex;gap:6px;margin-top:8px"><input id="brainMemoryInput" placeholder="Dạy AI ghi nhớ điều mới..." style="flex:1;border:1px solid #244d75;background:#091b2e;color:white;border-radius:7px;padding:7px;font-size:10px"><button class="secondary" id="brainMemorySave" style="padding:6px 8px">Lưu</button></div></div><div class="brain-box"><h4>Trạng thái</h4><p><b>Engine:</b> AION Brain v1 (logic cục bộ)<br><b>Trạng thái:</b> '+(b.status==='working'?'Đang xử lý':'Sẵn sàng')+'<br><b>Lịch sử xử lý:</b> '+(b.history?.length||0)+' lần<br><b>Việc gần nhất:</b> '+esc(last?.instruction||'Chưa có')+'</p></div></div><div class="brain-console"><div class="brain-console-head"><b>Brain Console</b><span style="color:#6f8daa">Phân tích theo vai trò + ghi vào lịch sử</span></div><div class="brain-output" id="brainOutput">'+esc(last?.output||'Giao một nhiệm vụ để xem bộ não này phân tích và lên kế hoạch.')+'</div><div class="brain-input"><textarea id="brainInstruction" placeholder="Ví dụ: Kiểm tra vì sao trang TrainingBot load chậm trên mobile..."></textarea><button id="brainRun">Phân tích & nhận việc</button></div></div>');
+ $('#brainMemorySave').onclick=()=>{const v=$('#brainMemoryInput').value.trim();if(!v)return;b.memory.unshift(v);save();$('#brainMemoryInput').value='';openBrain(id,false);toast(agent.title+' đã ghi nhớ.');};
+ $('#brainRun').onclick=()=>{const v=$('#brainInstruction').value.trim();if(!v)return toast('Nhập nhiệm vụ trước.');b.status='working';b.currentTask=v;const out=agentPlan(agent,v);b.history.unshift({time:new Date().toISOString(),instruction:v,output:out});b.status='ready';b.currentTask='';state.tasks.push({id:Date.now(),title:v,project:agent.title,type:'normal',status:'Planned',assignee:agent.id});state.logs.unshift(['Bây giờ',agent.title+' nhận việc: '+v]);save();$('#brainOutput').textContent=out;renderTeam();renderKanban();renderToday();renderLogs();toast(agent.title+' đã nhận và phân tích nhiệm vụ.');};
+ if(focusInput)setTimeout(()=>$('#brainInstruction')?.focus(),50);
+}
 function renderKnowledge(){$('#knowledgeGrid').innerHTML=state.knowledge.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><button class="secondary" style="padding:5px 8px">Mở ghi chú</button></div></div>').join('')}
 function openModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modal').classList.add('show')}
 function closeModal(){$('#modal').classList.remove('show')}$('#modalClose').onclick=closeModal;$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()}
@@ -543,6 +629,7 @@ $('#globalSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCa
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#globalSearch').focus()}if(e.key==='Escape')closeModal()});
 $('#themeBtn').onclick=()=>toast('AION HQ v2 đang dùng giao diện tối làm mặc định.');
 function boot(){
+ ensureBrains();
  const d=new Date(),weekday=d.toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});$('#todayLabel').textContent=weekday.charAt(0).toUpperCase()+weekday.slice(1);const onejan=new Date(d.getFullYear(),0,1),week=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);$('#weekLabel').textContent='Tuần '+week+' · '+d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  renderFocus();renderToday();renderApprovals();renderSites();renderLogs();renderIdeaPreview();renderProjects();renderKanban();renderIdeas();renderSources();renderLab();renderTeam();renderKnowledge();
  const hash=location.hash.replace('#','');if(hash&&$('#view-'+hash))setView(hash);
