@@ -21,9 +21,6 @@
       "new_sqlite_classes": ["DiscordCommsState"]
     }
   ],
-  "triggers": {
-    "crons": ["* * * * *"]
-  },
   "vars": {
     "AI_MODEL": "@cf/meta/llama-3.2-1b-instruct",
     "MAX_AI_CALLS_PER_DAY": "40",
