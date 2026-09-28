@@ -55,7 +55,7 @@ export function routeForSource(source){
     'email':{reply_channel:'gmail',reply_identity:'trainingbot.ai2@gmail.com'},
     'facebook_comment':{reply_channel:'facebook_comment_thread',reply_identity:'same_facebook_page'},
     'facebook_messenger':{reply_channel:'facebook_messenger',reply_identity:'same_facebook_page'},
-    'discord_community':{reply_channel:'same_discord_channel',reply_identity:'same_discord_bot'}
+    'telegram_community':{reply_channel:'same_telegram_chat',reply_identity:'same_telegram_bot'}
   };
   return map[source]||{reply_channel:'manager_review',reply_identity:'TB-01'};
 }
