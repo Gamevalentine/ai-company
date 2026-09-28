@@ -1,6 +1,8 @@
 # CODE-01 Workflow
 
-OWNER REQUEST
+OWNER GOAL
+    ↓
+CEO ATLAS ASSIGNS CODE-01
     ↓
 1. Identify project + target behavior
     ↓
@@ -16,9 +18,9 @@ OWNER REQUEST
     ↓
 7. Review git diff
     ↓
-8. Commit / push (only if authorized)
+8. Commit / push (only if authorized by CEO within Owner-approved policy)
     ↓
-9. Deploy (only if authorized)
+9. Deploy (production still requires Owner approval)
     ↓
 10. Verify live result
     ↓
