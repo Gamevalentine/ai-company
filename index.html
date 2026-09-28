@@ -233,45 +233,54 @@
     @media(max-width:1000px){.simple-employee-form{grid-template-columns:1fr 1fr}.simple-employee-form #simpleEmployeeTask{grid-column:1/-1}}
     @media(max-width:760px){.simple-employee-form{grid-template-columns:1fr}}
 
-    /* Giao việc — bước 1: UI/UX + bản nháp cục bộ, chưa kích hoạt runner AI */
-    .assign-layout{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:16px;align-items:start}
-    .assign-panel{border:1px solid var(--line);border-radius:14px;background:rgba(9,24,42,.62);overflow:hidden}
-    .assign-panel-head{padding:15px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-    .assign-panel-head h3{margin:0 0 5px;font-size:15px}
-    .assign-panel-head p{margin:0;color:var(--muted);font-size:11px;line-height:1.55}
-    .assign-panel-body{padding:16px}
-    .assign-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-    .assign-field{display:flex;flex-direction:column;gap:6px}
-    .assign-field.full{grid-column:1/-1}
-    .assign-field label{font-size:10px;font-weight:800;letter-spacing:.04em;color:#b9c7d8;text-transform:uppercase}
-    .assign-field input,.assign-field select,.assign-field textarea{
+    /* Giao việc — tối giản: giao nhanh, tùy chọn nâng cao chỉ mở khi cần */
+    .assign-quick{max-width:1040px;margin:16px auto 0}
+    .assign-quick-card{border:1px solid var(--line);border-radius:16px;background:rgba(9,24,42,.68);padding:18px}
+    .assign-quick-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
+    .assign-quick-title h3{margin:0 0 4px;font-size:16px}
+    .assign-quick-title p{margin:0;color:var(--muted);font-size:11px;line-height:1.5}
+    .assign-main-grid{display:grid;grid-template-columns:minmax(210px,.7fr) minmax(150px,.45fr);gap:10px;margin-bottom:10px}
+    .assign-control{display:flex;flex-direction:column;gap:6px}
+    .assign-control label{font-size:10px;font-weight:800;letter-spacing:.04em;color:#b9c7d8;text-transform:uppercase}
+    .assign-control select,.assign-control input,.assign-control textarea{
       width:100%;box-sizing:border-box;border:1px solid #214361;background:#0b1d32;color:var(--text);
-      border-radius:10px;padding:10px 11px;font:inherit;font-size:12px;outline:none
+      border-radius:11px;padding:11px 12px;font:inherit;font-size:12px;outline:none
     }
-    .assign-field textarea{min-height:86px;resize:vertical;line-height:1.55}
-    .assign-field input:focus,.assign-field select:focus,.assign-field textarea:focus{border-color:#3ea6ff;box-shadow:0 0 0 2px rgba(62,166,255,.12)}
-    .assign-help{font-size:10px;color:var(--muted);line-height:1.5}
-    .assign-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px;flex-wrap:wrap}
+    .assign-control textarea{min-height:118px;resize:vertical;line-height:1.6}
+    .assign-control select:focus,.assign-control input:focus,.assign-control textarea:focus{border-color:#3ea6ff;box-shadow:0 0 0 2px rgba(62,166,255,.12)}
+    .assign-task-box{margin-top:4px}
+    .assign-advanced{margin-top:11px;border-top:1px solid var(--line);padding-top:11px}
+    .assign-advanced summary{cursor:pointer;display:inline-flex;align-items:center;gap:7px;color:#8bdcf0;font-size:11px;font-weight:800;user-select:none}
+    .assign-advanced summary::-webkit-details-marker{display:none}
+    .assign-advanced summary:before{content:'＋';font-size:14px}
+    .assign-advanced[open] summary:before{content:'−'}
+    .assign-advanced-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    .assign-advanced-grid .full{grid-column:1/-1}
+    .assign-actions{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:15px;flex-wrap:wrap}
+    .assign-actions-note{font-size:10px;color:var(--muted)}
     .assign-secondary{border:1px solid var(--line);background:#0b1d32;color:#c9d5e4;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:700}
-    .assign-preview{border:1px solid rgba(110,231,255,.20);background:#0c2036;border-radius:12px;padding:13px;margin-bottom:12px}
-    .assign-preview-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .assign-preview h4{margin:0;font-size:13px}
-    .assign-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-    .assign-chip{border:1px solid var(--line);background:#0a192a;border-radius:999px;padding:4px 7px;font-size:9px;color:#aebed0}
+    .assign-list-wrap{max-width:1040px;margin:14px auto 0}
+    .assign-list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
+    .assign-list-head h3{margin:0;font-size:13px}
+    .assign-list{display:grid;gap:8px}
+    .assign-item{border:1px solid var(--line);background:#0b1d32;border-radius:12px;padding:12px 13px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
+    .assign-item-main{min-width:0}
+    .assign-item-main b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .assign-item-main small{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.45}
+    .assign-item-actions{display:flex;gap:7px;align-items:center}
+    .assign-chip{border:1px solid var(--line);background:#0a192a;border-radius:999px;padding:4px 7px;font-size:9px;color:#aebed0;white-space:nowrap}
     .assign-chip.high{color:#fda4af;border-color:rgba(251,113,133,.25);background:rgba(251,113,133,.08)}
     .assign-chip.medium{color:#fde68a;border-color:rgba(250,204,21,.23);background:rgba(250,204,21,.07)}
     .assign-chip.low{color:#86efac;border-color:rgba(74,222,128,.22);background:rgba(74,222,128,.06)}
-    .assign-draft-list{display:grid;gap:10px;max-height:580px;overflow:auto;padding-right:3px}
-    .assign-draft{border:1px solid var(--line);background:#0b1d32;border-radius:12px;padding:12px}
-    .assign-draft-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .assign-draft-title b{font-size:12px}
-    .assign-draft small{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.45}
-    .assign-draft-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:10px}
-    .assign-empty{padding:26px 16px;text-align:center;border:1px dashed #244762;border-radius:12px;color:var(--muted);font-size:11px;line-height:1.65}
-    .assign-note{display:flex;gap:9px;align-items:flex-start;border:1px solid rgba(110,231,255,.18);background:rgba(31,126,180,.08);border-radius:11px;padding:10px 12px;margin-bottom:14px;font-size:10px;line-height:1.55;color:#a9cfe0}
+    .assign-empty{padding:24px 16px;text-align:center;border:1px dashed #244762;border-radius:12px;color:var(--muted);font-size:11px;line-height:1.6}
     .staff-assign-btn{margin-top:9px;border:1px solid rgba(62,166,255,.25);background:rgba(62,166,255,.09);color:#8bdcf0;border-radius:8px;padding:7px 9px;font-size:10px;font-weight:700;cursor:pointer}
-    @media(max-width:1080px){.assign-layout{grid-template-columns:1fr}}
-    @media(max-width:720px){.assign-form-grid{grid-template-columns:1fr}.assign-field.full{grid-column:auto}.assign-panel-body{padding:12px}}
+    @media(max-width:720px){
+      .assign-quick-card{padding:13px}
+      .assign-main-grid,.assign-advanced-grid{grid-template-columns:1fr}
+      .assign-advanced-grid .full{grid-column:auto}
+      .assign-item{grid-template-columns:1fr}
+      .assign-item-actions{justify-content:flex-end}
+    }
   </style>
 </head>
 <body>
@@ -630,109 +639,92 @@
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap">
           <div>
             <h2 style="margin-bottom:6px">Giao việc</h2>
-            <p style="color:var(--muted);margin:0;max-width:760px;line-height:1.6">
-              Soạn nhiệm vụ rõ mục tiêu, phạm vi, tiêu chí nghiệm thu và người phụ trách trước khi giao cho nhân viên AI.
-            </p>
+            <p style="color:var(--muted);margin:0">Chọn người → nhập việc → tạo nhiệm vụ.</p>
           </div>
-          <span class="badge" id="assignmentDraftCount">0 bản nháp</span>
+          <span class="badge" id="assignmentDraftCount">0 việc</span>
         </div>
 
-        <div class="assign-note" style="margin-top:16px">
-          <span>ℹ️</span>
-          <div><b>Bước 1 — giao diện giao việc.</b> Các nhiệm vụ tạo tại đây đang được lưu dưới dạng <b>bản nháp cục bộ</b> trên trình duyệt. Chưa kích hoạt runner AI hoặc gửi lệnh thật cho nhân viên; phần đó sẽ được nối ở bước dữ liệu/thực thi sau.</div>
-        </div>
-
-        <div class="assign-layout">
-          <div class="assign-panel">
-            <div class="assign-panel-head">
+        <div class="assign-quick">
+          <div class="assign-quick-card">
+            <div class="assign-quick-title">
               <div>
-                <h3>Soạn nhiệm vụ mới</h3>
-                <p>Mỗi nhiệm vụ chỉ có một người phụ trách chính. CEO có thể bổ sung vai trò phối hợp ở bước vận hành thật.</p>
+                <h3>Giao việc nhanh</h3>
+                <p>Chỉ cần 2 thông tin chính. Các chi tiết khác có thể bổ sung khi cần.</p>
               </div>
-              <span class="assign-chip">BẢN NHÁP</span>
+              <span class="assign-chip">Chưa chạy AI</span>
             </div>
-            <div class="assign-panel-body">
-              <div class="assign-form-grid">
-                <div class="assign-field">
-                  <label>Mã nhiệm vụ</label>
-                  <input id="assignmentId" placeholder="Tự tạo nếu để trống">
-                </div>
-                <div class="assign-field">
+
+            <div class="assign-main-grid">
+              <div class="assign-control">
+                <label>Giao cho ai?</label>
+                <select id="assignmentAssignee"><option value="">Chọn nhân viên</option></select>
+              </div>
+              <div class="assign-control">
+                <label>Ưu tiên</label>
+                <select id="assignmentPriority">
+                  <option value="Cao">Cao</option>
+                  <option value="Trung bình" selected>Trung bình</option>
+                  <option value="Thấp">Thấp</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="assign-control assign-task-box">
+              <label>Việc cần làm</label>
+              <textarea id="assignmentTask" placeholder="Ví dụ: Kiểm tra toàn bộ trang đăng nhập, tìm lỗi và báo lại cho CEO..."></textarea>
+            </div>
+
+            <details class="assign-advanced" id="assignmentAdvanced">
+              <summary>Tùy chọn thêm</summary>
+              <div class="assign-advanced-grid">
+                <div class="assign-control">
                   <label>Dự án / website</label>
-                  <input id="assignmentProject" placeholder="Ví dụ: AION HQ, TrainingBot">
+                  <input id="assignmentProject" placeholder="AION HQ, TrainingBot...">
                 </div>
-                <div class="assign-field full">
-                  <label>Tên nhiệm vụ</label>
-                  <input id="assignmentTitle" placeholder="Viết ngắn gọn việc cần hoàn thành">
-                </div>
-                <div class="assign-field full">
-                  <label>Mục tiêu</label>
-                  <textarea id="assignmentObjective" placeholder="Kết quả cuối cùng cần đạt là gì?"></textarea>
-                </div>
-                <div class="assign-field">
-                  <label>Người phụ trách chính</label>
-                  <select id="assignmentAssignee"><option value="">Chọn nhân viên</option></select>
-                </div>
-                <div class="assign-field">
-                  <label>Mức ưu tiên</label>
-                  <select id="assignmentPriority">
-                    <option value="Cao">Cao</option>
-                    <option value="Trung bình" selected>Trung bình</option>
-                    <option value="Thấp">Thấp</option>
-                  </select>
-                </div>
-                <div class="assign-field">
+                <div class="assign-control">
                   <label>Thời hạn</label>
                   <input id="assignmentDeadline" type="date">
                 </div>
-                <div class="assign-field">
+                <div class="assign-control">
                   <label>Giới hạn chi phí</label>
-                  <input id="assignmentBudget" placeholder="0đ / Không phát sinh / Theo phê duyệt">
+                  <input id="assignmentBudget" placeholder="Mặc định: không phát sinh">
                 </div>
-                <div class="assign-field full">
+                <div class="assign-control">
+                  <label>Mã nhiệm vụ</label>
+                  <input id="assignmentId" placeholder="Tự tạo nếu để trống">
+                </div>
+                <div class="assign-control full">
                   <label>Phạm vi</label>
-                  <textarea id="assignmentScope" placeholder="Những phần được phép thay đổi / xử lý"></textarea>
+                  <textarea id="assignmentScope" placeholder="Chỉ ghi khi cần giới hạn khu vực được phép xử lý"></textarea>
                 </div>
-                <div class="assign-field full">
-                  <label>Ngoài phạm vi</label>
-                  <textarea id="assignmentOutOfScope" placeholder="Những phần không được đụng tới"></textarea>
+                <div class="assign-control full">
+                  <label>Không được đụng tới</label>
+                  <textarea id="assignmentOutOfScope" placeholder="Các phần cần giữ nguyên"></textarea>
                 </div>
-                <div class="assign-field full">
-                  <label>Tiêu chí nghiệm thu</label>
-                  <textarea id="assignmentCriteria" placeholder="Mỗi dòng là một tiêu chí có thể kiểm tra được"></textarea>
-                  <div class="assign-help">Ví dụ: “Đăng nhập thành công trên mobile”, “Không phát sinh lỗi console”, “QA-01 xác nhận PASS”.</div>
+                <div class="assign-control full">
+                  <label>Tiêu chí hoàn thành</label>
+                  <textarea id="assignmentCriteria" placeholder="Mỗi dòng một tiêu chí, nếu cần"></textarea>
                 </div>
               </div>
-              <div class="assign-actions">
-                <button class="assign-secondary" type="button" id="assignmentClear">Xóa nội dung</button>
-                <button class="primary-btn" type="button" id="assignmentSave">Lưu bản giao việc</button>
+            </details>
+
+            <div class="assign-actions">
+              <span class="assign-actions-note">Hiện tại mới lưu việc trên trình duyệt, chưa gửi runner AI.</span>
+              <div style="display:flex;gap:8px">
+                <button class="assign-secondary" type="button" id="assignmentClear">Làm mới</button>
+                <button class="primary-btn" type="button" id="assignmentSave">Tạo việc</button>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="assign-panel">
-            <div class="assign-panel-head">
-              <div>
-                <h3>Bản giao việc đã soạn</h3>
-                <p>Dùng để rà lại trước khi nối sang CEO/runner ở bước tiếp theo.</p>
-              </div>
-              <span id="assignmentPanelCount" class="assign-chip">0</span>
-            </div>
-            <div class="assign-panel-body">
-              <div id="assignmentPreview" class="assign-preview">
-                <div class="assign-preview-top">
-                  <div>
-                    <h4 id="assignmentPreviewTitle">Chưa có nhiệm vụ đang soạn</h4>
-                    <small id="assignmentPreviewObjective" style="color:var(--muted);display:block;margin-top:5px;line-height:1.5">Nhập thông tin ở biểu mẫu để xem trước bản giao việc.</small>
-                  </div>
-                  <span class="badge">Nháp</span>
-                </div>
-                <div class="assign-meta" id="assignmentPreviewMeta"></div>
-              </div>
-              <div class="assign-draft-list" id="assignmentDraftList">
-                <div class="assign-empty">Chưa có bản giao việc nào.<br>Tạo nhiệm vụ đầu tiên ở biểu mẫu bên trái.</div>
-              </div>
-            </div>
+        <div class="assign-list-wrap">
+          <div class="assign-list-head">
+            <h3>Việc đã tạo</h3>
+            <span id="assignmentPanelCount" class="assign-chip">0</span>
+          </div>
+          <div class="assign-list" id="assignmentDraftList">
+            <div class="assign-empty">Chưa có việc nào.</div>
           </div>
         </div>
       </div>
@@ -1512,8 +1504,10 @@
       renderSimpleEmployees();toast('Đã thêm nhân viên.');
     };
   }
-  // Giao việc — bước 1: bản nháp UI cục bộ, chưa dispatch runner AI.
+  // Giao việc tối giản — lưu cục bộ, chưa dispatch runner AI.
   const assignmentDraftKey='aiCompany.assignmentDrafts.v1';
+  let assignmentEditingId='';
+
   function loadAssignmentDrafts(){
     try{
       const value=JSON.parse(localStorage.getItem(assignmentDraftKey)||'[]');
@@ -1532,10 +1526,11 @@
   function populateAssignmentAssignees(selected=''){
     const select=document.getElementById('assignmentAssignee');
     if(!select) return;
+    const names=assignmentEmployeeNames();
     const current=selected||select.value;
     select.innerHTML='<option value="">Chọn nhân viên</option>'+
-      assignmentEmployeeNames().map(name=>'<option value="'+escapeHtml(name)+'">'+escapeHtml(name)+'</option>').join('');
-    if(current&&assignmentEmployeeNames().includes(current)) select.value=current;
+      names.map(name=>'<option value="'+escapeHtml(name)+'">'+escapeHtml(name)+'</option>').join('');
+    if(current&&names.includes(current)) select.value=current;
   }
   function priorityClass(priority){
     if(priority==='Cao') return 'high';
@@ -1543,15 +1538,16 @@
     return 'medium';
   }
   function assignmentDraftId(){
-    const stamp=String(Date.now()).slice(-6);
-    return 'TASK-'+stamp;
+    return 'TASK-'+String(Date.now()).slice(-6);
   }
   function assignmentFormData(){
+    const taskText=document.getElementById('assignmentTask')?.value.trim()||'';
+    const firstLine=taskText.split('\n').find(Boolean)||taskText;
     return {
-      id:document.getElementById('assignmentId')?.value.trim()||assignmentDraftId(),
+      id:document.getElementById('assignmentId')?.value.trim()||assignmentEditingId||assignmentDraftId(),
       project:document.getElementById('assignmentProject')?.value.trim()||'Nội bộ',
-      title:document.getElementById('assignmentTitle')?.value.trim()||'',
-      objective:document.getElementById('assignmentObjective')?.value.trim()||'',
+      title:firstLine.slice(0,90),
+      objective:taskText,
       assignee:document.getElementById('assignmentAssignee')?.value||'',
       priority:document.getElementById('assignmentPriority')?.value||'Trung bình',
       deadline:document.getElementById('assignmentDeadline')?.value||'',
@@ -1563,86 +1559,73 @@
       createdAt:new Date().toISOString()
     };
   }
-  function updateAssignmentPreview(){
-    const data=assignmentFormData();
-    const title=document.getElementById('assignmentPreviewTitle');
-    const objective=document.getElementById('assignmentPreviewObjective');
-    const meta=document.getElementById('assignmentPreviewMeta');
-    if(!title||!objective||!meta) return;
-    title.textContent=data.title||'Chưa có nhiệm vụ đang soạn';
-    objective.textContent=data.objective||'Nhập thông tin ở biểu mẫu để xem trước bản giao việc.';
-    const chips=[];
-    if(data.id) chips.push(data.id);
-    if(data.project) chips.push(data.project);
-    if(data.assignee) chips.push(data.assignee);
-    if(data.priority) chips.push('Ưu tiên: '+data.priority);
-    if(data.deadline) chips.push('Hạn: '+data.deadline);
-    meta.innerHTML=chips.map((x,i)=>'<span class="assign-chip '+(i===3?priorityClass(data.priority):'')+'">'+escapeHtml(x)+'</span>').join('');
-  }
   function renderAssignmentDrafts(){
     const list=document.getElementById('assignmentDraftList');
     const count=document.getElementById('assignmentDraftCount');
     const panelCount=document.getElementById('assignmentPanelCount');
-    if(count) count.textContent=assignmentDrafts.length+' bản nháp';
+    if(count) count.textContent=assignmentDrafts.length+' việc';
     if(panelCount) panelCount.textContent=String(assignmentDrafts.length);
     if(!list) return;
     if(!assignmentDrafts.length){
-      list.innerHTML='<div class="assign-empty">Chưa có bản giao việc nào.<br>Tạo nhiệm vụ đầu tiên ở biểu mẫu bên trái.</div>';
+      list.innerHTML='<div class="assign-empty">Chưa có việc nào.</div>';
       return;
     }
     list.innerHTML=assignmentDrafts.map((item,index)=>`
-      <div class="assign-draft">
-        <div class="assign-draft-title">
-          <div>
-            <b>${escapeHtml(item.title)}</b>
-            <small>${escapeHtml(item.id)} · ${escapeHtml(item.project)} · ${escapeHtml(item.assignee)}</small>
-          </div>
-          <span class="assign-chip ${priorityClass(item.priority)}">${escapeHtml(item.priority)}</span>
+      <div class="assign-item">
+        <div class="assign-item-main">
+          <b>${escapeHtml(item.title||item.objective||'Nhiệm vụ')}</b>
+          <small>${escapeHtml(item.assignee||'Chưa chọn')} · ${escapeHtml(item.project||'Nội bộ')}${item.deadline?' · Hạn '+escapeHtml(item.deadline):''}</small>
         </div>
-        <small>${escapeHtml(item.objective||'Chưa có mục tiêu')}</small>
-        <div class="assign-meta">
-          <span class="assign-chip">Nháp · chưa gửi runner</span>
-          ${item.deadline?'<span class="assign-chip">Hạn '+escapeHtml(item.deadline)+'</span>':''}
-          <span class="assign-chip">${item.criteria?.length||0} tiêu chí</span>
-        </div>
-        <div class="assign-draft-actions">
-          <button class="small-btn" type="button" data-assignment-load="${index}">Mở lại</button>
+        <div class="assign-item-actions">
+          <span class="assign-chip ${priorityClass(item.priority)}">${escapeHtml(item.priority||'Trung bình')}</span>
+          <button class="small-btn" type="button" data-assignment-load="${index}">Sửa</button>
           <button class="small-btn reject" type="button" data-assignment-delete="${index}">Xóa</button>
         </div>
       </div>
     `).join('');
+
     list.querySelectorAll('[data-assignment-delete]').forEach(btn=>btn.onclick=()=>{
+      const item=assignmentDrafts[Number(btn.dataset.assignmentDelete)];
       assignmentDrafts.splice(Number(btn.dataset.assignmentDelete),1);
+      if(item?.id===assignmentEditingId) clearAssignmentForm();
       localStorage.setItem(assignmentDraftKey,JSON.stringify(assignmentDrafts));
       renderAssignmentDrafts();
-      toast('Đã xóa bản giao việc.');
+      toast('Đã xóa việc.');
     });
+
     list.querySelectorAll('[data-assignment-load]').forEach(btn=>btn.onclick=()=>{
       const item=assignmentDrafts[Number(btn.dataset.assignmentLoad)];
       if(!item) return;
-      document.getElementById('assignmentId').value=item.id||'';
-      document.getElementById('assignmentProject').value=item.project||'';
-      document.getElementById('assignmentTitle').value=item.title||'';
-      document.getElementById('assignmentObjective').value=item.objective||'';
+      assignmentEditingId=item.id||'';
       populateAssignmentAssignees(item.assignee||'');
       document.getElementById('assignmentPriority').value=item.priority||'Trung bình';
+      document.getElementById('assignmentTask').value=item.objective||item.title||'';
+      document.getElementById('assignmentProject').value=item.project==='Nội bộ'?'':(item.project||'');
       document.getElementById('assignmentDeadline').value=item.deadline||'';
-      document.getElementById('assignmentBudget').value=item.budget||'';
+      document.getElementById('assignmentBudget').value=item.budget==='Không phát sinh'?'':(item.budget||'');
+      document.getElementById('assignmentId').value=item.id||'';
       document.getElementById('assignmentScope').value=item.scope||'';
       document.getElementById('assignmentOutOfScope').value=item.outOfScope||'';
       document.getElementById('assignmentCriteria').value=(item.criteria||[]).join('\n');
-      updateAssignmentPreview();
-      switchView('assign');
-      toast('Đã mở lại bản giao việc.');
+      const hasAdvanced=Boolean(
+        (item.project&&item.project!=='Nội bộ')||item.deadline||
+        (item.budget&&item.budget!=='Không phát sinh')||item.scope||item.outOfScope||(item.criteria||[]).length
+      );
+      document.getElementById('assignmentAdvanced').open=hasAdvanced;
+      document.getElementById('assignmentTask').focus();
+      toast('Đã mở việc để sửa.');
     });
   }
+
   function clearAssignmentForm(){
-    ['assignmentId','assignmentProject','assignmentTitle','assignmentObjective','assignmentDeadline','assignmentBudget','assignmentScope','assignmentOutOfScope','assignmentCriteria']
+    assignmentEditingId='';
+    ['assignmentTask','assignmentProject','assignmentDeadline','assignmentBudget','assignmentId','assignmentScope','assignmentOutOfScope','assignmentCriteria']
       .forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     const assignee=document.getElementById('assignmentAssignee');if(assignee)assignee.value='';
     const priority=document.getElementById('assignmentPriority');if(priority)priority.value='Trung bình';
-    updateAssignmentPreview();
+    const advanced=document.getElementById('assignmentAdvanced');if(advanced)advanced.open=false;
   }
+
   function decorateStaffCardsForAssignment(){
     document.querySelectorAll('#view-staff .staff-card').forEach(card=>{
       if(card.querySelector('.staff-assign-btn')) return;
@@ -1654,40 +1637,37 @@
       btn.textContent='📌 Giao việc';
       btn.dataset.assignEmployee=name;
       btn.onclick=()=>{
+        clearAssignmentForm();
         populateAssignmentAssignees(name);
         switchView('assign');
         localStorage.setItem(simpleViewKey,'assign');
-        document.getElementById('assignmentTitle')?.focus();
+        document.getElementById('assignmentTask')?.focus();
       };
       card.appendChild(btn);
     });
   }
 
-  const assignmentFields=['assignmentId','assignmentProject','assignmentTitle','assignmentObjective','assignmentAssignee','assignmentPriority','assignmentDeadline','assignmentBudget','assignmentScope','assignmentOutOfScope','assignmentCriteria'];
-  assignmentFields.forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){
-      el.addEventListener('input',updateAssignmentPreview);
-      el.addEventListener('change',updateAssignmentPreview);
-    }
-  });
   document.getElementById('assignmentClear')?.addEventListener('click',()=>{
     clearAssignmentForm();
-    toast('Đã xóa nội dung biểu mẫu.');
+    toast('Đã làm mới.');
   });
+
   document.getElementById('assignmentSave')?.addEventListener('click',()=>{
     const data=assignmentFormData();
-    if(!data.title){ toast('Nhập tên nhiệm vụ.'); return; }
-    if(!data.objective){ toast('Nhập mục tiêu nhiệm vụ.'); return; }
-    if(!data.assignee){ toast('Chọn người phụ trách chính.'); return; }
-    if(!data.scope){ toast('Nhập phạm vi nhiệm vụ.'); return; }
-    if(!data.criteria.length){ toast('Cần ít nhất 1 tiêu chí nghiệm thu.'); return; }
+    if(!data.assignee){ toast('Chọn nhân viên nhận việc.'); return; }
+    if(!data.objective){ toast('Nhập việc cần làm.'); return; }
+
     const existingIndex=assignmentDrafts.findIndex(x=>x.id===data.id);
-    if(existingIndex>=0) assignmentDrafts[existingIndex]=data;
-    else assignmentDrafts.unshift(data);
+    if(existingIndex>=0){
+      data.createdAt=assignmentDrafts[existingIndex].createdAt||data.createdAt;
+      assignmentDrafts[existingIndex]=data;
+    }else{
+      assignmentDrafts.unshift(data);
+    }
     localStorage.setItem(assignmentDraftKey,JSON.stringify(assignmentDrafts));
     renderAssignmentDrafts();
-    toast('Đã lưu bản giao việc. Chưa gửi runner AI.');
+    clearAssignmentForm();
+    toast('Đã tạo việc. Chưa gửi runner AI.');
   });
 
   navButtons.forEach(btn=>btn.addEventListener('click',()=>{
@@ -1697,7 +1677,6 @@
   populateAssignmentAssignees();
   decorateStaffCardsForAssignment();
   renderAssignmentDrafts();
-  updateAssignmentPreview();
   const savedSimpleView=localStorage.getItem(simpleViewKey);
   switchView(['staff','assign'].includes(savedSimpleView)?savedSimpleView:'ceo');
 
