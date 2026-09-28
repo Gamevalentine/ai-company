@@ -3,6 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
+import { snapshotManifest } from './code-01/tools.mjs';
 
 const __dirname=path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_AGENTS=JSON.parse(fs.readFileSync(path.join(__dirname,'agents.json'),'utf8'));
@@ -189,6 +190,7 @@ export class AionPlatform{
     const agent=this.agent(agentId);
     if(agent.role!=='qa') throw new PlatformError('QA_ONLY','Chỉ QA được trả QA PASS/FAIL',403);
     const t=this.task(taskId);
+    if(t.inputs?.code_execution_id) throw new PlatformError('DEDICATED_QA_REQUIRED','Use the independent CODE-01 QA runner',403);
     if(t.assigned_to!==agentId) throw new PlatformError('QA_TASK_DENIED','QA không sở hữu task này',403);
     const status=result==='PASS'?'QA_PASS':result==='FAIL'?'QA_FAIL':null;
     if(!status) throw new PlatformError('QA_RESULT_INVALID','Kết quả QA phải PASS hoặc FAIL');
@@ -264,10 +266,18 @@ export class AionPlatform{
     const ceo=this.agent(ceoId);
     if(ceo.role!=='ceo') throw new PlatformError('CEO_ONLY','Chỉ CEO được nghiệm thu cấp CEO',403);
     const t=this.task(taskId);
-    if(t.assigned_to!=='TB-01' && t.assigned_to!==ceoId) throw new PlatformError('CEO_SCOPE_DENIED','Task không thuộc tuyến CEO',403);
+    if(t.assigned_to==='CODE-01'){
+      const execution=t.outputs?.code_execution,qa=t.outputs?.code_qa;
+      const qaTask=qa&&this.state().tasks.find(x=>x.task_id===qa.qa_task_id);
+      if(t.created_by!==ceoId||t.status!=='READY_FOR_CEO_REVIEW'||!execution||!qa||qa.result!=='PASS'||qa.execution_id!==execution.execution_id||qaTask?.status!=='QA_PASS'||qaTask.assigned_to!=='QA-01'||!qa.checks?.length||qa.checks.some(c=>!c.passed)||JSON.stringify(qa.acceptance_criteria)!==JSON.stringify(t.acceptance_criteria)) throw new PlatformError('QA_EVIDENCE_REQUIRED','Current independent QA PASS required',409);
+      let manifest;
+      try{manifest=snapshotManifest(execution.workspace,execution.files);}catch{throw new PlatformError('STALE_QA_EVIDENCE','Workspace evidence unavailable',409);}
+      if(JSON.stringify(manifest)!==JSON.stringify(execution.manifest)||JSON.stringify(manifest)!==JSON.stringify(qa.manifest)) throw new PlatformError('STALE_QA_EVIDENCE','Workspace changed after verification',409);
+    } else if(t.assigned_to!=='TB-01' && t.assigned_to!==ceoId) throw new PlatformError('CEO_SCOPE_DENIED','Task không thuộc tuyến CEO',403);
     const children=this.state().tasks.filter(x=>x.parent_task_id===taskId);
-    const qaPass=children.some(x=>x.status==='QA_PASS');
+    const qaPass=t.assigned_to==='CODE-01'||children.some(x=>x.status==='QA_PASS');
     if(!qaPass) throw new PlatformError('QA_EVIDENCE_REQUIRED','Chưa có QA PASS + evidence',409);
+    requiresProduction=requiresProduction||t.inputs?.requires_production===true;
     const next=requiresProduction?'WAITING_OWNER_APPROVAL':'COMPLETED';
     this.store.mutate(s=>{
       const x=s.tasks.find(v=>v.task_id===taskId);

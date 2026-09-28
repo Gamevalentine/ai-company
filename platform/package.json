@@ -8,6 +8,10 @@
   },
   "scripts": {
     "test": "node --test *.test.mjs",
-    "start": "node runtime.mjs"
+    "start": "node runtime.mjs",
+    "code01": "node code-01/brain.mjs",
+    "code01:execute": "node code-01/execute.mjs",
+    "code01:review": "node code-01/review.mjs",
+    "code01:pilot": "node code-01/pilot.mjs"
   }
 }

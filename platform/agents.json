@@ -59,7 +59,9 @@
       "TrainingBot"
     ],
     "can_assign_to": [],
-    "allowed_tools": [],
+    "allowed_tools": [
+      "code01_workspace"
+    ],
     "permissions": [
       "accept_ceo_task",
       "read_source",
@@ -221,7 +223,9 @@
       "TrainingBot"
     ],
     "can_assign_to": [],
-    "allowed_tools": [],
+    "allowed_tools": [
+      "code01_qa_checks"
+    ],
     "permissions": [
       "accept_ceo_task",
       "read_source",
@@ -241,7 +245,8 @@
       "spend_money",
       "delete_data",
       "secret_change",
-      "change_acceptance_criteria"
+      "change_acceptance_criteria",
+      "sandbox_patch"
     ]
   },
   {

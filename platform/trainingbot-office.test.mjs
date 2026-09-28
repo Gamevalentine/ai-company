@@ -22,6 +22,9 @@ test('TB-01 can assign every TrainingBot office specialist while ATLAS cannot by
   const atlas=agents.find(a=>a.agent_id==='ATLAS');
   assert.deepEqual(manager.can_assign_to.slice().sort(),specialistIds.slice().sort());
   assert.ok(atlas.can_assign_to.includes('TB-01'));
+  assert.ok(atlas.can_assign_to.includes('CODE-01'));
+  assert.ok(atlas.can_assign_to.includes('QA-01'));
+  assert.equal(agents.find(a=>a.agent_id==='CODE-01').reports_to,'ATLAS');
   for(const id of specialistIds){
     assert.equal(atlas.can_assign_to.includes(id),false,'ATLAS bypassed TB-01 for '+id);
   }
