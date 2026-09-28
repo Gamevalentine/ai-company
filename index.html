@@ -97,6 +97,87 @@ button:disabled{opacity:.55;cursor:not-allowed}
  .app{display:block}.sidebar{display:none}.topbar{height:auto;padding:10px 12px;grid-template-columns:1fr auto}.top-user span:last-child{display:none}.content{padding:10px 10px 72px}.search span{display:none}.hero{grid-template-columns:1fr}.week-btn{display:none}.stats{grid-template-columns:repeat(2,1fr)}.focus-grid,.mid-grid,.right-col,.site-status,.cards-4,.grid-3,.form-grid{grid-template-columns:1fr}.focus-grid .project-card:last-child{grid-column:auto}.right-col .panel:first-child{grid-column:auto}.site-status{display:grid}.full{grid-column:auto}.hero h1{font-size:20px}
  .mobile-nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(5,16,29,.96);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:80;backdrop-filter:blur(18px)}.mobile-nav button{border:0;background:transparent;color:#7691aa;font-size:9px;display:grid;place-items:center;gap:2px}.mobile-nav button span{font-size:18px}.mobile-nav button.active{color:#4ca5ff}
 }
+
+/* AION HQ v2 readability pass */
+@media (min-width:701px){
+  .app{grid-template-columns:238px minmax(0,1fr)}
+  .sidebar{padding:16px 11px}
+  .nav-btn{font-size:14px;padding:11px 12px}
+  .nav-count{font-size:11px;min-width:25px;height:22px}
+  .topbar{height:64px;padding:0 24px}
+  .search{height:40px}
+  .search input,.search span{font-size:13px}
+  .top-time{font-size:11px}
+  .top-user{font-size:13px}
+  .content{padding:18px 18px 32px}
+  .dashboard-shell{grid-template-columns:minmax(0,1fr) 330px;gap:14px}
+  .hero{padding:18px 20px 14px}
+  .hero h1{font-size:28px}
+  .hero p{font-size:14px;line-height:1.55}
+  .week-btn{font-size:12px;padding:10px 13px}
+  .stats{gap:10px;margin-top:12px}
+  .stat{padding:13px;min-height:88px}
+  .stat-icon{width:40px;height:40px;font-size:19px}
+  .stat strong{font-size:23px}
+  .stat small{font-size:12px;margin-top:5px}
+  .stat em{font-size:11px;margin-top:7px}
+  .panel-head{height:50px;padding:0 15px}
+  .panel-head h2{font-size:16px}
+  .panel-head a,.panel-head button{font-size:11px}
+  .panel-body{padding:12px 14px}
+  .focus-grid{gap:10px}
+  .project-card{padding:13px;min-height:160px}
+  .pc-logo{width:46px;height:46px;font-size:23px}
+  .pc-name{font-size:15px}
+  .pc-desc{font-size:11.5px;margin-top:4px}
+  .status-badge{font-size:10.5px;padding:5px 8px}
+  .pc-meta{font-size:10.5px;gap:13px}
+  .open-project{font-size:11.5px;padding:8px}
+  .tabs{gap:7px}
+  .tab{font-size:10.5px;padding:6px 10px}
+  .row{min-height:40px;font-size:12px;grid-template-columns:24px minmax(0,1fr) auto auto;gap:8px}
+  .row .sub{font-size:10px}
+  .tag{font-size:9.5px;padding:4px 8px}
+  .approval-item{grid-template-columns:33px minmax(0,1fr) auto;gap:9px;padding:10px 0}
+  .ai-icon{width:31px;height:31px}
+  .approval-item strong{font-size:12px}
+  .approval-item p{font-size:10.5px;line-height:1.45}
+  .approve,.reject{font-size:10px;padding:6px 9px}
+  .site{padding:9px}
+  .site b{font-size:10.5px}
+  .online{font-size:9.5px}
+  .atlas-head b{font-size:16px !important}
+  .atlas-text{font-size:11.5px;line-height:1.65}
+  .ability{font-size:11.5px;margin:8px 0}
+  .atlas-chat input{font-size:11px;height:37px}
+  .activity{font-size:10.5px;padding:8px 0 8px 13px}
+  .idea-row{font-size:10.5px;padding:8px 0}
+  .score{font-size:9px}
+  .page-title h1{font-size:25px}
+  .page-title p{font-size:12.5px}
+  .primary,.secondary{font-size:12px}
+  .mini-card span{font-size:11px}
+  .table th,.table td{font-size:11.5px;padding:12px 13px}
+  .table th{font-size:10.5px}
+  .kanban-head{font-size:12px}
+  .k-card b{font-size:11.5px}
+  .k-card p{font-size:10.5px}
+  .k-card footer{font-size:9.5px}
+  .feature-card h3{font-size:13.5px}
+  .feature-card p{font-size:11.5px}
+  .field label{font-size:10.5px}
+  .field input,.field textarea,.field select{font-size:11.5px}
+  .side-atlas-title{font-size:14px}
+  .side-atlas p{font-size:11.5px}
+}
+@media (min-width:1251px){
+  .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media (min-width:701px) and (max-width:1100px){
+  .app{grid-template-columns:78px minmax(0,1fr)}
+}
+ /* end readability pass */
+
 </style>
 </head>
 <body>
