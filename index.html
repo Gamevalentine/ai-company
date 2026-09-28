@@ -518,7 +518,26 @@ const defaults={
   {icon:'🔒',title:'Security',desc:'Secret, quyền hạn tối thiểu và kiểm tra dependency.'}
  ]
 };
-function loadState(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem(stateKey)||'{}'))}catch(e){return structuredClone(defaults)}}
+function loadState(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(stateKey)||'{}')||{};
+  const merged=Object.assign({},defaults,saved);
+  const arrayKeys=['projects','tasks','approvals','ideas','logs','sources','lab','team','knowledge'];
+  arrayKeys.forEach(k=>{
+   if(!Array.isArray(merged[k])) merged[k]=structuredClone(defaults[k]);
+  });
+  // Đội AI là cấu hình hệ thống: luôn khôi phục đủ 8 vai trò chuẩn,
+  // nhưng giữ bộ nhớ/lịch sử riêng trong agentBrains.
+  const savedTeam=Array.isArray(saved.team)?saved.team:[];
+  merged.team=defaults.team.map(base=>{
+   const legacy=savedTeam.find(x=>x && (x.id===base.id || x.title===base.title));
+   return Object.assign({},base,legacy||{}, {id:base.id,brain:base.brain});
+  });
+  return merged;
+ }catch(e){
+  return structuredClone(defaults);
+ }
+}
 let state=loadState();
 function save(){localStorage.setItem(stateKey,JSON.stringify(state))}
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
@@ -570,9 +589,15 @@ function renderIdeas(){$('#ideaGrid').innerHTML=state.ideas.map(i=>'<div class="
 function renderSources(){$('#sourceTable').innerHTML='<table class="table"><thead><tr><th>Source</th><th>Loại</th><th>Công nghệ</th><th>Trạng thái</th><th>Có thể dùng cho</th></tr></thead><tbody>'+state.sources.map(r=>'<tr>'+r.map((v,i)=>'<td>'+(i===3?'<span class="tag '+(v==='Đã test'?'green':'blue')+'">'+esc(v)+'</span>':esc(v))+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
 function renderLab(){$('#labGrid').innerHTML=state.lab.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><span class="tag purple">'+esc(x.status)+'</span><button class="secondary" style="padding:5px 8px">Mở</button></div></div>').join('')}
 function ensureBrains(){
- if(!state.agentBrains) state.agentBrains={};
+ if(!Array.isArray(state.team)||!state.team.length) state.team=structuredClone(defaults.team);
+ if(!state.agentBrains||typeof state.agentBrains!=='object') state.agentBrains={};
  state.team.forEach(a=>{
+  if(!a||!a.id) return;
   if(!state.agentBrains[a.id]) state.agentBrains[a.id]={status:'ready',currentTask:'',history:[],memory:[...(a.brain?.memory||[])]};
+  const b=state.agentBrains[a.id];
+  if(!Array.isArray(b.history)) b.history=[];
+  if(!Array.isArray(b.memory)) b.memory=[...(a.brain?.memory||[])];
+  if(!b.status) b.status='ready';
  });
  save();
 }
@@ -591,6 +616,7 @@ function renderTeam(){
   return '<div class="feature-card ai-brain-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px"><div class="big">'+esc(x.icon)+'</div><div class="brain-status"><i class="brain-dot"></i>'+(b.status==='working'?'Đang xử lý':'Não Online')+'</div></div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="brain-meta"><div><b>'+((x.brain?.skills||[]).length)+'</b><span>Kỹ năng</span></div><div><b>'+(b.memory?.length||0)+'</b><span>Ký ức</span></div><div><b>'+(b.history?.length||0)+'</b><span>Lần xử lý</span></div></div><div class="brain-actions">'+(x.id==='atlas'?'<button class="secondary" data-open-leadership>👑 Não lãnh đạo</button>':'<button class="secondary" data-open-brain="'+esc(x.id)+'">🧠 Mở não</button>')+'<button class="primary" data-assign-brain="'+esc(x.id)+'">Giao việc</button></div></div>';
  }).join('');
  $('[data-open-brain]').forEach(btn=>btn.onclick=()=>openBrain(btn.dataset.openBrain,false));
+ $('[data-open-leadership]').forEach(btn=>btn.onclick=openLeadershipBrain);
  $('[data-assign-brain]').forEach(btn=>btn.onclick=()=>openBrain(btn.dataset.assignBrain,true));
  brainCounts();
 }
@@ -756,11 +782,21 @@ $('#atlasQuickSend').onclick=()=>{const q=$('#atlasQuick').value;atlasOpen();set
 $('#globalSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase().trim();if(!q)return;const hits=[...state.projects.map(x=>['Dự án',x.name,x.desc]),...state.tasks.map(x=>['Công việc',x.title,x.project]),...state.ideas.map(x=>['Ý tưởng',x.title,x.desc]),...state.sources.map(x=>['Source',x[0],x[1]])].filter(x=>x.join(' ').toLowerCase().includes(q)).slice(0,7);if(hits.length)openModal('Kết quả tìm kiếm','<div class="list">'+hits.map(h=>'<div class="row" style="grid-template-columns:90px 1fr"><span class="tag blue">'+h[0]+'</span><div><b>'+esc(h[1])+'</b><div class="sub">'+esc(h[2])+'</div></div></div>').join('')+'</div>')});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#globalSearch').focus()}if(e.key==='Escape')closeModal()});
 $('#themeBtn').onclick=()=>toast('AION HQ v2 đang dùng giao diện tối làm mặc định.');
+function safeRender(name,fn){
+ try{fn()}catch(error){console.error('[AION]',name,error)}
+}
 function boot(){
  ensureBrains();
  ensureLeadershipBrain();
+ // Render Đội AI trước để một lỗi ở module khác không làm biến mất toàn bộ nhân viên.
+ safeRender('team',renderTeam);
  const d=new Date(),weekday=d.toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});$('#todayLabel').textContent=weekday.charAt(0).toUpperCase()+weekday.slice(1);const onejan=new Date(d.getFullYear(),0,1),week=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);$('#weekLabel').textContent='Tuần '+week+' · '+d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
- renderFocus();renderToday();renderApprovals();renderSites();renderLogs();renderIdeaPreview();renderProjects();renderKanban();renderIdeas();renderSources();renderLab();renderTeam();renderKnowledge();
+ [
+  ['focus',renderFocus],['today',()=>renderToday()],['approvals',renderApprovals],
+  ['sites',renderSites],['logs',renderLogs],['ideaPreview',renderIdeaPreview],
+  ['projects',renderProjects],['kanban',renderKanban],['ideas',renderIdeas],
+  ['sources',renderSources],['lab',renderLab],['knowledge',renderKnowledge]
+ ].forEach(([name,fn])=>safeRender(name,fn));
  const hash=location.hash.replace('#','');if(hash&&$('#view-'+hash))setView(hash);
 }
 boot();
