@@ -135,7 +135,7 @@ export class TelegramCommsState extends DurableObject {
   async poll(){
     const env=this.env;
     if(!env.TELEGRAM_BOT_TOKEN) throw new Error('TELEGRAM_BOT_TOKEN is not configured');
-    if(!env.TELEGRAM_ALLOWED_CHAT_ID) throw new Error('TELEGRAM_ALLOWED_CHAT_ID is not configured');
+    if(!env.TELEGRAM_ALLOWED_CHAT_ID && !env.TELEGRAM_ALLOWED_CHAT_USERNAME) throw new Error('Telegram allowed chat is not configured');
 
     const me=await telegram(env,'getMe');
     const offset=await this.getOffset();
@@ -149,7 +149,8 @@ export class TelegramCommsState extends DurableObject {
     });
 
     let seen=0,replied=0,ignored=0,escalated=0,aiCalls=0;
-    const allowedChat=String(env.TELEGRAM_ALLOWED_CHAT_ID);
+    const allowedChat=String(env.TELEGRAM_ALLOWED_CHAT_ID||'').trim();
+    const allowedUsername=String(env.TELEGRAM_ALLOWED_CHAT_USERNAME||'').trim().replace(/^@/,'').toLowerCase();
 
     for(const update of updates){
       const next=Number(update.update_id)+1;
@@ -161,7 +162,9 @@ export class TelegramCommsState extends DurableObject {
 
       seen++;
       const chatId=String(message.chat?.id||'');
-      if(chatId!==allowedChat){
+      const chatUsername=String(message.chat?.username||'').toLowerCase();
+      const allowed=(allowedChat && chatId===allowedChat) || (allowedUsername && chatUsername===allowedUsername);
+      if(!allowed){
         ignored++;
         await this.markProcessed(update.update_id,'OUTSIDE_APPROVED_CHAT');
         await this.setOffset(next);
@@ -217,7 +220,8 @@ export class TelegramCommsState extends DurableObject {
     return {
       ok:true,
       bot_username:me.username||null,
-      allowed_chat_id:allowedChat,
+      allowed_chat_id:allowedChat||null,
+      allowed_chat_username:allowedUsername||null,
       seen,replied,ignored,escalated,
       ai_calls:aiCalls,
       free_guard:{max_ai_calls_per_day:Number(env.MAX_AI_CALLS_PER_DAY||40)}
