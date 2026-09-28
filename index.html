@@ -1493,6 +1493,8 @@
       simpleEmployees.splice(Number(btn.dataset.simpleEmployeeDelete),1);
       simpleSaveEmployees();renderSimpleEmployees();toast('Đã xóa nhân viên.');
     });
+    decorateStaffCardsForAssignment();
+    populateAssignmentAssignees();
   }
   const simpleEmployeeAdd=document.getElementById('simpleEmployeeAdd');
   if(simpleEmployeeAdd){
