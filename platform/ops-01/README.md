@@ -22,6 +22,8 @@ Keep owner-authorized systems deployable, observable, recoverable, and stable wi
 - SYSTEM_PROMPT.md — operations brain and decision rules
 - permissions.json — authority and safety boundaries
 - WORKFLOW.md — standard operating workflow
+- ../ops-01-brain.mjs — executable company-level operations runner
+- ../ops-01-brain.test.mjs — production-gate, health, rollback and incident tests
 
 ## Default operating mode
 - READ production status/logs: ON when authorized
@@ -33,3 +35,19 @@ Keep owner-authorized systems deployable, observable, recoverable, and stable wi
 - SECRET CHANGES: OFF until explicit Owner approval
 - COST: OFF
 - DESTRUCTIVE ACTIONS: OFF
+
+
+## Executable runner
+
+From `platform`, OPS-01 can process an ATLAS-assigned task with:
+
+`npm run ops01 -- run --state <STATE_FILE> --task-id <TASK_ID>`
+
+The runner consumes authorized `inputs.operational_evidence` such as route health, workflow runs, deployment/version evidence, approvals, rollback readiness, backup status, and critical QA/security blockers. It writes a structured `outputs.operations_handoff`, task evidence, audit history, and reports back to ATLAS.
+
+Hard gates prevent OPS-01 from:
+- claiming deployment success without verified deployment/version/post-deploy health evidence;
+- claiming a backup is usable without restore-readiness evidence;
+- proceeding past preparation for a production request when Owner approval or another required production gate is missing.
+
+This runner is separate from `ops-brain.mjs`, which belongs to TrainingBot's `OPS-TB-01`.
