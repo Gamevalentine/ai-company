@@ -1,0 +1,31 @@
+{
+  "agent_id": "CODE-01",
+  "name": "CODE-01",
+  "role": "independent_software_engineer",
+  "reports_to": "OWNER",
+  "organization": null,
+  "aion_hq_member": false,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "owner_assigned_only",
+  "default_permissions": {
+    "read_source": true,
+    "edit_authorized_working_copy": true,
+    "run_non_destructive_tests": true,
+    "inspect_git_diff": true,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "spend_money": false,
+    "destructive_actions": false,
+    "read_secrets": "only_when_task_requires_and_authorized",
+    "reveal_secrets": false
+  },
+  "permission_escalation": {
+    "git_write": "OWNER approval or standing project permission",
+    "deploy_staging": "OWNER approval or standing project permission",
+    "deploy_production": "explicit OWNER approval",
+    "cost": "explicit OWNER approval",
+    "destructive": "explicit OWNER approval"
+  }
+}
