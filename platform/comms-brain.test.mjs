@@ -16,10 +16,10 @@ test('website support replies through TrainingBot Gmail',()=>{
   assert.equal(r.reply_identity,'trainingbot.ai2@gmail.com');
 });
 
-test('Facebook and Discord stay on the same channel',()=>{
+test('Facebook and Telegram stay on the same channel',()=>{
   assert.equal(routeForSource('facebook_comment').reply_channel,'facebook_comment_thread');
   assert.equal(routeForSource('facebook_messenger').reply_channel,'facebook_messenger');
-  assert.equal(routeForSource('discord_community').reply_channel,'same_discord_channel');
+  assert.equal(routeForSource('telegram_community').reply_channel,'same_telegram_chat');
 });
 
 test('noreply and verification messages are ignored before AI',()=>{
@@ -50,11 +50,11 @@ test('high confidence approved game question may auto reply',()=>{
     proposed_reply:'Bạn có thể xem thông tin đã công bố tại trang cập nhật.',
     sensitive_flags:[]
   },{
-    source:'discord_community',
+    source:'telegram_community',
     approved_context:'Thông tin công khai đã được duyệt: xem trang cập nhật TrainingBot.'
   });
   assert.equal(r.decision,'AUTO_REPLY');
-  assert.equal(r.route.reply_channel,'same_discord_channel');
+  assert.equal(r.route.reply_channel,'same_telegram_chat');
 });
 
 test('missing approved context keeps a high confidence answer as draft only',()=>{
