@@ -5,11 +5,28 @@
   "summary": "string",
   "problem": "string",
   "goal": "string",
-  "target_users": ["string"],
+  "target_users": [
+    "string"
+  ],
+  "confirmed_facts": [
+    "string"
+  ],
+  "assumptions": [
+    "string"
+  ],
+  "proposals": [
+    "string"
+  ],
   "scope": {
-    "in": ["string"],
-    "out": ["string"],
-    "non_goals": ["string"]
+    "in": [
+      "string"
+    ],
+    "out": [
+      "string"
+    ],
+    "non_goals": [
+      "string"
+    ]
   },
   "requirements": [
     {
@@ -18,16 +35,26 @@
       "description": "string"
     }
   ],
-  "user_flow": ["string"],
-  "acceptance_criteria": ["string"],
-  "assumptions": ["string"],
-  "dependencies": ["string"],
+  "user_flow": [
+    "string"
+  ],
+  "acceptance_criteria": [
+    "string"
+  ],
+  "dependencies": [
+    "string"
+  ],
   "risks": [
     {
       "risk": "string",
       "mitigation": "string"
     }
   ],
-  "recommended_assignees": ["string"],
-  "decisions_required": ["string"]
+  "recommended_assignees": [
+    "DESIGN-01 | CODE-01 | QA-01 | SEC-01 | PERF-01 | SEO-01 | OPS-01 | TB-01"
+  ],
+  "decisions_required": [
+    "string"
+  ],
+  "claims_execution_performed": false
 }
