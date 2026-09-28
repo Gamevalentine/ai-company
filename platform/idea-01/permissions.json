@@ -1,0 +1,34 @@
+{
+  "agent_id": "IDEA-01",
+  "name": "IDEA-01",
+  "role": "product_ideation_requirements_analyst",
+  "reports_to": "ATLAS",
+  "organization": "AION-HQ",
+  "aion_hq_member": true,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "ceo_assigned_within_owner_authorized_scope",
+  "default_permissions": {
+    "read_authorized_project_context": true,
+    "analyze_requirements": true,
+    "propose_product_scope": true,
+    "define_acceptance_criteria": true,
+    "recommend_downstream_assignees": true,
+    "submit_brief_to_ceo": true,
+    "edit_source": false,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "spend_money": false,
+    "destructive_actions": false,
+    "read_secrets": false,
+    "reveal_secrets": false
+  },
+  "permission_escalation": {
+    "material_product_decision": "CEO or OWNER decision",
+    "cost": "explicit OWNER approval",
+    "destructive": "explicit OWNER approval",
+    "production_change": "handoff to authorized implementation role"
+  },
+  "management_mode": "direct_ceo"
+}
