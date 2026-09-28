@@ -102,14 +102,17 @@ function cleanRisks(v){
 
 export function validateIdeaBrief(input){
   if(!input||typeof input!=='object'||Array.isArray(input)) throw new Error('Invalid IDEA-01 output');
+  const summary=text(input.summary,'summary',420);
+  const problem=text(input.problem,'problem',420);
+  const goal=text(input.goal,'goal',420);
   const recommended=[...new Set(strings(input.recommended_assignees,{max:8,name:'recommended_assignees'}))]
     .filter(x=>ALLOWED_ASSIGNEES.has(x));
   const decisions=strings(input.decisions_required,{max:8,name:'decisions_required'});
   return {
     status:decisions.length?'NEEDS_DECISION':'READY_FOR_CEO_REVIEW',
-    summary:text(input.summary,'summary',420),
-    problem:text(input.problem,'problem',420),
-    goal:text(input.goal,'goal',420),
+    summary,
+    problem,
+    goal,
     target_users:strings(input.target_users,{min:1,max:8,name:'target_users'}),
     confirmed_facts:strings(input.confirmed_facts,{max:12,name:'confirmed_facts'}),
     assumptions:strings(input.assumptions,{max:12,name:'assumptions'}),
