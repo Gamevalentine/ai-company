@@ -1,1363 +1,472 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AION HQ — Trung tâm điều hành cá nhân</title>
-  <style>
-    :root{
-      --bg:#07111f;
-      --panel:#0d1a2b;
-      --panel-2:#101f33;
-      --line:#1f3552;
-      --text:#eef5ff;
-      --muted:#91a4bd;
-      --accent:#6ee7ff;
-      --accent-2:#8b5cf6;
-      --ok:#34d399;
-      --warn:#fbbf24;
-      --danger:#fb7185;
-      --shadow:0 18px 60px rgba(0,0,0,.28);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      background:
-        radial-gradient(circle at 20% 0%, rgba(110,231,255,.10), transparent 30%),
-        radial-gradient(circle at 90% 10%, rgba(139,92,246,.12), transparent 28%),
-        var(--bg);
-      color:var(--text);
-      min-height:100vh;
-    }
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
-    .sidebar{
-      border-right:1px solid var(--line);
-      background:rgba(7,17,31,.82);
-      backdrop-filter:blur(18px);
-      padding:20px 16px;
-      position:sticky;
-      top:0;height:100vh;
-      display:flex;flex-direction:column;
-    }
-    .brand{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 0 18px}
-    .brand-mark{
-      width:220px;max-width:100%;height:auto;aspect-ratio:157 / 57;border-radius:0;
-      display:grid;place-items:center;
-      background:transparent;
-      box-shadow:none;
-      overflow:visible;
-      flex:0 0 auto;
-    }
-    .brand-logo{width:100%;height:100%;display:block}
-    .brand b{display:block;font-size:17px}
-    .brand span{font-size:12px;color:var(--muted)}
-    .nav{display:grid;gap:6px}
-    .nav-btn{
-      border:0;background:transparent;color:var(--muted);
-      text-align:left;padding:11px 12px;border-radius:11px;
-      display:flex;align-items:center;gap:10px;
-      transition:.18s;
-    }
-    .nav-btn:hover,.nav-btn.active{background:rgba(110,231,255,.08);color:var(--text)}
-    .nav-btn.active{outline:1px solid rgba(110,231,255,.18)}
-    .nav-icon{width:22px;text-align:center}
-    .sidebar-footer{margin-top:auto;padding:12px}
-    .owner-chip{
-      border:1px solid var(--line);background:var(--panel);
-      border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px
-    }
-    .avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#162943}
-    .owner-chip b{font-size:13px;display:block}.owner-chip small{color:var(--muted)}
-    .main{padding:24px 28px 40px;min-width:0}
-    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
-    .headline h1{font-size:26px;margin:0 0 5px}.headline p{margin:0;color:var(--muted)}
-    .top-actions{display:flex;align-items:center;gap:10px}
-    .status-pill,.ghost-btn,.primary-btn{
-      border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel);color:var(--text)
-    }
-    .status-pill{display:flex;align-items:center;gap:8px;font-size:13px}
-    .dot{width:8px;height:8px;border-radius:999px;background:var(--ok);box-shadow:0 0 0 4px rgba(52,211,153,.08)}
-    .primary-btn{background:linear-gradient(135deg,#0ea5e9,#7c3aed);border:0;font-weight:700}
-    .grid-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
-    .stat{
-      border:1px solid var(--line);background:linear-gradient(180deg,rgba(16,31,51,.9),rgba(13,26,43,.9));
-      border-radius:16px;padding:16px;box-shadow:var(--shadow)
-    }
-    .stat .label{font-size:12px;color:var(--muted);margin-bottom:8px}
-    .stat .value{font-size:27px;font-weight:800}
-    .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
-    .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,.85fr);gap:18px}
-    .card{
-      border:1px solid var(--line);background:rgba(13,26,43,.90);
-      border-radius:18px;box-shadow:var(--shadow);overflow:hidden
-    }
-    .card-head{display:flex;justify-content:space-between;align-items:center;padding:17px 18px;border-bottom:1px solid var(--line)}
-    .card-head h2{font-size:16px;margin:0}.card-head span{font-size:12px;color:var(--muted)}
-    .card-body{padding:18px}
-    .org{display:flex;flex-direction:column;align-items:center;gap:14px}
-    .person{
-      background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px 14px;
-      display:flex;align-items:center;gap:11px;min-width:220px;position:relative
-    }
-    .person.ceo{outline:1px solid rgba(110,231,255,.35);box-shadow:0 0 36px rgba(110,231,255,.07)}
-    .person .face{width:42px;height:42px;border-radius:14px;background:#172f4d;display:grid;place-items:center;font-size:21px}
-    .person b{display:block;font-size:13px}.person small{color:var(--muted)}
-    .org-line{width:2px;height:18px;background:var(--line)}
-    .managers{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-    .manager{
-      border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px;
-      transition:.16s;cursor:pointer
-    }
-    .manager:hover{transform:translateY(-2px);border-color:#3b6b94}
-    .manager-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
-    .manager-title{font-size:13px;font-weight:800}
-    .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:rgba(52,211,153,.10);color:#86efac;border:1px solid rgba(52,211,153,.18)}
-    .badge.warn{background:rgba(251,191,36,.10);color:#fde68a;border-color:rgba(251,191,36,.18)}
-    .manager p{font-size:11px;color:var(--muted);margin:0;line-height:1.5}
-    .approval-list{display:grid;gap:10px}
-    .approval{
-      border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:13px
-    }
-    .approval-top{display:flex;justify-content:space-between;gap:10px}
-    .approval strong{font-size:13px}.approval small{color:var(--muted)}
-    .risk{font-size:10px;padding:4px 7px;border-radius:999px;height:max-content}
-    .risk.high{background:rgba(251,113,133,.11);color:#fda4af}
-    .risk.med{background:rgba(251,191,36,.11);color:#fde68a}
-    .approval p{font-size:12px;color:var(--muted);line-height:1.5}
-    .approve-actions{display:flex;gap:8px}
-    .small-btn{border:1px solid var(--line);background:#12243b;color:var(--text);padding:7px 9px;border-radius:9px;font-size:11px}
-    .small-btn.approve{background:rgba(52,211,153,.12);color:#86efac;border-color:rgba(52,211,153,.25)}
-    .small-btn.reject{background:rgba(251,113,133,.10);color:#fda4af;border-color:rgba(251,113,133,.20)}
-    .section-title{font-size:14px;margin:20px 0 10px}
-    .websites{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .website{
-      border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30;cursor:pointer
-    }
-    .website-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .website strong{font-size:13px}.website small{display:block;color:var(--muted);margin-top:4px}
-    .mini-dot{width:8px;height:8px;border-radius:999px;background:var(--ok)}
-    .mini-dot.warn{background:var(--warn)}
-    .task{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid rgba(31,53,82,.65)}
-    .task:last-child{border-bottom:0}
-    .task strong{font-size:13px;display:block}.task small{color:var(--muted)}
-    .progress{width:110px}
-    .bar{height:6px;background:#13263d;border-radius:999px;overflow:hidden;margin-top:7px}
-    .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
-    .activity{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(31,53,82,.55)}
-    .activity:last-child{border-bottom:0}
-    .activity .time{width:46px;color:var(--muted);font-size:11px}.activity p{margin:0;font-size:12px;line-height:1.5}
-    .view{display:none}.view.active{display:block}
-    .page-card{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:18px}
-    .page-card h2{margin-top:0}
-    .table{width:100%;border-collapse:collapse}
-    .table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:12px}
-    .table th{color:var(--muted);font-weight:600}
-    .staff-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .staff-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#0d1c30}
-    .staff-card .role{color:var(--muted);font-size:11px;margin-top:3px}
-    .staff-card .now{margin-top:12px;font-size:12px;line-height:1.45}
-    .office{
-      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px
-    }
-    .room{border:1px solid var(--line);border-radius:18px;background:#0c1a2b;padding:14px;min-height:180px}
-    .room-link{display:block;text-decoration:none;color:inherit;transition:.16s}
-    .room-link:hover{transform:translateY(-2px);border-color:#3b6b94;box-shadow:0 10px 28px rgba(0,0,0,.18)}
-    .room-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
-    .room-open{font-size:10px;color:#8bdcf0;border:1px solid rgba(110,231,255,.22);padding:5px 8px;border-radius:999px}
-    .room h3{font-size:13px;margin:0}.desks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-    .desk{padding:11px;border-radius:12px;background:#12243b;font-size:11px}
-    .desk span{display:block;font-size:18px;margin-bottom:4px}
-    .phase4-goal-grid{display:grid;gap:10px}
-    .phase4-goal{border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30}
-    .phase4-goal-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .phase4-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
-    .phase4-meta div{padding:8px;border:1px solid rgba(31,53,82,.75);border-radius:9px;font-size:10px;color:var(--muted)}
-    .phase4-meta b{color:var(--text);font-weight:700}
-    .phase4-workflow{display:grid;gap:10px}
-    .phase4-work{border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30}
-    .phase4-work-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .phase4-evidence{margin-top:9px;padding:8px;border-radius:9px;background:#10243b;font-size:10px;color:#b9c9db;line-height:1.5}
-    .phase4-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-    .executor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .executor-card{border:1px solid var(--line);background:#0d1c30;border-radius:15px;padding:14px}
-    .executor-card h3{font-size:13px;margin:0 0 6px}.executor-card p{font-size:11px;color:var(--muted);line-height:1.55;margin:5px 0}
-    .executor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-    .executor-link{display:inline-flex;align-items:center;text-decoration:none}
-    .execution-queue{display:grid;gap:10px}
-    .execution-item{border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px}
-    .execution-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .execution-meta{font-size:10px;color:var(--muted);line-height:1.6;margin-top:7px}
-    .safety-box{border:1px solid rgba(52,211,153,.24);background:rgba(52,211,153,.06);border-radius:12px;padding:11px;font-size:11px;line-height:1.6}
-    @media (max-width:1100px){.executor-grid{grid-template-columns:1fr}}
-    @media (max-width:760px){.phase4-meta{grid-template-columns:1fr}}
-    .modal{
-      position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
-    }
-    .modal.show{display:flex}
-    .modal-card{width:min(620px,100%);border:1px solid var(--line);background:#0a1728;border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
-    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:17px;border-bottom:1px solid var(--line)}
-    .modal-head h3{margin:0}.close{border:0;background:transparent;color:var(--muted);font-size:22px}
-    .modal-body{padding:18px}
-    .modal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
-    .mini-stat{border:1px solid var(--line);border-radius:12px;padding:11px;background:#0d1c30}
-    .mini-stat b{display:block;font-size:18px}.mini-stat small{color:var(--muted)}
-    .toast{position:fixed;right:22px;bottom:22px;background:#10233a;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);display:none;z-index:60;font-size:12px}
-    .toast.show{display:block}
-    .mobile-toggle{display:none}
-    @media (max-width:1100px){
-      .grid-stats{grid-template-columns:repeat(2,1fr)}
-      .dashboard-grid{grid-template-columns:1fr}
-      .managers{grid-template-columns:repeat(2,1fr)}
-      .staff-grid,.office{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width:760px){
-      .app{grid-template-columns:1fr}
-      .sidebar{position:fixed;z-index:40;left:-280px;width:260px;transition:.2s}
-      .sidebar.open{left:0}
-      .main{padding:18px 14px 30px}
-      .mobile-toggle{display:block;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:8px 10px}
-      .topbar{align-items:flex-start}.top-actions .status-pill{display:none}
-      .grid-stats{grid-template-columns:repeat(2,1fr)}
-      .managers,.websites,.staff-grid,.office{grid-template-columns:1fr}
-      .modal-grid{grid-template-columns:1fr}
-      .headline h1{font-size:21px}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#06111f">
+<title>AION HQ v2 — Trung tâm điều hành cá nhân</title>
+<style>
+:root{
+  --bg:#06111f;--bg2:#081626;--panel:#0a1a2d;--panel2:#0d2037;--panel3:#102844;
+  --line:#173657;--line2:#21496f;--text:#eef6ff;--muted:#86a0bd;--muted2:#607b98;
+  --blue:#2f8cff;--cyan:#27d8ff;--violet:#8b5cf6;--green:#18d58a;--amber:#ffad34;--red:#ff4e6d;--pink:#e85acb;
+  --shadow:0 16px 45px rgba(0,0,0,.24);--radius:15px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+radial-gradient(circle at 14% -10%,rgba(39,216,255,.09),transparent 32%),
+radial-gradient(circle at 80% 0%,rgba(139,92,246,.08),transparent 30%),
+linear-gradient(180deg,#06111f 0%,#071524 100%);
+color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+.app{display:grid;grid-template-columns:224px minmax(0,1fr);min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;background:rgba(4,14,26,.94);border-right:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;z-index:30;backdrop-filter:blur(18px)}
+.brand{height:58px;display:flex;align-items:center;padding:0 10px 10px;border-bottom:1px solid rgba(23,54,87,.6);margin-bottom:8px}
+.brand-crop{width:174px;height:46px;position:relative;overflow:hidden}
+.brand-crop img{position:absolute;width:990px;height:990px;left:-126px;top:-105px;transform:scale(.18);transform-origin:0 0}
+.brand-fallback{display:none;font-weight:900;letter-spacing:.5px;font-size:20px}.brand-fallback b{color:var(--cyan)}.brand-fallback em{font-style:normal;color:#c552ff;font-size:13px}
+.nav{display:grid;gap:3px;overflow:auto;padding-right:2px}
+.nav-btn{border:0;background:transparent;color:#9eb2c9;border-radius:10px;padding:10px 11px;display:flex;align-items:center;gap:10px;text-align:left;font-size:13px;transition:.18s}
+.nav-btn:hover{background:#0b1d31;color:white}.nav-btn.active{background:linear-gradient(90deg,#0c6cff 0%,#243f93 100%);color:white;box-shadow:inset 3px 0 0 #2bdfff}
+.nav-ico{width:22px;text-align:center;font-size:15px}.nav-count{margin-left:auto;min-width:23px;height:21px;border-radius:999px;background:#17314c;color:#dcecff;display:grid;place-items:center;font-size:10px;font-weight:800;padding:0 6px}
+.nav-count.red{background:#e33d58;color:white}
+.side-atlas{margin-top:auto;border:1px solid #1b4776;border-radius:14px;padding:12px;background:linear-gradient(160deg,rgba(15,49,90,.84),rgba(16,32,60,.94));box-shadow:0 14px 40px rgba(0,0,0,.24)}
+.side-atlas-title{display:flex;align-items:center;gap:9px;font-weight:800;font-size:13px}.side-atlas p{font-size:11px;color:#c0d0e2;line-height:1.5;margin:10px 0}
+.side-atlas button{width:100%;border:0;border-radius:9px;padding:9px;color:white;font-weight:700;background:linear-gradient(90deg,#6b3df5,#1688ff)}
+.main{min-width:0}
+.topbar{height:59px;position:sticky;top:0;z-index:20;background:rgba(5,16,29,.88);border-bottom:1px solid rgba(23,54,87,.85);backdrop-filter:blur(18px);display:grid;grid-template-columns:minmax(280px,520px) 1fr auto;gap:18px;align-items:center;padding:0 22px}
+.search{height:37px;border:1px solid #204a74;background:#0b1d32;border-radius:9px;display:flex;align-items:center;padding:0 12px;gap:9px}
+.search input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;font-size:12px}.search span{color:#7892ac;font-size:12px}
+.top-time{justify-self:end;text-align:right;font-size:10px;color:#a8bdd1;line-height:1.5}
+.top-user{display:flex;align-items:center;gap:10px;font-size:12px}.icon-btn{border:1px solid #1d3f64;background:#0d2037;color:white;width:34px;height:34px;border-radius:10px;display:grid;place-items:center}.bell{position:relative}.bell i{position:absolute;right:-4px;top:-5px;background:#f13f59;color:#fff;font-style:normal;font-size:9px;border-radius:999px;min-width:17px;height:17px;display:grid;place-items:center}
+.user-circle{width:34px;height:34px;border-radius:50%;border:1px solid #466482;display:grid;place-items:center;background:#122a47}
+.content{padding:16px 16px 28px}
+.view{display:none}.view.active{display:block}
+.dashboard-shell{display:grid;grid-template-columns:minmax(0,1fr) 306px;gap:12px}
+.hero{border:1px solid var(--line);border-radius:14px;background:linear-gradient(110deg,rgba(10,26,45,.9),rgba(10,28,51,.65));padding:16px 18px 12px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.hero h1{font-size:24px;margin:0 0 4px}.hero p{margin:0;color:#8fa7c0;font-size:12px}.week-btn{border:1px solid #1f5a91;background:#0c2745;color:#cbe5ff;border-radius:9px;padding:9px 11px;font-size:11px}
+.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:10px}
+.stat{border:1px solid var(--line);background:#0b1d32;border-radius:11px;padding:11px;min-height:80px;display:flex;gap:10px;align-items:flex-start}
+.stat-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:17px;flex:none}.stat-icon.blue{background:#0c67e8}.stat-icon.green{background:#0b9f67}.stat-icon.orange{background:#d96a17}.stat-icon.purple{background:#7447dd}.stat-icon.pink{background:#a62882}.stat-icon.cyan{background:#0f97af}
+.stat strong{font-size:19px;display:block;line-height:1}.stat small{font-size:10px;color:#c2d0df;display:block;margin-top:4px}.stat em{font-style:normal;font-size:9px;display:block;margin-top:6px}.good{color:#1de197}.warn{color:#ffb443}.bad{color:#ff5a75}.violet{color:#a98aff}.cyan{color:#28dafa}
+.panel{border:1px solid var(--line);background:rgba(9,25,43,.91);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.panel + .panel{margin-top:10px}
+.panel-head{height:45px;padding:0 13px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(23,54,87,.8);gap:10px}
+.panel-head h2{font-size:14px;margin:0;display:flex;align-items:center;gap:8px}.panel-head a,.panel-head button{font-size:10px;color:#52baff;background:transparent;border:0;text-decoration:none}
+.panel-body{padding:10px 12px}
+.focus-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.project-card{position:relative;overflow:hidden;border:1px solid #21486d;border-radius:12px;padding:11px;min-height:146px;background:linear-gradient(160deg,#10213a,#0a192b)}
+.project-card::after{content:"";position:absolute;inset:auto -25% -62% 10%;height:120px;filter:blur(10px);opacity:.25;border-radius:50%}.project-card.training::after{background:#714cff}.project-card.aion::after{background:#078eff}.project-card.hmoob::after{background:#ff861c}
+.project-card.training{border-color:#5438af}.project-card.aion{border-color:#0e5e9d}.project-card.hmoob{border-color:#96541b;background:linear-gradient(160deg,#3a2517,#171c25)}
+.pc-top{display:flex;gap:9px;align-items:center;position:relative;z-index:1}.pc-logo{width:43px;height:43px;border-radius:10px;display:grid;place-items:center;font-size:22px;background:#173459;border:1px solid #2c5c8c;overflow:hidden}.pc-logo img{width:100%;height:100%;object-fit:cover}.pc-name{font-weight:800;font-size:13px}.pc-desc{font-size:10px;color:#b9c8d7;margin-top:3px}.status-badge{margin-left:auto;align-self:flex-start;border-radius:999px;padding:4px 7px;font-size:9px;border:1px solid rgba(33,221,147,.3);background:rgba(20,174,117,.13);color:#2ee3a0;white-space:nowrap}
+.progress{height:7px;border-radius:999px;background:#182b42;overflow:hidden;margin:12px 0 8px;position:relative;z-index:1}.progress span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#4c8cff,#8158ff)}.hmoob .progress span{background:linear-gradient(90deg,#ff8a1b,#f6ad30)}
+.pc-meta{display:flex;gap:12px;align-items:center;color:#c5d0dd;font-size:9px;position:relative;z-index:1}.pc-meta .risk{color:#ff5773}.pc-meta .priority{color:#ffb43d}
+.open-project{margin-top:9px;border:1px solid #3a6ea5;background:linear-gradient(90deg,rgba(87,56,239,.85),rgba(20,111,238,.85));color:white;border-radius:7px;width:100%;padding:7px;font-size:10px;font-weight:800;position:relative;z-index:1}.hmoob .open-project{border-color:#a8672a;background:rgba(147,90,28,.75)}
+.mid-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:8px;margin-top:10px}
+.tabs{display:flex;gap:6px}.tab{padding:5px 9px;border:1px solid #24455f;border-radius:999px;color:#9db3c8;background:#0d2137;font-size:9px}.tab.active{color:white;background:#17375a}
+.list{display:grid}.row{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;gap:7px;align-items:center;min-height:35px;border-bottom:1px solid rgba(25,55,84,.7);font-size:10px}.row:last-child{border-bottom:0}.check{width:16px;height:16px;border-radius:50%;border:1px solid #72a8dc;background:transparent}.row .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row .sub{font-size:9px;color:#6f8aa6;margin-top:2px}.tag{font-size:8px;border-radius:999px;padding:4px 7px;background:#17324e;color:#bad3e9}.tag.red{background:#5b1b2a;color:#ff8296}.tag.orange{background:#5a3814;color:#ffc063}.tag.blue{background:#123c68;color:#6ac1ff}.tag.purple{background:#46256c;color:#cba1ff}.tag.green{background:#0f513b;color:#72efbf}
+.approval-item{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;padding:9px 0;border-bottom:1px solid rgba(25,55,84,.7)}.approval-item:last-child{border-bottom:0}.ai-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:#14366a}.approval-item strong{font-size:10px}.approval-item p{font-size:9px;color:#7f99b3;margin:3px 0 5px}.approval-actions{display:flex;gap:5px}.approve,.reject{border-radius:6px;padding:5px 8px;font-size:9px}.approve{border:1px solid #1b855e;background:#0f4d3b;color:#60e9b2}.reject{border:1px solid #783042;background:#48222d;color:#ff8b9d}
+.site-status{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.site{border:1px solid #1b3e60;background:#0b1d32;border-radius:9px;padding:8px}.site b{font-size:9px}.site-top{display:flex;justify-content:space-between;gap:5px}.online{font-size:8px;color:#23db93;margin-top:5px}.spark{height:16px;margin-top:3px;display:flex;align-items:end;gap:2px}.spark i{flex:1;background:#1aa8ff;border-radius:3px 3px 0 0;opacity:.8}
+.right-col .panel{box-shadow:none}
+.atlas-head{display:flex;align-items:center;gap:9px}.atlas-logo{width:38px;height:38px;border-radius:50%;border:1px solid #725df1;background:linear-gradient(135deg,#1b2d68,#0a93d9);display:grid;place-items:center;font-size:20px}.atlas-status{margin-left:auto;font-size:9px;color:#27df9a;background:#0e4536;border-radius:999px;padding:4px 8px}.atlas-text{font-size:10px;color:#b5c6d7;line-height:1.6}.ability{display:flex;align-items:center;gap:7px;margin:7px 0;font-size:10px}.ability span{color:#27df9a}.atlas-chat{display:grid;grid-template-columns:1fr 31px;gap:7px;margin-top:12px}.atlas-chat input{height:34px;border:1px solid #1b4672;border-radius:8px;background:#0c1f35;color:white;padding:0 10px;font-size:10px;outline:0}.atlas-chat button{border:0;border-radius:8px;color:white;background:#146fe8}
+.timeline{position:relative;padding-left:15px}.timeline::before{content:"";position:absolute;left:6px;top:7px;bottom:6px;width:1px;background:#42709e}.activity{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:7px 0 7px 12px;font-size:9px}.activity::before{content:"";position:absolute;left:-12px;top:11px;width:7px;height:7px;border-radius:50%;background:#75aee6;border:1px solid #b5d8fa}.activity time{color:#6f8ba5}.idea-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:7px 0;font-size:9px;border-bottom:1px solid rgba(25,55,84,.55)}.idea-row:last-child{border:0}.score{border-radius:999px;padding:3px 7px;font-size:8px;background:#0d543f;color:#63e7b5}.score.med{background:#593713;color:#ffbe63}
+.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:12px}.page-title h1{font-size:22px;margin:0}.page-title p{margin:4px 0 0;color:var(--muted);font-size:11px}.primary,.secondary{border-radius:9px;padding:9px 12px;font-size:11px}.primary{border:0;background:linear-gradient(90deg,#6843f3,#1686f0);color:white;font-weight:800}.secondary{border:1px solid #234a70;background:#0d223a;color:#cfe4f7}
+.cards-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.mini-card{border:1px solid var(--line);background:#0b1d32;border-radius:12px;padding:12px}.mini-card strong{font-size:20px}.mini-card span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:#091a2d}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{text-align:left;padding:11px 12px;border-bottom:1px solid rgba(23,54,87,.72);font-size:10px}.table th{font-size:9px;color:#7390aa;font-weight:700;background:#0b2037;position:sticky;top:0}.table tr:hover td{background:#0b2036}
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:10px;overflow:auto;padding-bottom:4px}.kanban-col{border:1px solid var(--line);background:#091a2c;border-radius:12px;min-height:400px;padding:10px}.kanban-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;margin-bottom:8px}.k-card{border:1px solid #1d4266;background:#0e233c;border-radius:10px;padding:9px;margin-bottom:8px}.k-card b{font-size:10px}.k-card p{margin:5px 0;color:#8fa8c0;font-size:9px;line-height:1.45}.k-card footer{display:flex;justify-content:space-between;gap:7px;color:#6e8aa4;font-size:8px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.feature-card{border:1px solid var(--line);background:#0a1d32;border-radius:13px;padding:13px}.feature-card h3{font-size:12px;margin:0 0 5px}.feature-card p{font-size:10px;color:#8ca5bd;line-height:1.55;margin:0}.feature-card .big{font-size:26px;margin-bottom:10px}.feature-card .foot{margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.filter{border:1px solid #22476b;background:#0c2037;color:#bcd2e6;border-radius:999px;padding:6px 10px;font-size:9px}.filter.active{background:#164b79;color:white}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:grid;gap:5px}.field label{font-size:9px;color:#8ca5bd}.field input,.field textarea,.field select{border:1px solid #22486f;background:#0a1d32;color:white;border-radius:9px;padding:9px;outline:0;font-size:10px}.field textarea{min-height:86px;resize:vertical}.full{grid-column:1/-1}
+.modal{position:fixed;inset:0;background:rgba(1,7,15,.78);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}.modal.show{display:flex}.modal-card{width:min(620px,100%);max-height:86vh;overflow:auto;background:#081b2e;border:1px solid #26527a;border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.45)}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}.modal-head h3{font-size:14px;margin:0}.modal-body{padding:14px 16px}.close{border:0;background:transparent;color:#9bb2c8;font-size:20px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:150;background:#0e2844;border:1px solid #2c5b87;color:white;border-radius:10px;padding:10px 12px;font-size:10px;box-shadow:var(--shadow);display:none}.toast.show{display:block}
+.mobile-nav{display:none}
+@media(max-width:1250px){
+ .stats{grid-template-columns:repeat(3,1fr)}
+ .dashboard-shell{grid-template-columns:1fr 280px}
+ .focus-grid{grid-template-columns:1fr 1fr}.focus-grid .project-card:last-child{grid-column:1/-1}
+}
+@media(max-width:980px){
+ .app{grid-template-columns:72px 1fr}.sidebar{padding:12px 7px}.brand{padding:0}.brand-crop{display:none}.brand-fallback{display:block;font-size:15px}.brand-fallback span,.brand-fallback b,.brand-fallback em{display:block}.nav-btn{justify-content:center;padding:10px 7px;font-size:0}.nav-ico{font-size:16px}.nav-count{position:absolute;margin:0 0 18px 22px}.side-atlas{display:none}
+ .dashboard-shell{grid-template-columns:1fr}.right-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}.right-col .panel{margin-top:0}.right-col .panel:first-child{grid-column:1/-1}
+ .topbar{grid-template-columns:minmax(220px,1fr) auto}.top-time{display:none}
+ .cards-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+ .app{display:block}.sidebar{display:none}.topbar{height:auto;padding:10px 12px;grid-template-columns:1fr auto}.top-user span:last-child{display:none}.content{padding:10px 10px 72px}.search span{display:none}.hero{grid-template-columns:1fr}.week-btn{display:none}.stats{grid-template-columns:repeat(2,1fr)}.focus-grid,.mid-grid,.right-col,.site-status,.cards-4,.grid-3,.form-grid{grid-template-columns:1fr}.focus-grid .project-card:last-child{grid-column:auto}.right-col .panel:first-child{grid-column:auto}.site-status{display:grid}.full{grid-column:auto}.hero h1{font-size:20px}
+ .mobile-nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(5,16,29,.96);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);z-index:80;backdrop-filter:blur(18px)}.mobile-nav button{border:0;background:transparent;color:#7691aa;font-size:9px;display:grid;place-items:center;gap:2px}.mobile-nav button span{font-size:18px}.mobile-nav button.active{color:#4ca5ff}
+}
+</style>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg class="brand-logo" viewBox="0 0 220 80" role="img" aria-labelledby="brandLogoTitle" xmlns="http://www.w3.org/2000/svg">
-          <title id="brandLogoTitle">AION HQ logo</title>
-          <svg x="12" y="16" width="56" height="48" viewBox="170 134 914 777" overflow="hidden">
-            <image href="./assets/aion-hq-original.webp" width="1254" height="1254"/>
-          </svg>
-          <svg x="80" y="29" width="128" height="22" viewBox="17 919 1215 202" overflow="hidden">
-            <image href="./assets/aion-hq-original.webp" width="1254" height="1254"/>
-          </svg>
-        </svg>
-      </div>
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-fallback">AION <b>HQ</b> <em>v2</em></div>
+    <div class="brand-crop" aria-label="AION HQ v2">
+      <svg viewBox="0 0 174 46" width="174" height="46">
+        <defs><clipPath id="logoClip"><rect x="0" y="0" width="174" height="46" rx="0"/></clipPath></defs>
+        <g clip-path="url(#logoClip)">
+          <image href="./assets/aion-hq-original.webp" x="-17" y="-16" width="201" height="201"></image>
+        </g>
+      </svg>
     </div>
-    <nav class="nav" id="nav">
-      <button class="nav-btn active" data-view="overview"><span class="nav-icon">⌂</span>Tổng quan</button>
-      <button class="nav-btn" data-view="ceo"><span class="nav-icon">♛</span>AI CEO</button>
-      <button class="nav-btn" data-view="departments"><span class="nav-icon">▦</span>Trưởng phòng</button>
-      <button class="nav-btn" data-view="websites"><span class="nav-icon">◎</span>Website</button>
-      <button class="nav-btn" data-view="staff"><span class="nav-icon">♟</span>Nhân viên AI</button>
-      <button class="nav-btn" data-view="tasks"><span class="nav-icon">✓</span>Nhiệm vụ</button>
-      <button class="nav-btn" data-view="approvals"><span class="nav-icon">⚑</span>Phê duyệt <b id="navApprovalCount" style="margin-left:auto;color:#fde68a">3</b></button>
-      <button class="nav-btn" data-view="execution"><span class="nav-icon">▶</span>Thực thi <b id="navExecutionCount" style="margin-left:auto;color:#86efac">0</b></button>
-      <button class="nav-btn" data-view="reports"><span class="nav-icon">▤</span>Báo cáo</button>
-      <button class="nav-btn" data-view="office"><span class="nav-icon">⌘</span>Văn phòng AI</button>
-      <button class="nav-btn" data-view="logs"><span class="nav-icon">≡</span>Nhật ký</button>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="owner-chip">
-        <div class="avatar">👤</div>
-        <div><b>Chủ sở hữu</b><small>Quyền phê duyệt tối cao</small></div>
-      </div>
-    </div>
-  </aside>
+  </div>
+  <nav class="nav" id="nav">
+    <button class="nav-btn active" data-view="overview"><span class="nav-ico">⌂</span>Tổng quan</button>
+    <button class="nav-btn" data-view="projects"><span class="nav-ico">▣</span>Dự án <span class="nav-count">8</span></button>
+    <button class="nav-btn" data-view="tasks"><span class="nav-ico">☑</span>Công việc</button>
+    <button class="nav-btn" data-view="ideas"><span class="nav-ico">◉</span>Ý tưởng</button>
+    <button class="nav-btn" data-view="sources"><span class="nav-ico">⌂</span>Thư viện mã nguồn</button>
+    <button class="nav-btn" data-view="lab"><span class="nav-ico">⚗</span>Phòng Lab</button>
+    <button class="nav-btn" data-view="team"><span class="nav-ico">⌘</span>Đội AI</button>
+    <button class="nav-btn" data-view="approvals"><span class="nav-ico">☑</span>Phê duyệt <span class="nav-count red" id="approvalNavCount">4</span></button>
+    <button class="nav-btn" data-view="plan"><span class="nav-ico">▢</span>Lịch & Kế hoạch</button>
+    <button class="nav-btn" data-view="reports"><span class="nav-ico">⌁</span>Báo cáo</button>
+    <button class="nav-btn" data-view="knowledge"><span class="nav-ico">▤</span>Kiến thức</button>
+    <button class="nav-btn" data-view="resources"><span class="nav-ico">□</span>Tài nguyên</button>
+    <button class="nav-btn" data-view="settings"><span class="nav-ico">⚙</span>Cài đặt</button>
+  </nav>
+  <div class="side-atlas">
+    <div class="side-atlas-title"><span>◉</span> ATLAS</div>
+    <p>AI điều phối cá nhân. Hỏi, phân tích, lên kế hoạch và gom mọi thứ về đúng chỗ.</p>
+    <button data-open-atlas>Trò chuyện với ATLAS</button>
+  </div>
+</aside>
 
-  <main class="main">
-    <div class="topbar">
-      <div style="display:flex;gap:10px;align-items:flex-start">
-        <button class="mobile-toggle" id="mobileToggle">☰</button>
-        <div class="headline">
-          <h1 id="pageTitle">Trung tâm điều hành</h1>
-          <p id="pageSubtitle">CEO AI đang quản lý toàn bộ hệ sinh thái website.</p>
-        </div>
-      </div>
-      <div class="top-actions">
-        <div class="status-pill"><span class="dot"></span> Hệ thống bình thường</div>
-        <button class="primary-btn" id="ceoBriefBtn">Hỏi CEO</button>
-      </div>
-    </div>
+<main class="main">
+  <header class="topbar">
+    <div class="search"><span>⌕</span><input id="globalSearch" placeholder="Tìm dự án, công việc, ý tưởng, nguồn mã..."><span>Ctrl + K</span></div>
+    <div class="top-time"><b id="todayLabel"></b><br><span id="weekLabel"></span></div>
+    <div class="top-user"><button class="icon-btn" id="themeBtn">☼</button><button class="icon-btn bell">♢<i id="bellCount">4</i></button><div class="user-circle">◯</div><span>Chủ sở hữu</span><span>⌄</span></div>
+  </header>
 
+  <div class="content">
     <section class="view active" id="view-overview">
-      <div class="grid-stats">
-        <div class="stat"><div class="label">Website đang quản lý</div><div class="value">5</div><div class="sub">5 trưởng phòng AI phụ trách</div></div>
-        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">33</div><div class="sub">5 đội chuyên trách theo từng website</div></div>
-        <div class="stat"><div class="label">Nhiệm vụ đang chạy</div><div class="value">14</div><div class="sub">4 ưu tiên cao</div></div>
-        <div class="stat"><div class="label">Chờ bạn phê duyệt</div><div class="value" id="approvalMetric">3</div><div class="sub">Không có chi phí phát sinh</div></div>
-      </div>
-
-      <div class="dashboard-grid">
-        <div>
-          <div class="card">
-            <div class="card-head"><div><h2>Sơ đồ điều hành</h2><span>Chủ sở hữu → CEO → Trưởng phòng website</span></div><span>BẢN DEMO</span></div>
-            <div class="card-body">
-              <div class="org">
-                <div class="person">
-                  <div class="face">👤</div><div><b>Bạn — Chủ sở hữu</b><small>Duyệt quyết định quan trọng</small></div>
-                </div>
-                <div class="org-line"></div>
-                <div class="person ceo" id="ceoCard">
-                  <div class="face">🧠</div><div><b>ATLAS — AI CEO</b><small>🟢 Đang điều hành · 5 phòng ban</small></div>
-                </div>
-                <div class="org-line"></div>
-                <div class="managers">
-                  <div class="manager" data-name="TrainingBot" data-status="Bình thường" data-tasks="5" data-staff="6" data-goal="Ổn định API, cải thiện trải nghiệm và tăng nội dung hữu ích.">
-                    <div class="manager-top"><div class="manager-title">TrainingBot Trưởng phòng</div><span class="badge">Trực tuyến</span></div>
-                    <p>6 AI · 5 nhiệm vụ<br>Ưu tiên: API & nội dung</p>
-                  </div>
-                  <div class="manager" data-name="Toolpick" data-status="Bình thường" data-tasks="3" data-staff="5" data-goal="Giữ hệ sinh thái công cụ ổn định và tối ưu luồng người dùng.">
-                    <div class="manager-top"><div class="manager-title">Toolpick Trưởng phòng</div><span class="badge">Trực tuyến</span></div>
-                    <p>5 AI · 3 nhiệm vụ<br>Ưu tiên: ổn định hệ thống</p>
-                  </div>
-                  <div class="manager" data-name="HMOOB MUSIC" data-status="Cần theo dõi" data-tasks="4" data-staff="6" data-goal="Tối ưu trang sản phẩm, hiệu năng mobile và chất lượng trải nghiệm mua hàng.">
-                    <div class="manager-top"><div class="manager-title">HMOOB Trưởng phòng</div><span class="badge warn">Theo dõi</span></div>
-                    <p>6 AI · 4 nhiệm vụ<br>Ưu tiên: tốc độ mobile</p>
-                  </div>
-                  <div class="manager" data-name="Toolpick Mail" data-status="Bình thường" data-tasks="1" data-staff="5" data-goal="Theo dõi đăng nhập, bảo mật, độ ổn định và luồng gửi nhận thư.">
-                    <div class="manager-top"><div class="manager-title">Trưởng phòng Toolpick Mail</div><span class="badge">Trực tuyến</span></div>
-                    <p>5 AI · 1 nhiệm vụ<br>Ưu tiên: bảo mật</p>
-                  </div>
-                  <div class="manager" data-name="Mầm Kids" data-status="Bình thường" data-tasks="1" data-staff="4" data-goal="Giữ giao diện học tập rõ ràng, ổn định và thân thiện trên nhiều màn hình.">
-                    <div class="manager-top"><div class="manager-title">Mầm Kids Trưởng phòng</div><span class="badge">Trực tuyến</span></div>
-                    <p>4 AI · 1 nhiệm vụ<br>Ưu tiên: giao diện</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="section-title">Website</div>
-              <div class="websites">
-                <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small>Trưởng phòng: TB-01 · 5 việc</small></div>
-                <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>Trưởng phòng: TP-01 · 3 việc</small></div>
-                <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small>Trưởng phòng: HM-01 · cần theo dõi</small></div>
-                <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>Trưởng phòng: ML-01 · ổn định</small></div>
-              </div>
+      <div class="dashboard-shell">
+        <div class="left-col">
+          <div class="hero">
+            <div><h1>Chào bạn, Chủ sở hữu! 👋</h1><p>Đây là trung tâm điều hành cá nhân của bạn. Tất cả dự án, ý tưởng, AI và công việc đều ở đây.</p></div>
+            <button class="week-btn" data-view-jump="plan">▣ Tổng quan tuần này</button>
+            <div class="stats" style="grid-column:1/-1">
+              <div class="stat"><div class="stat-icon blue">▰</div><div><strong id="statProjects">8</strong><small>Tổng dự án</small><em class="good">3 đang tập trung</em></div></div>
+              <div class="stat"><div class="stat-icon green">✓</div><div><strong id="statTasks">24</strong><small>Công việc</small><em class="good">8 đang làm</em></div></div>
+              <div class="stat"><div class="stat-icon orange">!</div><div><strong>4</strong><small>Việc bị kẹt</small><em class="bad">Cần xử lý</em></div></div>
+              <div class="stat"><div class="stat-icon purple">●</div><div><strong id="statIdeas">12</strong><small>Ý tưởng mới</small><em class="violet">Chưa đánh giá</em></div></div>
+              <div class="stat"><div class="stat-icon pink">◉</div><div><strong>36</strong><small>Mã nguồn hay</small><em class="violet">Đã lưu</em></div></div>
+              <div class="stat"><div class="stat-icon cyan">⚗</div><div><strong>6</strong><small>Đang thử nghiệm</small><em class="cyan">Phòng Lab</em></div></div>
             </div>
           </div>
 
-          <div class="card" style="margin-top:18px">
-            <div class="card-head"><div><h2>Nhiệm vụ CEO đã giao</h2><span>Đồng bộ từ mục tiêu Giai đoạn 4</span></div><span id="ceoAssignedCount">0 đang chạy</span></div>
-            <div class="card-body" id="ceoAssignedList"></div>
+          <div class="panel" style="margin-top:10px">
+            <div class="panel-head"><h2>🎯 3 dự án đang tập trung (Focus)</h2><button data-view-jump="projects">Quản lý dự án →</button></div>
+            <div class="panel-body">
+              <div class="focus-grid" id="focusGrid"></div>
+            </div>
+          </div>
+
+          <div class="mid-grid">
+            <div class="panel">
+              <div class="panel-head"><h2>🗓 Việc hôm nay</h2><button data-action="add-task">＋ Thêm việc</button></div>
+              <div class="panel-body">
+                <div class="tabs"><button class="tab active" data-task-filter="all">Tất cả (8)</button><button class="tab" data-task-filter="high">Ưu tiên cao (3)</button><button class="tab" data-task-filter="normal">Thông thường (4)</button><button class="tab" data-task-filter="check">Kiểm tra (1)</button></div>
+                <div class="list" id="todayTasks"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><h2>🔒 Chờ bạn phê duyệt <span class="nav-count red" id="approvalHeadCount">4</span></h2><button data-view-jump="approvals">Xem tất cả →</button></div>
+              <div class="panel-body" id="approvalPreview"></div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:10px">
+            <div class="panel-head"><h2>Tình trạng website</h2><button data-action="refresh-sites">Làm mới</button></div>
+            <div class="panel-body"><div class="site-status" id="siteStatus"></div></div>
           </div>
         </div>
 
-        <div>
-          <div class="card">
-            <div class="card-head"><div><h2>Chờ bạn phê duyệt</h2><span>AI không được vượt quyền</span></div><span id="approvalHeader">3 yêu cầu</span></div>
-            <div class="card-body approval-list" id="approvalList"></div>
+        <aside class="right-col">
+          <div class="panel">
+            <div class="panel-body">
+              <div class="atlas-head"><div class="atlas-logo">◈</div><div><b style="font-size:14px">ATLAS AI</b><div style="font-size:9px;color:#7f9bb7">AI điều phối cá nhân</div></div><span class="atlas-status">● Online</span></div>
+              <div class="atlas-text" style="margin-top:12px">Tôi là ATLAS, AI điều phối cá nhân của bạn.<br>Tôi có thể:</div>
+              <div class="ability"><span>✓</span> Phân tích & ưu tiên công việc</div>
+              <div class="ability"><span>✓</span> Theo dõi tiến độ dự án</div>
+              <div class="ability"><span>✓</span> Tìm kiếm mã nguồn mở</div>
+              <div class="ability"><span>✓</span> Kiểm tra lỗi website</div>
+              <div class="ability"><span>✓</span> Đề xuất giải pháp</div>
+              <div class="ability"><span>✓</span> Tự động báo cáo</div>
+              <div class="atlas-chat"><input id="atlasQuick" placeholder="Hỏi ATLAS bất cứ điều gì..."><button id="atlasQuickSend">➤</button></div>
+            </div>
           </div>
-
-          <div class="card" style="margin-top:18px">
-            <div class="card-head"><div><h2>Nhật ký CEO</h2><span>Hoạt động gần đây</span></div></div>
-            <div class="card-body" id="ceoActivityList"></div>
+          <div class="panel">
+            <div class="panel-head"><h2>♨ Hoạt động gần đây</h2><button data-action="add-log">Xem tất cả →</button></div>
+            <div class="panel-body"><div class="timeline" id="activityTimeline"></div></div>
           </div>
-        </div>
+          <div class="panel">
+            <div class="panel-head"><h2>💡 Ý tưởng nổi bật</h2><button data-view-jump="ideas">Xem tất cả →</button></div>
+            <div class="panel-body" id="ideaPreview"></div>
+          </div>
+        </aside>
       </div>
     </section>
 
-    <section class="view" id="view-ceo">
-      <div class="page-card">
-        <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
-          <div>
-            <h2 style="margin-bottom:6px">🧠 ATLAS — AI CEO</h2>
-            <p style="color:var(--muted);line-height:1.7;margin:0;max-width:850px">
-              ATLAS là AI điều hành cao nhất của công ty. Ở giai đoạn hiện tại, CEO chỉ được quan sát, phân tích,
-              tự đề xuất mục tiêu và chuẩn bị kế hoạch. CEO chưa được tự ý thay đổi website thật.
-            </p>
-          </div>
-          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát · lập mục tiêu · giao việc nội bộ</div>
-        </div>
-
-        <div class="grid-stats" style="margin-top:18px">
-          <div class="stat"><div class="label">Website đang quan sát</div><div class="value">5</div><div class="sub">chưa tự can thiệp website thật</div></div>
-          <div class="stat"><div class="label">Mục tiêu CEO đang theo dõi</div><div class="value" id="ceoGoalMetric">3</div><div class="sub">hồ sơ mục tiêu có căn cứ và tiêu chí</div></div>
-          <div class="stat"><div class="label">Việc cần Chủ sở hữu duyệt</div><div class="value" id="ceoApprovalMetric">3</div><div class="sub">mọi việc nhạy cảm đều dừng lại</div></div>
-          <div class="stat"><div class="label">Hành động vượt quyền</div><div class="value">0</div><div class="sub">CEO không được vượt phạm vi cho phép</div></div>
-        </div>
-
-        <div class="card" style="box-shadow:none;margin-top:16px">
-          <div class="card-head">
-            <div>
-              <h2>Sổ điều hành của CEO</h2>
-              <span>Những gì ATLAS đang quan sát, cân nhắc và ghi chú để Chủ sở hữu nắm được tình hình</span>
-            </div>
-            <span>Cập nhật gần đây</span>
-          </div>
-          <div class="card-body">
-            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
-              <div class="staff-card">
-                <b>👀 Đang quan sát</b>
-                <div class="role" style="margin-top:8px;line-height:1.55">
-                  HMOOB MUSIC có dấu hiệu cần theo dõi hiệu năng mobile; TrainingBot đang có một số luồng API cần tiếp tục kiểm tra.
-                </div>
-              </div>
-              <div class="staff-card">
-                <b>💡 Ý tưởng đang cân nhắc</b>
-                <div class="role" style="margin-top:8px;line-height:1.55">
-                  Tạo tiêu chuẩn chung để mọi website đều có cách báo lỗi, kiểm thử và xin phê duyệt giống nhau.
-                </div>
-              </div>
-              <div class="staff-card">
-                <b>⚠️ Điều đang lo</b>
-                <div class="role" style="margin-top:8px;line-height:1.55">
-                  Không để AI sửa lan sang website khác hoặc tự thay đổi production khi chưa có kiểm tra và phê duyệt.
-                </div>
-              </div>
-              <div class="staff-card">
-                <b>❓ Câu hỏi chưa giải quyết</b>
-                <div class="role" style="margin-top:8px;line-height:1.55">
-                  Khi nào một lỗi đủ nghiêm trọng để CEO tự nâng thành mục tiêu ưu tiên cao?
-                </div>
-              </div>
-              <div class="staff-card">
-                <b>📝 Ghi chú linh tinh</b>
-                <div class="role" style="margin-top:8px;line-height:1.55">
-                  Cần tránh tạo quá nhiều nhiệm vụ cùng lúc. Ưu tiên việc ảnh hưởng người dùng trước, việc làm đẹp giao diện xếp sau.
-                </div>
-              </div>
-              <div class="staff-card">
-                <b>🎯 Việc muốn làm tiếp</b>
-                <div class="role" style="margin-top:8px;line-height:1.55">
-                  Hoàn thiện cách CEO tự đặt mục tiêu, chấm mức ưu tiên và trình lý do cho Chủ sở hữu trước khi giao việc.
-                </div>
-              </div>
-            </div>
-
-            <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
-              <div style="font-size:12px;font-weight:700;margin-bottom:8px">Nhật ký quyết định gần đây</div>
-              <div class="activity">
-                <div class="time">23:03</div>
-                <p><b>ATLAS:</b> Giữ CEO ở chế độ quan sát và lập kế hoạch; chưa mở quyền tự sửa website thật. <span style="color:var(--muted)">Lý do: bộ máy kiểm thử và phê duyệt chưa hoàn thiện.</span></p>
-              </div>
-              <div class="activity">
-                <div class="time">22:48</div>
-                <p><b>ATLAS:</b> Đưa ổn định website lên ưu tiên cao hơn việc bổ sung tính năng mới. <span style="color:var(--muted)">Lý do: giảm nguy cơ phát sinh lỗi khi hệ thống AI còn đang xây dựng.</span></p>
-              </div>
-              <div class="activity">
-                <div class="time">22:32</div>
-                <p><b>ATLAS:</b> Mọi thay đổi production phải tiếp tục đi qua Chủ sở hữu. <span style="color:var(--muted)">Lý do: giữ quyền kiểm soát cuối cùng ở con người.</span></p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card" style="box-shadow:none;margin-top:16px" id="ceoStage3">
-          <div class="card-head">
-            <div>
-              <h2>🌐 Dữ liệu thật CEO đang đọc</h2>
-              <span>Chế độ chỉ đọc — ATLAS chỉ kiểm tra khả năng truy cập và nguồn công khai, không thay đổi website</span>
-            </div>
-            <button id="ceoLiveRefresh" class="small-btn" type="button">Kiểm tra lại</button>
-          </div>
-          <div class="card-body">
-            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px" id="ceoLiveSources">
-              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://trainingbot.io.vn">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                  <b>TrainingBot</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
-                </div>
-                <div class="role" style="margin-top:7px">Nguồn: trainingbot.io.vn</div>
-                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
-              </div>
-
-              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://toolpick.id.vn">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                  <b>Toolpick</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
-                </div>
-                <div class="role" style="margin-top:7px">Nguồn: toolpick.id.vn</div>
-                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
-              </div>
-
-              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://toolpick.id.vn/mam-kids/">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                  <b>Mầm Kids</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
-                </div>
-                <div class="role" style="margin-top:7px">Nguồn: toolpick.id.vn/mam-kids/</div>
-                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
-              </div>
-
-              <div class="staff-card">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                  <b>HMOOB MUSIC</b><span class="badge warn">Chưa cấu hình</span>
-                </div>
-                <div class="role" style="margin-top:7px">Chưa có URL công khai được xác định chắc chắn.</div>
-                <div class="now">ATLAS không tự đoán nguồn dữ liệu.</div>
-              </div>
-
-              <div class="staff-card">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                  <b>Toolpick Mail</b><span class="badge warn">Chưa cấu hình</span>
-                </div>
-                <div class="role" style="margin-top:7px">Chưa có URL production được xác định chắc chắn.</div>
-                <div class="now">ATLAS không tự đoán nguồn dữ liệu.</div>
-              </div>
-
-              <div class="staff-card ceo-live-source" data-kind="github" data-url="https://api.github.com/repos/Gamevalentine/trainingbot-cloudflare">
-                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
-                  <b>Mã nguồn TrainingBot</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
-                </div>
-                <div class="role" style="margin-top:7px">Nguồn công khai: GitHub</div>
-                <div class="now ceo-live-detail">Chờ đọc trạng thái repository.</div>
-              </div>
-            </div>
-
-            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)">
-              <div style="font-size:10px;color:var(--muted)">
-                Kiểm tra website dùng yêu cầu mạng chỉ đọc. “Có phản hồi” chỉ xác nhận kết nối mạng thành công, không khẳng định toàn bộ chức năng website đều tốt.
-              </div>
-              <div id="ceoLiveLastCheck" style="font-size:10px;color:var(--muted)">Chưa kiểm tra</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px" id="ceoStage2">
-          <div class="card" style="box-shadow:none">
-            <div class="card-head">
-              <div>
-                <h2>🧠 Bộ nhớ CEO</h2>
-                <span>Ghi nhớ lâu dài trong trình duyệt này</span>
-              </div>
-              <span id="ceoMemoryCount">0 mục</span>
-            </div>
-            <div class="card-body">
-              <div style="display:grid;grid-template-columns:160px 1fr auto;gap:8px;margin-bottom:12px">
-                <select id="ceoMemoryType" class="small-btn" style="width:100%;padding:9px">
-                  <option value="Quy tắc Chủ sở hữu">Quy tắc Chủ sở hữu</option>
-                  <option value="Quyết định">Quyết định</option>
-                  <option value="Bài học">Bài học</option>
-                  <option value="Ghi chú">Ghi chú</option>
-                </select>
-                <input id="ceoMemoryInput" type="text" placeholder="Nhập điều CEO cần ghi nhớ..." style="min-width:0;border:1px solid var(--line);background:#0d1c30;color:var(--text);border-radius:9px;padding:9px 10px;outline:none">
-                <button id="ceoMemorySave" class="small-btn approve" type="button">Lưu nhớ</button>
-              </div>
-              <div id="ceoMemoryList" style="display:grid;gap:8px"></div>
-              <div style="margin-top:10px;font-size:10px;color:var(--muted)">
-                Bộ nhớ này hiện được lưu bằng localStorage trên trình duyệt; chưa đồng bộ lên máy chủ hay AI thật.
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="box-shadow:none">
-            <div class="card-head">
-              <div>
-                <h2>🎯 Hệ thống ưu tiên của CEO</h2>
-                <span>CEO phải giải thích vì sao một việc được xếp trước việc khác</span>
-              </div>
-              <span>Dữ liệu demo</span>
-            </div>
-            <div class="card-body">
-              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:12px;font-size:10px;color:var(--muted)">
-                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Ảnh hưởng</b><br>0–5 điểm</div>
-                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Khẩn cấp</b><br>0–5 điểm</div>
-                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Rủi ro</b><br>0–5 điểm</div>
-                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Điểm</b><br>Ảnh hưởng×2 + Khẩn×2 + Rủi ro</div>
-              </div>
-              <div id="ceoPriorityList" style="display:grid;gap:9px">
-                <div class="staff-card ceo-priority-item" data-impact="4" data-urgency="4" data-risk="3">
-                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
-                    <div><b>TrainingBot — tiếp tục kiểm tra các luồng API</b><div class="role" style="margin-top:5px">Lý do: có thể ảnh hưởng chức năng mà người dùng đang sử dụng.</div></div>
-                    <span class="badge ceo-priority-badge">—</span>
-                  </div>
-                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
-                </div>
-                <div class="staff-card ceo-priority-item" data-impact="4" data-urgency="3" data-risk="3">
-                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
-                    <div><b>HMOOB MUSIC — theo dõi hiệu năng di động</b><div class="role" style="margin-top:5px">Lý do: tốc độ chậm có thể ảnh hưởng trải nghiệm mua hàng.</div></div>
-                    <span class="badge ceo-priority-badge">—</span>
-                  </div>
-                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
-                </div>
-                <div class="staff-card ceo-priority-item" data-impact="3" data-urgency="2" data-risk="2">
-                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
-                    <div><b>Chuẩn hóa cách CEO tạo và giải thích mục tiêu</b><div class="role" style="margin-top:5px">Lý do: cần cho vận hành lâu dài nhưng chưa ảnh hưởng trực tiếp người dùng hiện tại.</div></div>
-                    <span class="badge ceo-priority-badge">—</span>
-                  </div>
-                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
-                </div>
-              </div>
-              <div style="margin-top:10px;font-size:10px;color:var(--muted)">
-                Ngưỡng hiện tại: 20–25 Khẩn cấp · 15–19 Cao · 9–14 Trung bình · 0–8 Thấp.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:16px;margin-top:16px">
-          <div style="display:grid;gap:16px">
-            <div class="card" style="box-shadow:none">
-              <div class="card-head">
-                <div><h2>Hồ sơ mục tiêu CEO</h2><span>Mỗi mục tiêu có căn cứ, website, phụ trách, ưu tiên, thời hạn và tiêu chí hoàn thành</span></div>
-                <span id="ceoGoalCount">0 mục tiêu</span>
-              </div>
-              <div class="card-body">
-                <div class="phase4-goal-grid" id="ceoGoalProfiles"></div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none">
-              <div class="card-head">
-                <div><h2>Luồng giao việc & nghiệm thu</h2><span>CEO giao → Trưởng phòng nhận → cung cấp bằng chứng → CEO nghiệm thu</span></div>
-                <span id="ceoWorkflowCount">0 việc</span>
-              </div>
-              <div class="card-body">
-                <div class="phase4-workflow" id="ceoWorkflowList"></div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none">
-              <div class="card-head">
-                <div><h2>Chu trình làm việc của CEO</h2><span>Khung điều hành sẽ được dùng khi ATLAS hoạt động thật</span></div>
-              </div>
-              <div class="card-body">
-                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
-                  <div class="staff-card"><b>1. Quan sát</b><div class="role">Đọc trạng thái website, lỗi, hiệu năng và cảnh báo.</div></div>
-                  <div class="staff-card"><b>2. Phân tích</b><div class="role">Xác định vấn đề, nguyên nhân và mức độ ảnh hưởng.</div></div>
-                  <div class="staff-card"><b>3. Đặt mục tiêu</b><div class="role">Tự tạo mục tiêu có lý do, ưu tiên và tiêu chí hoàn thành.</div></div>
-                  <div class="staff-card"><b>4. Lập kế hoạch</b><div class="role">Chia mục tiêu thành các bước cần thực hiện.</div></div>
-                  <div class="staff-card"><b>5. Xin phê duyệt</b><div class="role">Dừng lại khi có production, chi phí hoặc quyền cao.</div></div>
-                  <div class="staff-card"><b>6. Đánh giá</b><div class="role">So sánh kết quả với mục tiêu rồi quyết định bước tiếp theo.</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style="display:grid;gap:16px">
-            <div class="card" style="box-shadow:none">
-              <div class="card-head"><div><h2>Quyền hạn hiện tại</h2><span>Giai đoạn 4 · không tự sửa production</span></div></div>
-              <div class="card-body">
-                <div class="activity"><div style="width:26px">✅</div><p><b>Được phép:</b> đọc dữ liệu, phân tích, đề xuất mục tiêu, lập kế hoạch và viết báo cáo.</p></div>
-                <div class="activity"><div style="width:26px">⛔</div><p><b>Chưa được phép:</b> sửa code production, deploy, xóa dữ liệu, đổi DNS hoặc tự chi tiền.</p></div>
-                <div class="activity"><div style="width:26px">👤</div><p><b>Phải xin bạn duyệt:</b> mọi hành động có thể ảnh hưởng website thật, tài khoản, dữ liệu hoặc chi phí.</p></div>
-              </div>
-            </div>
-
-            <div class="card" style="box-shadow:none">
-              <div class="card-head"><div><h2>Nguyên tắc bắt buộc</h2><span>CEO không được tự thay đổi</span></div></div>
-              <div class="card-body">
-                <div class="activity"><div style="width:26px">01</div><p>Không được hành động nếu chưa giải thích được <b>vì sao cần làm</b>.</p></div>
-                <div class="activity"><div style="width:26px">02</div><p>Không được sửa một website chỉ vì vấn đề xuất hiện ở website khác.</p></div>
-                <div class="activity"><div style="width:26px">03</div><p>Không được coi nhiệm vụ là hoàn thành nếu chưa có kết quả kiểm tra.</p></div>
-                <div class="activity"><div style="width:26px">04</div><p>Không được tự phát sinh chi phí nếu chưa có Chủ sở hữu chấp thuận.</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <section class="view" id="view-projects">
+      <div class="page-title"><div><h1>Dự án</h1><p>Chỉ tối đa 3 dự án được ở trạng thái Focus cùng lúc.</p></div><button class="primary" data-action="add-project">＋ Dự án mới</button></div>
+      <div class="cards-4">
+        <div class="mini-card"><strong>8</strong><span>Tổng dự án</span></div><div class="mini-card"><strong class="good">3</strong><span>Đang Focus</span></div><div class="mini-card"><strong class="warn">2</strong><span>Maintenance</span></div><div class="mini-card"><strong class="violet">3</strong><span>Đóng băng / chờ</span></div>
       </div>
-    </section>
-
-    <section class="view" id="view-departments">
-      <div class="page-card">
-        <h2>Trưởng phòng theo website</h2>
-        <table class="table">
-          <thead><tr><th>Website</th><th>Trưởng phòng</th><th>Nhân viên</th><th>Nhiệm vụ</th><th>Trạng thái</th></tr></thead>
-          <tbody>
-            <tr><td>TrainingBot</td><td>TB-01</td><td>6 AI</td><td>5</td><td>🟢 Bình thường</td></tr>
-            <tr><td>Toolpick</td><td>TP-01</td><td>5 AI</td><td>3</td><td>🟢 Bình thường</td></tr>
-            <tr><td>HMOOB MUSIC</td><td>HM-01</td><td>6 AI</td><td>4</td><td>🟡 Theo dõi</td></tr>
-            <tr><td>Toolpick Mail</td><td>ML-01</td><td>5 AI</td><td>1</td><td>🟢 Bình thường</td></tr>
-            <tr><td>Mầm Kids</td><td>MK-01</td><td>4 AI</td><td>1</td><td>🟢 Bình thường</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="view" id="view-websites">
-      <div class="page-card">
-        <h2>Danh mục website</h2>
-        <div class="websites">
-          <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small id="websiteSummaryTrainingBot">6 AI · 5 nhiệm vụ</small></div>
-          <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>5 AI · 3 nhiệm vụ</small></div>
-          <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small id="websiteSummaryHmoob">6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi</small></div>
-          <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>5 AI · bảo mật bình thường</small></div>
-          <div class="website"><div class="website-line"><strong>Mầm Kids</strong><span class="mini-dot"></span></div><small>4 AI · giao diện ổn định</small></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="view" id="view-staff">
-      <div class="page-card">
-        <h2>Nhân viên AI</h2>
-        <p style="color:var(--muted)">Nhân sự được tổ chức theo chuyên môn của từng website, không dùng một bộ vai trò giống nhau cho tất cả văn phòng.</p>
-        <div class="staff-grid">
-          <div class="staff-card"><b>TrainingBot · 7 AI</b><div class="role">DEV · Kiểm thử · Nội dung · SEO · Phân tích · Tin tức & cập nhật · Hỗ trợ cộng đồng</div><div class="now">🟢 Đội nội dung, phân tích và phát triển chuyên cho TrainingBot.</div></div>
-          <div class="staff-card"><b>Toolpick · 6 AI</b><div class="role">Lập trình full-stack · Vận hành hệ thống · Kiểm thử · Bảo mật · Tích hợp công cụ · Hiệu năng</div><div class="now">🟢 Đội kỹ thuật và hạ tầng chuyên cho hệ sinh thái công cụ.</div></div>
-          <div class="staff-card"><b>HMOOB MUSIC · 7 AI</b><div class="role">Lập trình viên · UI/UX · Sản phẩm/Danh mục · Kinh doanh · Chăm sóc khách hàng · SEO/Nội dung · Order Kiểm thử</div><div class="now">🟡 Đội thương mại điện tử và hỗ trợ bán hàng.</div></div>
-          <div class="staff-card"><b>Toolpick Mail · 7 AI</b><div class="role">Lập trình máy chủ · Hạ tầng thư điện tử · Bảo mật · Xác thực · Đảm bảo gửi thư · Vận hành hệ thống · Kiểm thử</div><div class="now">🟢 Đội chuyên sâu thư điện tử, xác thực và bảo mật.</div></div>
-          <div class="staff-card"><b>Mầm Kids · 6 AI</b><div class="role">UI/UX · Giao diện · Education Nội dung · Trải nghiệm trẻ em · Desktop/Kiểm thử di động · Đa phương tiện & hoạt ảnh</div><div class="now">🟢 Đội giáo dục trẻ em và trải nghiệm học tập.</div></div>
-        </div>
-      </div>
+      <div class="panel" style="margin-top:10px"><div class="panel-head"><h2>Danh sách dự án</h2><div class="filters"><button class="filter active">Tất cả</button><button class="filter">Focus</button><button class="filter">Maintenance</button><button class="filter">Frozen</button></div></div><div class="panel-body" id="projectTable"></div></div>
     </section>
 
     <section class="view" id="view-tasks">
-      <div class="page-card">
-        <h2>Nhiệm vụ toàn công ty</h2>
-        <table class="table">
-          <thead><tr><th>ID</th><th>Nhiệm vụ</th><th>Website</th><th>AI phụ trách</th><th>Tiến độ</th></tr></thead>
-          <tbody>
-            <tr><td>#1842</td><td>Kiểm tra API Theo dõi truy cập</td><td>TrainingBot</td><td>DEV-TB-01</td><td>68%</td></tr>
-            <tr><td>#1843</td><td>Kiểm thử mobile</td><td>HMOOB MUSIC</td><td>Kiểm thử-HM-01</td><td>42%</td></tr>
-            <tr><td>#1844</td><td>Kiểm tra backup</td><td>Toolpick</td><td>OPS-TP-01</td><td>92%</td></tr>
-            <tr><td>#1845</td><td>Rà soát phiên đăng nhập</td><td>Toolpick Mail</td><td>SEC-ML-01</td><td>75%</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div class="page-title"><div><h1>Công việc</h1><p>Luồng chuẩn: Inbox → Planned → Doing → Review → Done.</p></div><button class="primary" data-action="add-task">＋ Thêm công việc</button></div>
+      <div class="kanban" id="taskKanban"></div>
+    </section>
+
+    <section class="view" id="view-ideas">
+      <div class="page-title"><div><h1>Idea Vault</h1><p>Mọi ý tưởng mới vào đây trước, không tự biến thành dự án.</p></div><button class="primary" data-action="add-idea">＋ Ghi ý tưởng</button></div>
+      <div class="grid-3" id="ideaGrid"></div>
+    </section>
+
+    <section class="view" id="view-sources">
+      <div class="page-title"><div><h1>Thư viện mã nguồn</h1><p>Repo GitHub, công cụ và dự án mã nguồn mở bạn muốn lưu lại.</p></div><button class="primary" data-action="add-source">＋ Lưu nguồn</button></div>
+      <div class="panel"><div class="panel-head"><h2>Source Library</h2><div class="filters"><button class="filter active">Tất cả</button><button class="filter">Đã test</button><button class="filter">Chưa test</button></div></div><div class="panel-body" id="sourceTable"></div></div>
+    </section>
+
+    <section class="view" id="view-lab">
+      <div class="page-title"><div><h1>Phòng Lab</h1><p>Nơi thử nghiệm source, công nghệ và ý tưởng trước khi đưa vào dự án thật.</p></div><button class="primary" data-action="add-lab">＋ Thử nghiệm mới</button></div>
+      <div class="grid-3" id="labGrid"></div>
+    </section>
+
+    <section class="view" id="view-team">
+      <div class="page-title"><div><h1>Đội AI</h1><p>Không đếm “nhân viên cho đẹp”. Mỗi AI có năng lực, quyền hạn và đầu ra rõ ràng.</p></div><button class="secondary" data-open-atlas>Hỏi ATLAS</button></div>
+      <div class="grid-3" id="teamGrid"></div>
     </section>
 
     <section class="view" id="view-approvals">
-      <div class="page-card">
-        <h2>Trung tâm phê duyệt</h2>
-        <p style="color:var(--muted)">Mọi thao tác production, quyền cao, chi phí hoặc thay đổi nhạy cảm sẽ dừng ở đây để bạn quyết định.</p>
-        <div class="approval-list" id="approvalListFull" style="margin-top:14px"></div>
-      </div>
+      <div class="page-title"><div><h1>Trung tâm phê duyệt</h1><p>Deploy, dữ liệu, chi phí, quyền truy cập và thay đổi rủi ro đều phải dừng ở đây.</p></div></div>
+      <div class="panel"><div class="panel-head"><h2>Đang chờ quyết định</h2><span id="approvalFullCount" style="font-size:10px;color:#8aa4be"></span></div><div class="panel-body" id="approvalFull"></div></div>
     </section>
 
-    <section class="view" id="view-execution">
-      <div class="page-card">
-        <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap">
-          <div>
-            <h2 style="margin-bottom:6px">▶ Bộ thực thi có kiểm soát — Giai đoạn 5</h2>
-            <p style="color:var(--muted);line-height:1.65;margin:0;max-width:900px">AION HQ đã có kênh thực thi thật đầu tiên cho TrainingBot bằng GitHub Actions. Việc an toàn chạy trên nhánh <b>aion-sandbox</b>; production vẫn bị khóa và không có token bí mật nào được đặt trong trình duyệt.</p>
-          </div>
-          <button class="small-btn" id="executorRefresh" type="button">Kiểm tra trạng thái thật</button>
-        </div>
-
-        <div class="executor-grid" style="margin-top:18px">
-          <div class="executor-card">
-            <div style="display:flex;justify-content:space-between;gap:8px"><h3>TrainingBot</h3><span class="badge">Đã kết nối</span></div>
-            <p>GitHub: Gamevalentine/trainingbot-cloudflare</p>
-            <p>Nhánh an toàn: <b style="color:var(--text)">aion-sandbox</b></p>
-            <p>Cho phép: kiểm tra shell, build sandbox, so sánh với main.</p>
-            <div class="executor-actions">
-              <a class="small-btn approve executor-link" target="_blank" rel="noopener" href="https://github.com/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml">Mở bộ thực thi GitHub ↗</a>
-            </div>
-          </div>
-          <div class="executor-card">
-            <div style="display:flex;justify-content:space-between;gap:8px"><h3>Production</h3><span class="badge warn">Đang khóa</span></div>
-            <p>Không deploy, đổi DNS, xóa dữ liệu hoặc dùng secret production từ trang AION HQ.</p>
-            <p>Muốn mở production phải có một cổng backend an toàn và một lần phê duyệt riêng cho từng hành động.</p>
-          </div>
-          <div class="executor-card">
-            <div style="display:flex;justify-content:space-between;gap:8px"><h3>Trạng thái GitHub Actions</h3><span class="badge" id="executorLiveBadge">Chưa kiểm tra</span></div>
-            <p id="executorLiveDetail">Bấm “Kiểm tra trạng thái thật” để đọc lần chạy gần nhất.</p>
-            <p id="executorLiveTime"></p>
-          </div>
-        </div>
-
-        <div class="card" style="box-shadow:none;margin-top:18px">
-          <div class="card-head"><div><h2>Hàng đợi thực thi</h2><span>Chỉ tạo sau khi Chủ sở hữu đã phê duyệt</span></div><span id="executionQueueCount">0 việc</span></div>
-          <div class="card-body execution-queue" id="executionQueue"></div>
-        </div>
-
-        <div class="safety-box" style="margin-top:16px">
-          <b>Cơ chế an toàn:</b> workflow hiện có quyền GitHub chỉ đọc, checkout đúng nhánh <b>aion-sandbox</b>, yêu cầu nhập câu xác nhận <b>AION-SANDBOX</b>, và không chứa bước deploy production.
-        </div>
+    <section class="view" id="view-plan">
+      <div class="page-title"><div><h1>Lịch & Kế hoạch</h1><p>Tập trung vào tuần hiện tại, không nhồi quá nhiều việc vào một ngày.</p></div><button class="primary" data-action="weekly-review">Tạo Weekly Review</button></div>
+      <div class="grid-3">
+        <div class="feature-card"><div class="big">🎯</div><h3>3 mục tiêu tuần</h3><p>Ổn định TrainingBot, hoàn thiện AION HQ v2, kiểm tra hiệu năng HMOOB MUSIC.</p><div class="foot"><span class="tag blue">Tuần 39</span><span>3/3 đã chốt</span></div></div>
+        <div class="feature-card"><div class="big">🧠</div><h3>Học & Lab</h3><p>Docker volume/backup, agent orchestration và cách đánh giá source GitHub an toàn.</p><div class="foot"><span class="tag green">20% thời gian</span><span>2 phiên</span></div></div>
+        <div class="feature-card"><div class="big">🧭</div><h3>Khám phá</h3><p>Giới hạn 10% thời gian để tìm repo hay mà không làm vỡ kế hoạch chính.</p><div class="foot"><span class="tag purple">10% thời gian</span><span>Đúng nhịp</span></div></div>
       </div>
     </section>
 
     <section class="view" id="view-reports">
-      <div class="page-card">
-        <h2>Báo cáo điều hành</h2>
-        <table class="table">
-          <thead><tr><th>Chu kỳ</th><th>CEO kết luận</th><th>Hoàn thành</th><th>Cần duyệt</th></tr></thead>
-          <tbody id="reportBody"></tbody>
-        </table>
-      </div>
+      <div class="page-title"><div><h1>Báo cáo</h1><p>Tổng hợp điều cần biết, không biến dashboard thành chỗ chứa số liệu vô nghĩa.</p></div><button class="secondary" data-action="generate-report">Tạo báo cáo mới</button></div>
+      <div class="cards-4"><div class="mini-card"><strong>72%</strong><span>Focus cao nhất — TrainingBot</span></div><div class="mini-card"><strong>4</strong><span>Việc đang bị kẹt</span></div><div class="mini-card"><strong>4</strong><span>Chờ quyết định</span></div><div class="mini-card"><strong>6</strong><span>Thử nghiệm trong Lab</span></div></div>
+      <div class="panel" style="margin-top:10px"><div class="panel-head"><h2>Nhận định của ATLAS</h2></div><div class="panel-body"><p class="atlas-text" style="font-size:11px">Khối lượng công việc hiện phân tán trên nhiều dự án. Quy tắc Focus tối đa 3 dự án sẽ được giữ cứng. Dự án mới chỉ được nâng từ Idea/Lab lên Focus khi một dự án hiện tại hoàn thành, chuyển Maintenance hoặc Frozen.</p></div></div>
     </section>
 
-    <section class="view" id="view-office">
-      <div class="page-card">
-        <h2>Văn phòng AI</h2>
-        <p style="color:var(--muted)">Mỗi website có một đội nhân viên AI khác nhau, được thiết kế theo đúng loại công việc của website đó. Bấm vào văn phòng để quan sát chi tiết.</p>
-        <div class="office" style="margin-top:16px">
-          <a class="room room-link" href="office/trainingbot/"><div class="room-top"><h3>TrainingBot Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>💻</span>Lập trình viên</div><div class="desk"><span>✍️</span>Nội dung</div><div class="desk"><span>🔎</span>SEO</div><div class="desk"><span>📊</span>Phân tích</div><div class="desk"><span>📰</span>Tin tức & cập nhật</div><div class="desk"><span>💬</span>Hỗ trợ cộng đồng</div></div></a>
-          <a class="room room-link" href="office/toolpick/"><div class="room-top"><h3>Toolpick Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🛠️</span>Lập trình full-stack</div><div class="desk"><span>☁️</span>Vận hành hệ thống</div><div class="desk"><span>🛡️</span>Bảo mật</div><div class="desk"><span>🔌</span>Tích hợp</div><div class="desk"><span>⚡</span>Hiệu năng</div><div class="desk"><span>🧪</span>Kiểm thử</div></div></a>
-          <a class="room room-link" href="office/hmoob-music/"><div class="room-top"><h3>HMOOB MUSIC Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🛍️</span>Danh mục</div><div class="desk"><span>💰</span>Kinh doanh</div><div class="desk"><span>💬</span>Chăm sóc khách hàng</div><div class="desk"><span>🎨</span>UI/UX</div><div class="desk"><span>🔎</span>SEO/Nội dung</div><div class="desk"><span>📦</span>Order Kiểm thử</div></div></a>
-          <a class="room room-link" href="office/toolpick-mail/"><div class="room-top"><h3>Văn phòng Toolpick Mail</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>⚙️</span>Lập trình máy chủ</div><div class="desk"><span>📨</span>Hạ tầng thư điện tử</div><div class="desk"><span>🔐</span>Xác thực</div><div class="desk"><span>📬</span>Đảm bảo gửi thư</div><div class="desk"><span>🛡️</span>Bảo mật</div><div class="desk"><span>☁️</span>Vận hành hệ thống</div></div></a>
-          <a class="room room-link" href="office/mam-kids/"><div class="room-top"><h3>Mầm Kids Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🎨</span>UI/UX</div><div class="desk"><span>💻</span>Giao diện</div><div class="desk"><span>📚</span>Education Nội dung</div><div class="desk"><span>🧸</span>Trải nghiệm trẻ em</div><div class="desk"><span>🧪</span>Kiểm thử đa thiết bị</div><div class="desk"><span>🎞️</span>Đa phương tiện & hoạt ảnh</div></div></a>
-        </div>
-      </div>
+    <section class="view" id="view-knowledge">
+      <div class="page-title"><div><h1>Kiến thức</h1><p>Những gì đã học được để lần sau không phải bắt đầu lại từ đầu.</p></div><button class="primary" data-action="add-knowledge">＋ Ghi kiến thức</button></div>
+      <div class="grid-3" id="knowledgeGrid"></div>
     </section>
 
-    <section class="view" id="view-logs">
-      <div class="page-card">
-        <h2>Nhật ký quyết định</h2>
-        <table class="table">
-          <thead><tr><th>Thời gian</th><th>AI</th><th>Hành động</th><th>Quyền</th></tr></thead>
-          <tbody id="decisionLogBody"></tbody>
-        </table>
+    <section class="view" id="view-resources">
+      <div class="page-title"><div><h1>Tài nguyên</h1><p>Domain, hosting, repo, tài khoản dịch vụ và liên kết quan trọng của hệ sinh thái.</p></div></div>
+      <div class="panel"><div class="panel-body"><table class="table"><thead><tr><th>Tài nguyên</th><th>Loại</th><th>Dùng cho</th><th>Trạng thái</th></tr></thead><tbody><tr><td>GitHub / Gamevalentine</td><td>Source control</td><td>AION HQ & dự án web</td><td><span class="tag green">Hoạt động</span></td></tr><tr><td>GitHub Pages</td><td>Hosting</td><td>AION HQ</td><td><span class="tag green">Free</span></td></tr><tr><td>Cloudflare</td><td>Hosting / DNS</td><td>Toolpick ecosystem</td><td><span class="tag blue">Theo dự án</span></td></tr><tr><td>Telegram</td><td>Cộng đồng / Bot</td><td>TrainingBot</td><td><span class="tag green">Kết nối</span></td></tr></tbody></table></div></div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="page-title"><div><h1>Cài đặt</h1><p>Nguyên tắc vận hành AION HQ v2.</p></div></div>
+      <div class="grid-3">
+        <div class="feature-card"><h3>Giới hạn Focus</h3><p>Không quá 3 dự án cùng trạng thái Focus.</p><div class="foot"><span class="tag green">Bật</span></div></div>
+        <div class="feature-card"><h3>Phê duyệt thay đổi quan trọng</h3><p>Deploy production, xóa dữ liệu, thay quyền, mua dịch vụ đều phải chờ bạn.</p><div class="foot"><span class="tag green">Bật</span></div></div>
+        <div class="feature-card"><h3>Không phát sinh chi phí</h3><p>ATLAS và AI Team không được tự bật dịch vụ trả phí nếu chưa được bạn đồng ý.</p><div class="foot"><span class="tag green">Bật</span></div></div>
       </div>
     </section>
-  </main>
-</div>
-
-<div class="modal" id="detailModal">
-  <div class="modal-card">
-    <div class="modal-head"><h3 id="modalTitle">Văn phòng</h3><button class="close" id="modalClose">×</button></div>
-    <div class="modal-body">
-      <div id="modalStatus" style="color:var(--muted)"></div>
-      <div class="modal-grid">
-        <div class="mini-stat"><b id="modalStaff">0</b><small>Nhân viên AI</small></div>
-        <div class="mini-stat"><b id="modalTasks">0</b><small>Nhiệm vụ</small></div>
-        <div class="mini-stat"><b>1</b><small>Trưởng phòng</small></div>
-      </div>
-      <h4>Mục tiêu hiện tại</h4>
-      <p id="modalGoal" style="color:var(--muted);line-height:1.65"></p>
-      <button class="primary-btn" id="openVăn phòng">Mở phòng làm việc</button>
-    </div>
   </div>
+</main>
 </div>
 
-<div class="modal" id="ceoModal">
-  <div class="modal-card">
-    <div class="modal-head"><h3>🧠 Báo cáo nhanh từ ATLAS</h3><button class="close" id="ceoClose">×</button></div>
-    <div class="modal-body">
-      <p id="ceoBriefSummary" style="line-height:1.7;margin-top:0"></p>
-      <p id="ceoBriefDetail" style="color:var(--muted);line-height:1.7"></p>
-    </div>
-  </div>
-</div>
+<nav class="mobile-nav">
+<button class="active" data-view="overview"><span>⌂</span>Tổng quan</button>
+<button data-view="projects"><span>▣</span>Dự án</button>
+<button data-view="tasks"><span>☑</span>Việc</button>
+<button data-view="ideas"><span>◉</span>Ý tưởng</button>
+<button data-open-atlas><span>◈</span>ATLAS</button>
+</nav>
 
+<div class="modal" id="modal"><div class="modal-card"><div class="modal-head"><h3 id="modalTitle">AION HQ</h3><button class="close" id="modalClose">×</button></div><div class="modal-body" id="modalBody"></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
-  const navButtons=[...document.querySelectorAll('.nav-btn')];
-  const views=[...document.querySelectorAll('.view')];
-  const titles={
-    overview:['Trung tâm điều hành','CEO AI đang quản lý toàn bộ hệ sinh thái website.'],
-    ceo:['AI CEO','Theo dõi mục tiêu, quyết định và quyền hạn của CEO.'],
-    departments:['Các Trưởng phòng','Mỗi Trưởng phòng chịu trách nhiệm một website.'],
-    websites:['Website','Toàn bộ tài sản số đang được AION HQ quản lý.'],
-    staff:['Nhân viên AI','Các Agent chuyên môn dưới quyền từng Trưởng phòng.'],
-    tasks:['Nhiệm vụ','Công việc AI đang thực hiện trên toàn công ty.'],
-    approvals:['Phê duyệt','Những việc AI bắt buộc phải xin quyền từ bạn.'],
-    execution:['Thực thi','Các hành động thật được đưa qua cổng an toàn sau khi bạn phê duyệt.'],
-    reports:['Báo cáo','Kết quả điều hành do CEO tổng hợp.'],
-    office:['Văn phòng AI','Chế độ trực quan theo dõi AI đang làm việc.'],
-    logs:['Nhật ký','Lịch sử quyết định và hành động của các AI.']
-  };
-
-  function switchView(name){
-    navButtons.forEach(b=>b.classList.toggle('active',b.dataset.view===name));
-    views.forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
-    document.getElementById('pageTitle').textContent=titles[name][0];
-    document.getElementById('pageSubtitle').textContent=titles[name][1];
-    document.getElementById('sidebar').classList.remove('open');
-  }
-  navButtons.forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
-  document.getElementById('mobileToggle').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
-
-  const modal=document.getElementById('detailModal');
-  document.querySelectorAll('.manager').forEach(m=>m.addEventListener('click',()=>{
-    document.getElementById('modalTitle').textContent=m.dataset.name+' Văn phòng';
-    document.getElementById('modalStatus').textContent='Trạng thái: '+m.dataset.status;
-    document.getElementById('modalStaff').textContent=m.dataset.staff;
-    document.getElementById('modalTasks').textContent=m.dataset.tasks;
-    document.getElementById('modalGoal').textContent=m.dataset.goal;
-    modal.classList.add('show');
-  }));
-  document.getElementById('modalClose').onclick=()=>modal.classList.remove('show');
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
-  document.getElementById('openVăn phòng').onclick=()=>{modal.classList.remove('show');switchView('staff')};
-
-  const ceoModal=document.getElementById('ceoModal');
-  document.getElementById('ceoBriefBtn').onclick=()=>{renderCeoBrief();ceoModal.classList.add('show')};
-  document.getElementById('ceoClose').onclick=()=>ceoModal.classList.remove('show');
-  ceoModal.addEventListener('click',e=>{if(e.target===ceoModal)ceoModal.classList.remove('show')});
-
-  // CEO Giai đoạn 4: trạng thái dùng chung cho mục tiêu, giao việc, phê duyệt, báo cáo và nhật ký.
-  const phase4Key='aiCompany.ceo.phase4.v1';
-  const phase4Defaults={
-    goals:[
-      {id:'G-001',title:'Ổn định các luồng API quan trọng của TrainingBot',basis:'Kiểm tra nguồn thật cho thấy TrainingBot là tài sản đang hoạt động; các luồng API có ảnh hưởng trực tiếp người dùng.',website:'TrainingBot',owner:'TB-01',priority:'Cao',deadline:'Trong phiên kiểm tra hiện tại',criteria:'Có kết quả kiểm thử rõ ràng; nếu cần production thì phải tạo yêu cầu phê duyệt.',status:'Đã giao'},
-      {id:'G-002',title:'Theo dõi hiệu năng mobile của HMOOB MUSIC',basis:'Hiệu năng mobile đang được đánh dấu cần theo dõi trong bảng điều hành.',website:'HMOOB MUSIC',owner:'HM-01',priority:'Cao',deadline:'Trước khi mở thêm thay đổi giao diện',criteria:'Có bằng chứng kiểm thử mobile và kết luận đạt/chưa đạt; không tự đổi production.',status:'Đã giao'},
-      {id:'G-003',title:'Chuẩn hóa cách CEO tạo, giao và nghiệm thu mục tiêu',basis:'Bộ máy cần một luồng thống nhất để tránh giao việc mơ hồ hoặc báo hoàn thành khi chưa có bằng chứng.',website:'AION HQ',owner:'ATLAS',priority:'Trung bình',deadline:'Giai đoạn 4',criteria:'Mục tiêu có đủ hồ sơ; trạng thái giao việc, phê duyệt, báo cáo và nhật ký đồng bộ.',status:'Đang thực hiện'}
-    ],
-    tasks:[
-      {id:'CEO-1842',goalId:'G-001',title:'Kiểm tra API Theo dõi truy cập',website:'TrainingBot',assignee:'TB-01',status:'assigned',progress:25,evidence:''},
-      {id:'CEO-1843',goalId:'G-002',title:'Kiểm thử hiệu năng và giao diện mobile',website:'HMOOB MUSIC',assignee:'HM-01',status:'accepted',progress:50,evidence:''},
-      {id:'CEO-1844',goalId:'G-003',title:'Đối chiếu trạng thái giữa CEO, Phê duyệt, Báo cáo và Nhật ký',website:'AION HQ',assignee:'ATLAS',status:'evidence_ready',progress:85,evidence:'Đã dùng chung một state có ID/trạng thái; chờ nghiệm thu trên giao diện.'}
-    ],
-    approvals:[
-      {id:'APR-001',title:'Deploy bản sửa #1842',website:'TrainingBot',risk:'Vừa',description:'Lập trình viên và Kiểm thử đã hoàn thành bản sửa. CEO yêu cầu quyền triển khai production.',status:'pending',linkedTask:'CEO-1842'},
-      {id:'APR-002',title:'Thay đổi cấu hình cache',website:'HMOOB MUSIC',risk:'Cao',description:'Đề xuất thay đổi cấu hình nhằm cải thiện tốc độ. Cần Chủ sở hữu duyệt trước khi tác động production.',status:'pending',linkedTask:'CEO-1843'},
-      {id:'APR-003',title:'Xuất bản 2 bài SEO',website:'TrainingBot',risk:'Thấp',description:'Nội dung đã qua rà soát; việc xuất bản thật vẫn phải chờ Chủ sở hữu quyết định.',status:'pending',linkedTask:'CEO-1842'}
-    ],
-    logs:[
-      {time:'22:01',actor:'ATLAS',action:'Giao kiểm thử HMOOB MUSIC trên mobile.',permission:'Tự động'},
-      {time:'21:54',actor:'TB-01',action:'Nhận mục tiêu kiểm tra luồng API TrainingBot.',permission:'Tự động'},
-      {time:'21:43',actor:'ATLAS',action:'Tạo hồ sơ mục tiêu có căn cứ và tiêu chí hoàn thành.',permission:'Tự động'},
-      {time:'21:30',actor:'ATLAS',action:'Khởi tạo Giai đoạn 4 với trạng thái dùng chung.',permission:'Tự động'}
-    ]
-  };
-
-  function clonePhase4Defaults(){ return JSON.parse(JSON.stringify(phase4Defaults)); }
-  function getPhase4State(){
-    try{
-      const saved=JSON.parse(localStorage.getItem(phase4Key)||'null');
-      if(!saved||!Array.isArray(saved.goals)||!Array.isArray(saved.tasks)||!Array.isArray(saved.approvals)||!Array.isArray(saved.logs)) return clonePhase4Defaults();
-      return saved;
-    }catch(e){ return clonePhase4Defaults(); }
-  }
-  let phase4State=getPhase4State();
-
-  const phase5Key='aiCompany.ceo.phase5.v1';
-  const executorConfig={
-    TrainingBot:{
-      repo:'Gamevalentine/trainingbot-cloudflare',
-      branch:'aion-sandbox',
-      workflow:'aion-safe-executor.yml',
-      workflowUrl:'https://github.com/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml',
-      runsApi:'https://api.github.com/repos/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml/runs?per_page=5'
-    }
-  };
-  function getPhase5State(){
-    try{
-      const saved=JSON.parse(localStorage.getItem(phase5Key)||'null');
-      return saved&&Array.isArray(saved.executions)?saved:{executions:[],lastRun:null};
-    }catch(e){ return {executions:[],lastRun:null}; }
-  }
-  let phase5State=getPhase5State();
-  function savePhase5State(){ localStorage.setItem(phase5Key,JSON.stringify(phase5State)); }
-
-  function savePhase4State(){
-    localStorage.setItem(phase4Key,JSON.stringify(phase4State));
-  }
-  function nowTime(){
-    return new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-  }
-  function addPhase4Log(actor,action,permission='Tự động'){
-    phase4State.logs.unshift({time:nowTime(),actor,action,permission});
-    phase4State.logs=phase4State.logs.slice(0,30);
-  }
-  function escapeHtml(value){
-    return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
-  }
-  function statusLabel(status){
-    return ({assigned:'Đã giao',accepted:'Đã nhận',evidence_ready:'Chờ nghiệm thu',completed:'Hoàn thành'}[status]||status);
-  }
-  function statusBadgeClass(status){
-    return status==='completed'?'badge':(status==='assigned'||status==='evidence_ready'?'badge warn':'badge');
-  }
-  function pendingApprovals(){ return phase4State.approvals.filter(x=>x.status==='pending'); }
-
-  function toast(msg){
-    const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),2200);
-  }
-
-  function renderPhase4Goals(){
-    const host=document.getElementById('ceoGoalProfiles');
-    if(!host) return;
-    document.getElementById('ceoGoalCount').textContent=phase4State.goals.length+' mục tiêu';
-    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
-    const metric=document.getElementById('ceoGoalMetric');
-    if(metric) metric.textContent=activeGoals;
-    host.innerHTML=phase4State.goals.map(g=>`
-      <div class="phase4-goal">
-        <div class="phase4-goal-top">
-          <div><b>${escapeHtml(g.id)} · ${escapeHtml(g.title)}</b><div class="role" style="margin-top:5px;line-height:1.5">${escapeHtml(g.basis)}</div></div>
-          <span class="badge ${g.priority==='Cao'?'warn':''}">${escapeHtml(g.status)}</span>
-        </div>
-        <div class="phase4-meta">
-          <div><b>Website</b><br>${escapeHtml(g.website)}</div>
-          <div><b>Phụ trách</b><br>${escapeHtml(g.owner)}</div>
-          <div><b>Ưu tiên</b><br>${escapeHtml(g.priority)}</div>
-          <div><b>Thời hạn</b><br>${escapeHtml(g.deadline)}</div>
-        </div>
-        <div class="phase4-evidence"><b>Tiêu chí hoàn thành:</b> ${escapeHtml(g.criteria)}</div>
-      </div>`).join('');
-  }
-
-  function renderPhase4Workflow(){
-    const host=document.getElementById('ceoWorkflowList');
-    if(!host) return;
-    const active=phase4State.tasks.filter(t=>t.status!=='completed').length;
-    document.getElementById('ceoWorkflowCount').textContent=active+' việc đang mở';
-    host.innerHTML=phase4State.tasks.map(t=>{
-      let action='';
-      if(t.status==='assigned') action=`<button class="small-btn approve" data-phase4-action="accept" data-task="${t.id}">Trưởng phòng nhận việc</button>`;
-      if(t.status==='accepted') action=`<button class="small-btn approve" data-phase4-action="evidence" data-task="${t.id}">Gửi bằng chứng nghiệm thu</button>`;
-      if(t.status==='evidence_ready') action=`<button class="small-btn approve" data-phase4-action="complete" data-task="${t.id}">CEO nghiệm thu</button>`;
-      return `<div class="phase4-work">
-        <div class="phase4-work-head">
-          <div><b>${escapeHtml(t.id)} · ${escapeHtml(t.title)}</b><div class="role" style="margin-top:5px">${escapeHtml(t.website)} · ${escapeHtml(t.assignee)} · Mục tiêu ${escapeHtml(t.goalId)}</div></div>
-          <span class="${statusBadgeClass(t.status)}">${escapeHtml(statusLabel(t.status))}</span>
-        </div>
-        <div class="progress" style="width:100%;margin-top:10px"><small>${Number(t.progress)||0}%</small><div class="bar"><i style="width:${Math.max(0,Math.min(100,Number(t.progress)||0))}%"></i></div></div>
-        ${t.evidence?`<div class="phase4-evidence"><b>Bằng chứng:</b> ${escapeHtml(t.evidence)}</div>`:''}
-        <div class="phase4-actions">${action}</div>
-      </div>`;
-    }).join('');
-    host.querySelectorAll('[data-phase4-action]').forEach(btn=>btn.onclick=()=>{
-      const task=phase4State.tasks.find(t=>t.id===btn.dataset.task);
-      if(!task) return;
-      const action=btn.dataset.phase4Action;
-      if(action==='accept'&&task.status==='assigned'){
-        task.status='accepted';task.progress=Math.max(task.progress,40);
-        addPhase4Log(task.assignee,'Đã nhận việc '+task.id+': '+task.title+'.','Tự động');
-        toast('Trưởng phòng đã nhận việc.');
-      }else if(action==='evidence'&&task.status==='accepted'){
-        task.status='evidence_ready';task.progress=Math.max(task.progress,85);
-        task.evidence='Đã hoàn thành bước kiểm tra trong môi trường an toàn và gửi kết quả để CEO nghiệm thu.';
-        addPhase4Log(task.assignee,'Đã gửi bằng chứng cho '+task.id+'.','Tự động');
-        toast('Đã gửi bằng chứng, chờ CEO nghiệm thu.');
-      }else if(action==='complete'&&task.status==='evidence_ready'){
-        task.status='completed';task.progress=100;
-        const goal=phase4State.goals.find(g=>g.id===task.goalId);
-        if(goal) goal.status='Hoàn thành';
-        addPhase4Log('ATLAS','Nghiệm thu '+task.id+' sau khi có bằng chứng.','Tự động');
-        toast('CEO đã nghiệm thu nhiệm vụ.');
-      }
-      savePhase4State();renderPhase4();
-    });
-  }
-
-  function queueExecutionForApproval(a){
-    if(a.status!=='approved') return;
-    if(phase5State.executions.some(x=>x.approvalId===a.id)) return;
-    const cfg=executorConfig[a.website];
-    const safeAction=(a.id==='APR-001'&&cfg)?'validate-sandbox':null;
-    phase5State.executions.unshift({
-      id:'EXE-'+a.id,
-      approvalId:a.id,
-      taskId:a.linkedTask||'',
-      website:a.website,
-      title:a.title,
-      status:safeAction?'ready':'blocked',
-      safeAction:safeAction||'',
-      environment:safeAction?cfg.branch:'production',
-      createdAt:new Date().toISOString()
-    });
-    savePhase5State();
-    addPhase4Log('ATLAS',safeAction?'Đã đưa '+a.id+' vào hàng đợi thực thi an toàn trên '+cfg.branch+'.':'Đã ghi nhận '+a.id+' nhưng chưa có executor an toàn phù hợp; production tiếp tục bị khóa.','Thực thi');
-  }
-
-  function executionStatusLabel(status){
-    return ({ready:'Sẵn sàng chạy',blocked:'Bị khóa',running:'Đang chạy',success:'Đã kiểm tra',failed:'Kiểm tra lỗi'}[status]||status);
-  }
-
-  function renderExecutionQueue(){
-    const host=document.getElementById('executionQueue');
-    if(!host) return;
-    const ready=phase5State.executions.filter(x=>x.status==='ready'||x.status==='running').length;
-    const nav=document.getElementById('navExecutionCount');if(nav)nav.textContent=ready;
-    const count=document.getElementById('executionQueueCount');if(count)count.textContent=phase5State.executions.length+' việc';
-    if(!phase5State.executions.length){
-      host.innerHTML='<p style="color:var(--muted);margin:0">Chưa có hành động nào được đưa vào hàng đợi. Khi bạn duyệt một yêu cầu phù hợp, ATLAS sẽ tạo lệnh thực thi ở đây.</p>';
-      return;
-    }
-    host.innerHTML=phase5State.executions.map(x=>{
-      const cfg=executorConfig[x.website];
-      const action=x.status==='ready'&&cfg?'<a class="small-btn approve executor-link" target="_blank" rel="noopener" href="'+cfg.workflowUrl+'">Mở GitHub để chạy ↗</a><button class="small-btn" data-copy-execution="'+escapeHtml(x.id)+'">Chép thông số</button>':'';
-      return '<div class="execution-item"><div class="execution-top"><div><b>'+escapeHtml(x.id)+' · '+escapeHtml(x.title)+'</b><div class="execution-meta">'+escapeHtml(x.website)+' · '+escapeHtml(x.environment)+' · từ '+escapeHtml(x.approvalId)+'</div></div><span class="'+(x.status==='blocked'?'badge warn':'badge')+'">'+escapeHtml(executionStatusLabel(x.status))+'</span></div>'+(x.status==='blocked'?'<div class="phase4-evidence"><b>Đang khóa:</b> hành động này có thể tác động production hoặc chưa có executor an toàn tương ứng.</div>':'<div class="phase4-evidence"><b>Thao tác:</b> validate-sandbox · <b>Task ID:</b> '+escapeHtml(x.taskId)+' · <b>Xác nhận:</b> AION-SANDBOX</div>')+'<div class="executor-actions">'+action+'</div></div>';
-    }).join('');
-    host.querySelectorAll('[data-copy-execution]').forEach(btn=>btn.onclick=async()=>{
-      const x=phase5State.executions.find(e=>e.id===btn.dataset.copyExecution);
-      if(!x) return;
-      const text='task_id='+x.taskId+' | operation=validate-sandbox | confirm=AION-SANDBOX';
-      try{ await navigator.clipboard.writeText(text); toast('Đã chép thông số thực thi.'); }
-      catch(e){ toast(text); }
-    });
-  }
-
-  async function refreshExecutorStatus(){
-    const badge=document.getElementById('executorLiveBadge');
-    const detail=document.getElementById('executorLiveDetail');
-    const time=document.getElementById('executorLiveTime');
-    const button=document.getElementById('executorRefresh');
-    if(!badge||!detail) return;
-    if(button){button.disabled=true;button.textContent='Đang kiểm tra...'}
-    badge.textContent='Đang đọc';
-    try{
-      const res=await fetch(executorConfig.TrainingBot.runsApi,{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data=await res.json();
-      const run=(data.workflow_runs||[])[0];
-      if(!run){
-        badge.textContent='Chưa có lần chạy';
-        detail.textContent='Workflow đã kết nối nhưng chưa có lịch sử thực thi.';
-      }else{
-        const label=run.status==='completed'?(run.conclusion==='success'?'Thành công':'Lỗi'):'Đang chạy';
-        badge.textContent=label;
-        badge.classList.toggle('warn',label==='Lỗi');
-        detail.textContent='Lần chạy #'+run.run_number+' · '+(run.name||'AION HQ Safe Executor')+' · '+label;
-        if(time) time.textContent='Cập nhật: '+new Date(run.updated_at||run.created_at).toLocaleString('vi-VN');
-        phase5State.lastRun={id:run.id,status:run.status,conclusion:run.conclusion,updatedAt:run.updated_at||run.created_at};
-        savePhase5State();
-      }
-    }catch(error){
-      badge.textContent='Không đọc được';
-      badge.classList.add('warn');
-      detail.textContent='Không lấy được trạng thái GitHub Actions ở lần kiểm tra này.';
-    }finally{
-      if(button){button.disabled=false;button.textContent='Kiểm tra trạng thái thật'}
-    }
-  }
-
-  function approvalHtml(a){
-    const riskClass=a.risk==='Cao'?'high':'med';
-    return `<div class="approval" data-approval-id="${escapeHtml(a.id)}">
-      <div class="approval-top"><div><strong>${escapeHtml(a.title)}</strong><small>${escapeHtml(a.website)} · ${escapeHtml(a.id)}</small></div><span class="risk ${riskClass}">Rủi ro ${escapeHtml(a.risk.toLowerCase())}</span></div>
-      <p>${escapeHtml(a.description)}</p>
-      <div class="approve-actions"><button class="small-btn approve" data-approval-action="approved" data-id="${escapeHtml(a.id)}">✓ Duyệt</button><button class="small-btn reject" data-approval-action="rejected" data-id="${escapeHtml(a.id)}">✕ Từ chối</button></div>
-    </div>`;
-  }
-  function renderApprovals(){
-    const pending=pendingApprovals();
-    const html=pending.length?pending.map(approvalHtml).join(''):'<p style="color:var(--muted)">Không còn yêu cầu nào đang chờ.</p>';
-    ['approvalList','approvalListFull'].forEach(id=>{
-      const host=document.getElementById(id);
-      if(!host) return;
-      host.innerHTML=html;
-      host.querySelectorAll('[data-approval-action]').forEach(btn=>btn.onclick=()=>{
-        const item=phase4State.approvals.find(a=>a.id===btn.dataset.id);
-        if(!item||item.status!=='pending') return;
-        item.status=btn.dataset.approvalAction;
-        item.decidedAt=new Date().toISOString();
-        const word=item.status==='approved'?'duyệt':'từ chối';
-        addPhase4Log('Chủ sở hữu','Đã '+word+' '+item.id+' — '+item.title+'.','Phê duyệt');
-        if(item.status==='approved') queueExecutionForApproval(item);
-        savePhase4State();renderPhase4();
-        toast(item.status==='approved'?'Đã duyệt. Nếu có executor an toàn, việc đã được đưa vào hàng đợi thực thi.':'Đã ghi nhận từ chối.');
-      });
-    });
-    const count=pending.length;
-    ['approvalMetric','navApprovalCount','ceoApprovalMetric'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=count});
-    const header=document.getElementById('approvalHeader');if(header) header.textContent=count+' yêu cầu';
-  }
-
-  function renderOverviewAssigned(){
-    const host=document.getElementById('ceoAssignedList');
-    if(!host) return;
-    const active=phase4State.tasks.filter(t=>t.status!=='completed');
-    document.getElementById('ceoAssignedCount').textContent=active.length+' đang chạy';
-    host.innerHTML=(active.length?active:phase4State.tasks.slice(-3)).map(t=>`
-      <div class="task"><div><strong>${escapeHtml(t.id)} · ${escapeHtml(t.title)}</strong><small>${escapeHtml(t.website)} · ${escapeHtml(t.assignee)} · ${escapeHtml(statusLabel(t.status))}</small></div><div class="progress"><small>${t.progress}%</small><div class="bar"><i style="width:${t.progress}%"></i></div></div></div>
-    `).join('');
-  }
-
-  function renderLogs(){
-    const top=document.getElementById('ceoActivityList');
-    if(top) top.innerHTML=phase4State.logs.slice(0,4).map(l=>`<div class="activity"><div class="time">${escapeHtml(l.time)}</div><p><b>${escapeHtml(l.actor)}</b> ${escapeHtml(l.action)}</p></div>`).join('');
-    const table=document.getElementById('decisionLogBody');
-    if(table) table.innerHTML=phase4State.logs.map(l=>`<tr><td>${escapeHtml(l.time)}</td><td>${escapeHtml(l.actor)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.permission)}</td></tr>`).join('');
-  }
-
-  function renderWebsiteApprovalSummaries(){
-    const tb=pendingApprovals().filter(a=>a.website==='TrainingBot').length;
-    const hm=pendingApprovals().filter(a=>a.website==='HMOOB MUSIC').length;
-    const tbEl=document.getElementById('websiteSummaryTrainingBot');
-    const hmEl=document.getElementById('websiteSummaryHmoob');
-    if(tbEl) tbEl.textContent='6 AI · 5 nhiệm vụ'+(tb?' · '+tb+' yêu cầu duyệt':'');
-    if(hmEl) hmEl.textContent='6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi'+(hm?' · '+hm+' yêu cầu duyệt':'');
-  }
-
-  function renderReports(){
-    const body=document.getElementById('reportBody');
-    if(!body) return;
-    const completed=phase4State.tasks.filter(t=>t.status==='completed').length;
-    const total=phase4State.tasks.length;
-    const pending=pendingApprovals().length;
-    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
-    const conclusion=pending?'Có '+pending+' việc chờ Chủ sở hữu; '+activeGoals+' mục tiêu còn mở.':'Không còn yêu cầu phê duyệt; '+activeGoals+' mục tiêu còn mở.';
-    body.innerHTML=`<tr><td>Phiên hiện tại</td><td>${escapeHtml(conclusion)}</td><td>${completed}/${total}</td><td>${pending}</td></tr>
-      <tr><td>Giai đoạn 4</td><td>Dữ liệu mục tiêu, giao việc, phê duyệt và nhật ký đã dùng chung một trạng thái.</td><td>${completed}/${total} nghiệm thu</td><td>${pending}</td></tr>`;
-  }
-
-  function renderCeoBrief(){
-    const pending=pendingApprovals().length;
-    const active=phase4State.tasks.filter(t=>t.status!=='completed').length;
-    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
-    const summary=document.getElementById('ceoBriefSummary');
-    const detail=document.getElementById('ceoBriefDetail');
-    if(summary) summary.textContent='Tôi đang theo dõi '+phase4State.goals.length+' mục tiêu; còn '+activeGoals+' mục tiêu mở, '+active+' việc đang chạy và '+pending+' yêu cầu cần Chủ sở hữu quyết định.';
-    if(detail) detail.textContent='Giai đoạn 5 đã nối TrainingBot với bộ thực thi GitHub Actions trên nhánh aion-sandbox. Production, DNS, xóa dữ liệu, secret và chi phí vẫn bị khóa cho tới khi có cổng an toàn và phê duyệt riêng.';
-  }
-
-  function renderPhase4(){
-    renderPhase4Goals();
-    renderPhase4Workflow();
-    renderApprovals();
-    renderOverviewAssigned();
-    renderWebsiteApprovalSummaries();
-    renderExecutionQueue();
-    renderLogs();
-    renderReports();
-    renderCeoBrief();
-  }
-  savePhase4State();
-  renderPhase4();
-
-  // CEO Giai đoạn 2: bộ nhớ cục bộ + hệ thống ưu tiên.
-  const ceoMemoryKey='aiCompany.ceo.memory.v1';
-  const ceoDefaultMemories=[
-    {type:'Quy tắc Chủ sở hữu',text:'Không tự ý phát sinh chi phí nếu chưa được Chủ sở hữu đồng ý.'},
-    {type:'Quy tắc Chủ sở hữu',text:'Chỉ thay đổi đúng phạm vi công việc đã được giao; không sửa lan sang phần khác.'},
-    {type:'Bài học',text:'Mọi thay đổi mã nguồn phải được kiểm tra chức năng liên quan trước khi báo hoàn thành.'}
-  ];
-
-  function getCeoMemories(){
-    try{
-      const saved=JSON.parse(localStorage.getItem(ceoMemoryKey)||'null');
-      return Array.isArray(saved)?saved:ceoDefaultMemories;
-    }catch(e){
-      return ceoDefaultMemories;
-    }
-  }
-
-  function saveCeoMemories(items){
-    localStorage.setItem(ceoMemoryKey,JSON.stringify(items));
-  }
-
-  function renderCeoMemories(){
-    const list=document.getElementById('ceoMemoryList');
-    const count=document.getElementById('ceoMemoryCount');
-    if(!list||!count) return;
-    const items=getCeoMemories();
-    count.textContent=items.length+' mục';
-    list.innerHTML='';
-    items.forEach((item,index)=>{
-      const row=document.createElement('div');
-      row.style.cssText='display:grid;grid-template-columns:140px 1fr auto;gap:8px;align-items:start;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0d1c30';
-      const type=document.createElement('div');
-      type.style.cssText='font-size:10px;color:#8bdcf0;font-weight:700';
-      type.textContent=item.type;
-      const body=document.createElement('div');
-      body.style.cssText='font-size:11px;line-height:1.5;color:#c6d4e5';
-      body.textContent=item.text;
-      const del=document.createElement('button');
-      del.type='button';
-      del.className='small-btn reject';
-      del.textContent='Xóa';
-      del.onclick=()=>{
-        const next=getCeoMemories();
-        next.splice(index,1);
-        saveCeoMemories(next);
-        renderCeoMemories();
-      };
-      row.append(type,body,del);
-      list.appendChild(row);
-    });
-  }
-
-  const ceoMemorySave=document.getElementById('ceoMemorySave');
-  if(ceoMemorySave){
-    ceoMemorySave.onclick=()=>{
-      const input=document.getElementById('ceoMemoryInput');
-      const type=document.getElementById('ceoMemoryType');
-      const value=(input.value||'').trim();
-      if(!value){ toast('Nhập nội dung CEO cần ghi nhớ trước.'); return; }
-      const items=getCeoMemories();
-      items.unshift({type:type.value,text:value});
-      saveCeoMemories(items);
-      input.value='';
-      renderCeoMemories();
-      toast('CEO đã lưu ghi nhớ trên trình duyệt này.');
-    };
-    document.getElementById('ceoMemoryInput').addEventListener('keydown',e=>{
-      if(e.key==='Enter') ceoMemorySave.click();
-    });
-    renderCeoMemories();
-  }
-
-  function renderCeoPriorities(){
-    const list=document.getElementById('ceoPriorityList');
-    if(!list) return;
-    const items=[...list.querySelectorAll('.ceo-priority-item')];
-    items.forEach(item=>{
-      const impact=Number(item.dataset.impact||0);
-      const urgency=Number(item.dataset.urgency||0);
-      const risk=Number(item.dataset.risk||0);
-      const score=impact*2+urgency*2+risk;
-      let level='Thấp';
-      if(score>=20) level='Khẩn cấp';
-      else if(score>=15) level='Cao';
-      else if(score>=9) level='Trung bình';
-      const badge=item.querySelector('.ceo-priority-badge');
-      const scoreText=item.querySelector('.ceo-priority-score');
-      badge.textContent=level;
-      badge.classList.toggle('warn',level==='Trung bình');
-      if(level==='Khẩn cấp'||level==='Cao'){
-        badge.style.background='rgba(251,113,133,.10)';
-        badge.style.color='#fda4af';
-        badge.style.borderColor='rgba(251,113,133,.20)';
-      }
-      scoreText.textContent='Điểm '+score+'/25 · Ảnh hưởng '+impact+'/5 · Khẩn cấp '+urgency+'/5 · Rủi ro '+risk+'/5';
-      item.dataset.score=String(score);
-    });
-    items.sort((a,b)=>Number(b.dataset.score)-Number(a.dataset.score)).forEach(item=>list.appendChild(item));
-  }
-  renderCeoPriorities();
-
-  // CEO Giai đoạn 3: đọc dữ liệu thật ở chế độ chỉ đọc.
-  async function checkCeoLiveSource(card){
-    const status=card.querySelector('.ceo-live-status');
-    const detail=card.querySelector('.ceo-live-detail');
-    const kind=card.dataset.kind;
-    const url=card.dataset.url;
-    if(!status||!detail||!url) return;
-
-    status.textContent='Đang kiểm tra';
-    status.classList.remove('warn');
-    status.style.background='';
-    status.style.color='';
-    status.style.borderColor='';
-    detail.textContent='ATLAS đang đọc nguồn dữ liệu...';
-
-    const started=performance.now();
-    try{
-      if(kind==='github'){
-        const res=await fetch(url,{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        const data=await res.json();
-        const pushed=data.pushed_at?new Date(data.pushed_at).toLocaleString('vi-VN'):'Không rõ';
-        status.textContent='Đã kết nối';
-        detail.textContent='Nhánh mặc định: '+(data.default_branch||'không rõ')+' · Cập nhật mã nguồn gần nhất: '+pushed;
-      }else{
-        await fetch(url,{method:'GET',mode:'no-cors',cache:'no-store',redirect:'follow'});
-        const ms=Math.max(1,Math.round(performance.now()-started));
-        status.textContent='Có phản hồi';
-        detail.textContent='Kết nối mạng thành công · khoảng '+ms+' ms';
-      }
-    }catch(error){
-      status.textContent='Không truy cập được';
-      status.classList.add('warn');
-      status.style.background='rgba(251,113,133,.10)';
-      status.style.color='#fda4af';
-      status.style.borderColor='rgba(251,113,133,.20)';
-      detail.textContent='Không nhận được phản hồi từ nguồn này ở lần kiểm tra hiện tại.';
-    }
-  }
-
-  async function refreshCeoLiveData(){
-    const button=document.getElementById('ceoLiveRefresh');
-    const last=document.getElementById('ceoLiveLastCheck');
-    const cards=[...document.querySelectorAll('.ceo-live-source')];
-    if(!cards.length) return;
-    if(button){
-      button.disabled=true;
-      button.textContent='Đang kiểm tra...';
-    }
-    await Promise.all(cards.map(checkCeoLiveSource));
-    if(last) last.textContent='Kiểm tra lúc '+new Date().toLocaleString('vi-VN');
-    if(button){
-      button.disabled=false;
-      button.textContent='Kiểm tra lại';
-    }
-  }
-
-  const ceoLiveRefresh=document.getElementById('ceoLiveRefresh');
-  if(ceoLiveRefresh){
-    ceoLiveRefresh.addEventListener('click',refreshCeoLiveData);
-    refreshCeoLiveData();
-  }
-
-  const executorRefresh=document.getElementById('executorRefresh');
-  if(executorRefresh) executorRefresh.addEventListener('click',refreshExecutorStatus);
-
-  if(location.hash==='#office' || localStorage.getItem('aiCompanyView')==='office'){
-    switchView('office');
-    localStorage.removeItem('aiCompanyView');
-  }
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const stateKey='aion-hq-v2-state';
+const defaults={
+ projects:[
+  {id:'trainingbot',name:'TrainingBot',desc:'Nền tảng học tiếng Anh & AI Training',status:'Focus',progress:72,tasks:12,blocked:2,priority:'Cao',cls:'training',icon:'🤖'},
+  {id:'aion',name:'AION HQ',desc:'Trung tâm điều hành cá nhân',status:'Focus',progress:58,tasks:15,blocked:1,priority:'Cao',cls:'aion',icon:'◈'},
+  {id:'hmoob',name:'HMOOB MUSIC',desc:'Website bán nhạc cụ',status:'Focus',progress:68,tasks:10,blocked:1,priority:'Trung bình',cls:'hmoob',icon:'🎸'},
+  {id:'toolpick',name:'Toolpick',desc:'Hệ sinh thái công cụ',status:'Maintenance',progress:83,tasks:7,blocked:0,priority:'Trung bình',icon:'🧰'},
+  {id:'mail',name:'Toolpick Mail',desc:'Dịch vụ mail theo domain',status:'Maintenance',progress:76,tasks:5,blocked:0,priority:'Trung bình',icon:'✉️'},
+  {id:'mamkids',name:'Mam Kids',desc:'Trang học cho trẻ em',status:'Waiting',progress:44,tasks:3,blocked:0,priority:'Thấp',icon:'🧸'},
+  {id:'land',name:'Bản đồ đất',desc:'Bản đồ cộng đồng rao bán đất',status:'Frozen',progress:31,tasks:6,blocked:0,priority:'Thấp',icon:'🗺️'},
+  {id:'quiz',name:'Quiz Platform',desc:'Rung chuông vàng & QR join',status:'Frozen',progress:39,tasks:6,blocked:1,priority:'Thấp',icon:'🏆'}
+ ],
+ tasks:[
+  {id:1,title:'Sửa lỗi theo dõi truy cập (location)',project:'TrainingBot',type:'high',status:'Doing'},
+  {id:2,title:'Hoàn thiện Telegram bot',project:'TrainingBot',type:'high',status:'Doing'},
+  {id:3,title:'Test mobile giao diện sản phẩm',project:'HMOOB MUSIC',type:'check',status:'Review'},
+  {id:4,title:'Tìm và đánh giá source GitHub (quiz)',project:'Phòng Lab',type:'normal',status:'Planned'},
+  {id:5,title:'Viết bài SEO cho trang /news',project:'TrainingBot',type:'normal',status:'Planned'},
+  {id:6,title:'Kiểm tra hiệu năng website',project:'Toolpick',type:'normal',status:'Review'},
+  {id:7,title:'Xem xét 3 đề xuất từ AI',project:'Phê duyệt',type:'normal',status:'Inbox'},
+  {id:8,title:'Học Docker - volume và backup',project:'Học & Lab',type:'normal',status:'Inbox'}
+ ],
+ approvals:[
+  {id:'APR-001',title:'Deploy bản sửa #1842',project:'TrainingBot',desc:'Tạo bản triển khai mới để deploy lên production.',risk:'Sản xuất',status:'pending',icon:'🤖'},
+  {id:'APR-002',title:'Thay đổi cấu hình cache',project:'HMOOB MUSIC',desc:'Điều chỉnh cấu hình cache nhằm cải thiện hiệu năng.',risk:'Hiệu năng',status:'pending',icon:'▣'},
+  {id:'APR-003',title:'Thêm trainingbot.ai2 vào admin',project:'AION HQ',desc:'Yêu cầu thêm tài khoản quản trị mới.',risk:'Bảo mật',status:'pending',icon:'◈'},
+  {id:'APR-004',title:'Xuất bản 2 bài SEO mới',project:'TrainingBot',desc:'Nội dung đã sẵn sàng, chờ xuất bản.',risk:'Nội dung',status:'pending',icon:'▤'}
+ ],
+ ideas:[
+  {title:'Website bản đồ đất',score:'Cao',date:'25/09',desc:'Cộng đồng vẽ polygon thửa đất và đăng tin trực tiếp trên bản đồ.'},
+  {title:'Nền tảng quiz online',score:'Cao',date:'24/09',desc:'Rung chuông vàng, QR join, host điều khiển câu hỏi.'},
+  {title:'Tạo video tự động từ template',score:'Trung bình',date:'24/09',desc:'Đọc mẫu video, yêu cầu asset rồi clone template.'},
+  {title:'Hệ thống mail theo domain',score:'Cao',date:'23/09',desc:'Quản lý domain, mailbox và gói dịch vụ khách hàng.'},
+  {title:'Auto Doctor nâng cấp',score:'Trung bình',date:'22/09',desc:'Theo dõi lỗi, downtime và báo cáo tập trung.'},
+  {title:'Kho source cá nhân',score:'Cao',date:'28/09',desc:'Tự động lưu, gắn nhãn và chấm khả năng ứng dụng repo GitHub.'}
+ ],
+ logs:[
+  ['22:01','ATLAS kiểm tra lỗi HMOOB MUSIC'],
+  ['20:15','Sửa giao diện mobile Toolpick'],
+  ['18:40','Research thêm 5 source GitHub'],
+  ['16:22','Hoàn thành cập nhật Telegram'],
+  ['14:11','Thêm ý tưởng mới: Bản đồ đất'],
+  ['11:35','QA test TrainingBot'],
+  ['09:18','Đã deploy bản cập nhật'],
+  ['Hôm qua','Tạo tài liệu hướng dẫn Docker']
+ ],
+ sources:[
+  ['Vaultwarden','Password manager','Rust / Docker','Đã test','Bảo mật cá nhân'],
+  ['Reactive Resume','CV Builder','TypeScript','Đã lưu','CV Generator'],
+  ['n8n','Automation','Node.js','Đã test','AION HQ'],
+  ['Uptime Kuma','Monitoring','Vue / Node','Đã test','Auto Doctor'],
+  ['Quizizz Clone','Quiz / Game','React','Chưa test','Quiz Platform'],
+  ['AppFlowy','Productivity','Flutter / Rust','Đã lưu','Nghiên cứu']
+ ],
+ lab:[
+  {icon:'🧪',title:'AI Agent orchestration',desc:'Thử cách ATLAS phân nhiệm vụ theo vai trò thay vì giả lập 33 nhân viên.',status:'Đang thử'},
+  {icon:'🐳',title:'Docker backup',desc:'Kiểm tra volume, backup và phục hồi an toàn trong môi trường test.',status:'Đang thử'},
+  {icon:'🔎',title:'GitHub source scoring',desc:'Chấm license, update frequency, complexity và độ phù hợp dự án.',status:'Prototype'},
+  {icon:'⚡',title:'Website performance',desc:'Thử bộ checklist tốc độ trên mobile trước khi đưa vào Auto Doctor.',status:'Đang thử'},
+  {icon:'🧠',title:'Knowledge memory',desc:'Biến bài học từ dự án thành knowledge có thể tìm lại.',status:'Ý tưởng'},
+  {icon:'🔐',title:'Approval guard',desc:'Chặn thay đổi rủi ro cho tới khi Chủ sở hữu phê duyệt.',status:'Prototype'}
+ ],
+ team:[
+  {icon:'◈',title:'ATLAS — Điều phối',desc:'Nhận mục tiêu, chia việc, ưu tiên và tổng hợp báo cáo.',out:'Đầu ra: kế hoạch & quyết định cần duyệt'},
+  {icon:'⌘',title:'Developer AI',desc:'Đọc source, sửa code và chuẩn bị thay đổi kỹ thuật.',out:'Đầu ra: patch / commit'},
+  {icon:'✓',title:'QA AI',desc:'Test luồng, tìm regression và kiểm tra sau khi sửa.',out:'Đầu ra: báo cáo pass/fail'},
+  {icon:'⌕',title:'Research AI',desc:'Tìm mã nguồn mở, đọc tài liệu và so sánh công nghệ.',out:'Đầu ra: shortlist có bằng chứng'},
+  {icon:'♜',title:'Security AI',desc:'Rà quyền, secret, dependency và thay đổi có rủi ro.',out:'Đầu ra: cảnh báo & yêu cầu duyệt'},
+  {icon:'✎',title:'Content AI',desc:'SEO, bài viết, nội dung sản phẩm và tài liệu.',out:'Đầu ra: bản nháp chờ duyệt'},
+  {icon:'⚙',title:'DevOps AI',desc:'Build, deploy, log, monitoring và cấu hình môi trường.',out:'Đầu ra: build/deploy plan'},
+  {icon:'▤',title:'Knowledge AI',desc:'Tóm tắt bài học và đưa vào kho kiến thức có cấu trúc.',out:'Đầu ra: note / playbook'}
+ ],
+ knowledge:[
+  {icon:'🐳',title:'Docker',desc:'Volume, image, container, backup và phục hồi.'},
+  {icon:'☁️',title:'Cloudflare',desc:'Pages, Workers, DNS và cách triển khai an toàn.'},
+  {icon:'⌘',title:'GitHub',desc:'Branch, commit, Actions và luồng rollback.'},
+  {icon:'🧠',title:'AI Agent',desc:'Phân vai, approval guard và orchestration.'},
+  {icon:'🗃️',title:'Database',desc:'Schema, migration, backup và quyền truy cập.'},
+  {icon:'🔒',title:'Security',desc:'Secret, quyền hạn tối thiểu và kiểm tra dependency.'}
+ ]
+};
+function loadState(){try{return Object.assign({},defaults,JSON.parse(localStorage.getItem(stateKey)||'{}'))}catch(e){return structuredClone(defaults)}}
+let state=loadState();
+function save(){localStorage.setItem(stateKey,JSON.stringify(state))}
+function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setView(name){
+ $$('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+ $$('.nav-btn,[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+ location.hash=name==='overview'?'':'#'+name;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+$$('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+$$('[data-view-jump]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.viewJump)));
+function projectCard(p){
+ return '<div class="project-card '+esc(p.cls||'')+'"><div class="pc-top"><div class="pc-logo">'+esc(p.icon||'▣')+'</div><div><div class="pc-name">'+esc(p.name)+'</div><div class="pc-desc">'+esc(p.desc)+'</div></div><span class="status-badge">'+(p.status==='Focus'?'Đang phát triển':esc(p.status))+'</span></div><div class="progress"><span style="width:'+p.progress+'%"></span></div><div class="pc-meta"><span>▣ '+p.tasks+' việc</span><span class="risk">● '+p.blocked+' bị kẹt</span><span class="priority">△ Ưu tiên '+esc(p.priority.toLowerCase())+'</span><span style="margin-left:auto;font-weight:800">'+p.progress+'%</span></div><button class="open-project" data-project="'+esc(p.id)+'">Mở dự án →</button></div>';
+}
+function renderFocus(){ $('#focusGrid').innerHTML=state.projects.filter(p=>p.status==='Focus').slice(0,3).map(projectCard).join('');$$('[data-project]').forEach(b=>b.onclick=()=>openProject(b.dataset.project));}
+function renderToday(filter='all'){
+ const list=state.tasks.filter(t=>filter==='all'||t.type===filter).slice(0,8);
+ $('#todayTasks').innerHTML=list.map(t=>'<div class="row"><button class="check" data-done="'+t.id+'"></button><div><div class="title">'+esc(t.title)+'</div><div class="sub">'+esc(t.project)+'</div></div><span class="tag '+(t.type==='high'?'red':t.type==='check'?'orange':t.project==='Học & Lab'?'green':'')+'">'+(t.type==='high'?'Ưu tiên cao':t.type==='check'?'Kiểm tra':t.project==='Học & Lab'?'Học tập':'Nội dung')+'</span><span style="color:#7690aa">Hôm nay</span></div>').join('');
+ $$('[data-done]').forEach(b=>b.onclick=()=>{const t=state.tasks.find(x=>x.id==b.dataset.done);if(t){t.status='Done';save();renderToday(filter);renderKanban();toast('Đã đánh dấu hoàn thành.')}})
+}
+$$('[data-task-filter]').forEach(b=>b.onclick=()=>{$$('[data-task-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderToday(b.dataset.taskFilter)});
+function pendingApprovals(){return state.approvals.filter(a=>a.status==='pending')}
+function approvalHTML(a){return '<div class="approval-item"><div class="ai-icon">'+esc(a.icon)+'</div><div><strong>'+esc(a.title)+'</strong><p>'+esc(a.project)+' · '+esc(a.desc)+'</p><div class="approval-actions"><button class="approve" data-appr="'+esc(a.id)+'">✓ Duyệt</button><button class="reject" data-rej="'+esc(a.id)+'">✕ Từ chối</button></div></div><span class="tag orange">'+esc(a.risk)+'</span></div>'}
+function renderApprovals(){
+ const p=pendingApprovals(), html=p.length?p.map(approvalHTML).join(''):'<p class="atlas-text">Không còn yêu cầu nào đang chờ.</p>';
+ $('#approvalPreview').innerHTML=p.slice(0,4).map(approvalHTML).join('')||html;$('#approvalFull').innerHTML=html;
+ $('#approvalNavCount').textContent=$('#approvalHeadCount').textContent=$('#bellCount').textContent=p.length;$('#approvalFullCount').textContent=p.length+' yêu cầu đang chờ';
+ $$('[data-appr]').forEach(b=>b.onclick=()=>decide(b.dataset.appr,'approved'));$$('[data-rej]').forEach(b=>b.onclick=()=>decide(b.dataset.rej,'rejected'));
+}
+function decide(id,status){const a=state.approvals.find(x=>x.id===id);if(!a)return;a.status=status;state.logs.unshift(['Bây giờ',(status==='approved'?'Đã duyệt: ':'Đã từ chối: ')+a.title]);save();renderApprovals();renderLogs();toast(status==='approved'?'Đã duyệt yêu cầu.':'Đã từ chối yêu cầu.')}
+function renderSites(){
+ const sites=[['TrainingBot','124ms'],['Toolpick','96ms'],['HMOOB MUSIC','156ms'],['Toolpick Mail','110ms'],['Mam Kids','132ms']];
+ $('#siteStatus').innerHTML=sites.map((s,i)=>'<div class="site"><div class="site-top"><b>'+s[0]+'</b><span style="font-size:8px;color:#8da5bc">'+s[1]+'</span></div><div class="online">● Online</div><div class="spark">'+[5,9,4,13,8,15,10,12].map((h,j)=>'<i style="height:'+(h+(i+j)%5)+'px"></i>').join('')+'</div></div>').join('');
+}
+function renderLogs(){$('#activityTimeline').innerHTML=state.logs.slice(0,8).map(l=>'<div class="activity"><span>'+esc(l[1])+'</span><time>'+esc(l[0])+'</time></div>').join('')}
+function renderIdeaPreview(){$('#ideaPreview').innerHTML=state.ideas.slice(0,4).map(i=>'<div class="idea-row"><span>💡 '+esc(i.title)+'</span><span class="score '+(i.score==='Trung bình'?'med':'')+'">'+esc(i.score)+'</span><time style="color:#6e8aa4">'+esc(i.date)+'</time></div>').join('')}
+function renderProjects(){
+ $('#projectTable').innerHTML='<table class="table"><thead><tr><th>Dự án</th><th>Trạng thái</th><th>Tiến độ</th><th>Công việc</th><th>Bị kẹt</th><th>Ưu tiên</th><th></th></tr></thead><tbody>'+state.projects.map(p=>'<tr><td><b>'+esc(p.icon)+' '+esc(p.name)+'</b><div style="color:#6f8ba6;margin-top:3px">'+esc(p.desc)+'</div></td><td><span class="tag '+(p.status==='Focus'?'green':p.status==='Frozen'?'purple':'blue')+'">'+esc(p.status)+'</span></td><td>'+p.progress+'%</td><td>'+p.tasks+'</td><td>'+p.blocked+'</td><td>'+esc(p.priority)+'</td><td><button class="secondary" style="padding:5px 8px" data-project="'+esc(p.id)+'">Mở</button></td></tr>').join('')+'</tbody></table>';
+ $$('[data-project]').forEach(b=>b.onclick=()=>openProject(b.dataset.project));
+}
+function openProject(id){const p=state.projects.find(x=>x.id===id);if(!p)return;openModal(p.name,'<div class="cards-4"><div class="mini-card"><strong>'+p.progress+'%</strong><span>Tiến độ</span></div><div class="mini-card"><strong>'+p.tasks+'</strong><span>Công việc</span></div><div class="mini-card"><strong>'+p.blocked+'</strong><span>Bị kẹt</span></div><div class="mini-card"><strong>'+esc(p.priority)+'</strong><span>Ưu tiên</span></div></div><p class="atlas-text" style="margin-top:14px">'+esc(p.desc)+'</p><div class="feature-card" style="margin-top:10px"><h3>Bước tiếp theo</h3><p>'+esc(nextAction(p.name))+'</p></div>')}
+function nextAction(n){return ({'TrainingBot':'Hoàn thiện Telegram bot, kiểm tra theo dõi truy cập và chạy QA toàn web.','AION HQ':'Hoàn thiện v2, nối dữ liệu thật và chuyển từng module khỏi dữ liệu demo.','HMOOB MUSIC':'Kiểm tra mobile, hiệu năng và các luồng sản phẩm trước vòng review tiếp theo.'}[n]||'Xác định một hành động tiếp theo rõ ràng trước khi làm thêm tính năng.')}
+function renderKanban(){
+ const cols=['Inbox','Planned','Doing','Review','Done'];$('#taskKanban').innerHTML=cols.map(c=>'<div class="kanban-col"><div class="kanban-head"><span>'+c+'</span><span class="nav-count">'+state.tasks.filter(t=>t.status===c).length+'</span></div>'+state.tasks.filter(t=>t.status===c).map(t=>'<div class="k-card"><b>'+esc(t.title)+'</b><p>'+esc(t.project)+'</p><footer><span class="tag '+(t.type==='high'?'red':'')+'">'+esc(t.type)+'</span><button class="secondary" style="padding:4px 7px" data-next-task="'+t.id+'">→</button></footer></div>').join('')+'</div>').join('');
+ $$('[data-next-task]').forEach(b=>b.onclick=()=>{const t=state.tasks.find(x=>x.id==b.dataset.nextTask);const order=['Inbox','Planned','Doing','Review','Done'];const i=order.indexOf(t.status);t.status=order[Math.min(i+1,order.length-1)];save();renderKanban();renderToday();toast('Đã chuyển: '+t.status)});
+}
+function renderIdeas(){$('#ideaGrid').innerHTML=state.ideas.map(i=>'<div class="feature-card"><div class="big">💡</div><h3>'+esc(i.title)+'</h3><p>'+esc(i.desc)+'</p><div class="foot"><span class="score '+(i.score==='Trung bình'?'med':'')+'">'+esc(i.score)+'</span><span style="font-size:9px;color:#738da7">'+esc(i.date)+'</span></div></div>').join('')}
+function renderSources(){$('#sourceTable').innerHTML='<table class="table"><thead><tr><th>Source</th><th>Loại</th><th>Công nghệ</th><th>Trạng thái</th><th>Có thể dùng cho</th></tr></thead><tbody>'+state.sources.map(r=>'<tr>'+r.map((v,i)=>'<td>'+(i===3?'<span class="tag '+(v==='Đã test'?'green':'blue')+'">'+esc(v)+'</span>':esc(v))+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+function renderLab(){$('#labGrid').innerHTML=state.lab.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><span class="tag purple">'+esc(x.status)+'</span><button class="secondary" style="padding:5px 8px">Mở</button></div></div>').join('')}
+function renderTeam(){$('#teamGrid').innerHTML=state.team.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><span class="tag blue">'+esc(x.out)+'</span></div></div>').join('')}
+function renderKnowledge(){$('#knowledgeGrid').innerHTML=state.knowledge.map(x=>'<div class="feature-card"><div class="big">'+esc(x.icon)+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.desc)+'</p><div class="foot"><button class="secondary" style="padding:5px 8px">Mở ghi chú</button></div></div>').join('')}
+function openModal(title,body){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=body;$('#modal').classList.add('show')}
+function closeModal(){$('#modal').classList.remove('show')}$('#modalClose').onclick=closeModal;$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()}
+function addForm(kind){
+ const forms={
+  task:['Thêm công việc','<div class="form-grid"><div class="field full"><label>Tên công việc</label><input id="f1" placeholder="Ví dụ: Kiểm tra mobile TrainingBot"></div><div class="field"><label>Dự án</label><input id="f2" placeholder="TrainingBot"></div><div class="field"><label>Ưu tiên</label><select id="f3"><option value="normal">Thông thường</option><option value="high">Cao</option><option value="check">Kiểm tra</option></select></div></div>'],
+  idea:['Ghi ý tưởng mới','<div class="form-grid"><div class="field full"><label>Tên ý tưởng</label><input id="f1"></div><div class="field full"><label>Mô tả</label><textarea id="f2"></textarea></div><div class="field"><label>Đánh giá ban đầu</label><select id="f3"><option>Cao</option><option>Trung bình</option><option>Thấp</option></select></div></div>'],
+  source:['Lưu mã nguồn','<div class="form-grid"><div class="field"><label>Tên source</label><input id="f1"></div><div class="field"><label>Loại</label><input id="f2"></div><div class="field"><label>Công nghệ</label><input id="f3"></div><div class="field"><label>Dùng cho</label><input id="f4"></div></div>']
+ };
+ const f=forms[kind];openModal(f[0],f[1]+'<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="secondary" onclick="closeModal()">Hủy</button><button class="primary" id="formSave">Lưu</button></div>');
+ $('#formSave').onclick=()=>{if(kind==='task'){const title=$('#f1').value.trim();if(!title)return toast('Nhập tên công việc.');state.tasks.push({id:Date.now(),title,project:$('#f2').value||'Inbox',type:$('#f3').value,status:'Inbox'});renderKanban();renderToday()}
+ if(kind==='idea'){const title=$('#f1').value.trim();if(!title)return toast('Nhập tên ý tưởng.');state.ideas.unshift({title,desc:$('#f2').value||'Chưa có mô tả.',score:$('#f3').value,date:new Date().toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'})});renderIdeas();renderIdeaPreview()}
+ if(kind==='source'){const name=$('#f1').value.trim();if(!name)return toast('Nhập tên source.');state.sources.unshift([name,$('#f2').value||'Source',$('#f3').value||'Chưa rõ','Chưa test',$('#f4').value||'Chưa gán']);renderSources()}
+ save();closeModal();toast('Đã lưu vào AION HQ.')};
+}
+$$('[data-action="add-task"]').forEach(b=>b.onclick=()=>addForm('task'));$$('[data-action="add-idea"]').forEach(b=>b.onclick=()=>addForm('idea'));$$('[data-action="add-source"]').forEach(b=>b.onclick=()=>addForm('source'));
+$('[data-action="refresh-sites"]').onclick=()=>{renderSites();toast('Đã làm mới trạng thái website.')};
+$('[data-action="add-project"]').onclick=()=>openModal('Quy tắc tạo dự án','<p class="atlas-text">AION HQ v2 chỉ cho tối đa <b>3 dự án Focus</b>. Ý tưởng mới nên đi qua Idea Vault → Lab trước. Khi đã đủ 3 Focus, hãy chuyển một dự án sang Maintenance/Frozen trước khi nâng dự án mới.</p>');
+$$('[data-action="add-lab"],[data-action="add-knowledge"]').forEach(b=>b.onclick=()=>toast('Khung này sẽ được nối dữ liệu thật ở bước tiếp theo.'));
+$('[data-action="weekly-review"]').onclick=()=>openModal('Weekly Review','<div class="feature-card"><h3>Tuần này</h3><p>3 dự án Focus đang hoạt động. TrainingBot có mức tiến độ cao nhất. Có '+pendingApprovals().length+' quyết định đang chờ bạn và 4 việc bị kẹt cần xử lý trước khi mở thêm dự án mới.</p></div>');
+$('[data-action="generate-report"]').onclick=()=>toast('ATLAS đã tạo bản tóm tắt hiện tại.');
+function atlasOpen(){openModal('ATLAS AI','<div class="atlas-head"><div class="atlas-logo">◈</div><div><b>ATLAS</b><div style="font-size:9px;color:#7794af">AI điều phối cá nhân</div></div><span class="atlas-status">● Online</span></div><div id="atlasMessages" style="margin:14px 0;min-height:100px" class="atlas-text">Bạn có thể hỏi: “Hôm nay nên làm gì?”, “Dự án nào đang kẹt?”, “Tôi có nên bắt đầu dự án mới không?”.</div><div class="atlas-chat"><input id="atlasModalInput" placeholder="Nhập câu hỏi..."><button id="atlasModalSend">➤</button></div>');$('#atlasModalSend').onclick=()=>atlasReply($('#atlasModalInput').value,$('#atlasMessages'))}
+$$('[data-open-atlas]').forEach(b=>b.onclick=atlasOpen);
+function atlasReply(q,host){q=(q||'').trim();if(!q)return;let ans='Tôi đã ghi nhận. Bước tiếp theo là biến yêu cầu này thành một công việc có đầu ra rõ ràng trước khi thực thi.';const l=q.toLowerCase();if(l.includes('hôm nay')||l.includes('làm gì'))ans='Ưu tiên hôm nay: 1) xử lý 2 việc TrainingBot ưu tiên cao, 2) test mobile HMOOB MUSIC, 3) xem '+pendingApprovals().length+' yêu cầu đang chờ phê duyệt. Không mở thêm dự án Focus.';if(l.includes('kẹt'))ans='Hiện dashboard ghi nhận 4 việc bị kẹt: 2 ở TrainingBot, 1 ở AION HQ và 1 ở HMOOB MUSIC. Nên xử lý blocker trước khi thêm việc mới.';if(l.includes('dự án mới'))ans='Hiện đã đủ 3 dự án Focus. Ý tưởng mới nên đưa vào Idea Vault hoặc Lab; chỉ nâng lên Focus sau khi một dự án hiện tại hoàn thành hoặc chuyển trạng thái.';host.innerHTML='<div style="border:1px solid #21476c;background:#0d223a;border-radius:10px;padding:10px"><b>ATLAS</b><p style="margin:6px 0 0">'+esc(ans)+'</p></div>';state.logs.unshift(['Bây giờ','Bạn hỏi ATLAS: '+q]);save();renderLogs()}
+$('#atlasQuickSend').onclick=()=>{const q=$('#atlasQuick').value;atlasOpen();setTimeout(()=>{const i=$('#atlasModalInput');i.value=q;atlasReply(q,$('#atlasMessages'))},0)};$('#atlasQuick').addEventListener('keydown',e=>{if(e.key==='Enter')$('#atlasQuickSend').click()});
+$('#globalSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase().trim();if(!q)return;const hits=[...state.projects.map(x=>['Dự án',x.name,x.desc]),...state.tasks.map(x=>['Công việc',x.title,x.project]),...state.ideas.map(x=>['Ý tưởng',x.title,x.desc]),...state.sources.map(x=>['Source',x[0],x[1]])].filter(x=>x.join(' ').toLowerCase().includes(q)).slice(0,7);if(hits.length)openModal('Kết quả tìm kiếm','<div class="list">'+hits.map(h=>'<div class="row" style="grid-template-columns:90px 1fr"><span class="tag blue">'+h[0]+'</span><div><b>'+esc(h[1])+'</b><div class="sub">'+esc(h[2])+'</div></div></div>').join('')+'</div>')});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#globalSearch').focus()}if(e.key==='Escape')closeModal()});
+$('#themeBtn').onclick=()=>toast('AION HQ v2 đang dùng giao diện tối làm mặc định.');
+function boot(){
+ const d=new Date(),weekday=d.toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});$('#todayLabel').textContent=weekday.charAt(0).toUpperCase()+weekday.slice(1);const onejan=new Date(d.getFullYear(),0,1),week=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);$('#weekLabel').textContent='Tuần '+week+' · '+d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+ renderFocus();renderToday();renderApprovals();renderSites();renderLogs();renderIdeaPreview();renderProjects();renderKanban();renderIdeas();renderSources();renderLab();renderTeam();renderKnowledge();
+ const hash=location.hash.replace('#','');if(hash&&$('#view-'+hash))setView(hash);
+}
+boot();
 </script>
 </body>
 </html>
