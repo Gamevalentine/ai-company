@@ -187,7 +187,7 @@
   },
   "connector_runtime": {
     "module": "comms-connectors.mjs",
-    "status": "GMAIL_AUTHORIZED_TELEGRAM_PENDING_FACEBOOK_PENDING",
+    "status": "GMAIL_TELEGRAM_TOKEN_AUTHORIZED_FACEBOOK_PENDING",
     "github_status_run": "36294381801",
     "github_status_result": {
       "gmail": "WAITING_AUTHORIZATION",
@@ -277,8 +277,12 @@
   },
   "telegram_connection": {
     "community_url": "https://t.me/TraininggBott",
-    "authorization_status": "WAITING_BOT_TOKEN_AND_CHAT_ID",
+    "authorization_status": "BOT_TOKEN_AUTHORIZED",
     "runtime_connector_wired": true,
-    "inbound_worker_status": "CODE_BUILDING"
+    "inbound_worker_status": "CODE_TESTED_AWAITING_DEPLOY",
+    "bot_username": "TrainingBotCommsBot",
+    "bot_added_to_group": true,
+    "privacy_mode": "DISABLED",
+    "connector_status_run": "36378231335"
   }
 }
