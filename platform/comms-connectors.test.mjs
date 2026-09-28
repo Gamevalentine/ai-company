@@ -6,14 +6,14 @@ import {
   sendGmailReply,
   replyFacebookComment,
   replyFacebookMessenger,
-  sendDiscordChannelReply
+  sendTelegramReply
 } from './comms-connectors.mjs';
 
 test('connector status stays locked when credentials are absent',()=>{
   const s=connectorStatus({});
   assert.equal(s.gmail.configured,false);
   assert.equal(s.facebook.configured,false);
-  assert.equal(s.discord.configured,false);
+  assert.equal(s.telegram.configured,false);
   assert.equal(s.gmail.identity,'trainingbot.ai2@gmail.com');
 });
 
@@ -52,17 +52,18 @@ test('Facebook comment and Messenger connectors use Page access token without lo
   assert.equal(urls.some(u=>u.includes('page-token')),false);
 });
 
-test('Discord connector replies in the same channel and caps message length',async()=>{
+test('Telegram connector replies in the same approved chat and caps message length',async()=>{
   let body='';
-  const fetchImpl=async(url,opts)=>{ body=opts.body; return {ok:true,json:async()=>({id:'d1',channel_id:'c1'})}; };
-  const r=await sendDiscordChannelReply({
-    channel_id:'c1',
-    body:'a'.repeat(2500),
-    reply_to_message_id:'m0'
+  const fetchImpl=async(url,opts)=>{ body=opts.body; return {ok:true,json:async()=>({ok:true,result:{message_id:7,chat:{id:-1001}}})}; };
+  const r=await sendTelegramReply({
+    chat_id:'-1001',
+    body:'a'.repeat(5000),
+    reply_to_message_id:'6'
   },{
-    env:{DISCORD_BOT_TOKEN:'bot-token'},
+    env:{TELEGRAM_BOT_TOKEN:'bot-token',TELEGRAM_ALLOWED_CHAT_ID:'-1001'},
     fetchImpl
   });
   assert.equal(r.sent,true);
-  assert.equal(JSON.parse(body).content.length,2000);
+  assert.equal(JSON.parse(body).text.length,4000);
+  assert.equal(JSON.parse(body).reply_parameters.message_id,6);
 });
