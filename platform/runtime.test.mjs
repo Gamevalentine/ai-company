@@ -115,3 +115,26 @@ test('AC-13 full task timeline remains queryable',()=>{
   const events=p.timeline(root.task_id);
   assert.ok(events.length>=3);
 });
+
+test('QA-01 is an independent CEO-managed QA employee',()=>{
+  const {p}=fresh();
+  const qa=p.agent('QA-01');
+  assert.equal(qa.reports_to,'ATLAS');
+  assert.equal(qa.role,'qa');
+  assert.ok(qa.prohibited_actions.includes('edit_source'));
+  assert.ok(p.agent('ATLAS').can_assign_to.includes('QA-01'));
+
+  const task=p.createTask('ATLAS',{
+    assigned_to:'QA-01',
+    project:'AION-HQ',
+    objective:'Verify an AION HQ change independently',
+    acceptance_criteria:['changed behavior is verified with evidence']
+  });
+  assert.equal(task.created_by,'ATLAS');
+  assert.equal(task.assigned_to,'QA-01');
+
+  const result=p.qaResult('QA-01',task.task_id,'PASS',{type:'QA_REPORT',evidence:'fixture'});
+  assert.equal(result.status,'QA_PASS');
+  assert.equal(result.evidence.at(-1).agent_id,'QA-01');
+});
+
