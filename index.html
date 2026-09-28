@@ -604,7 +604,23 @@
           </select>
           <button class="primary-btn" id="simpleEmployeeAdd" type="button">Thêm nhân viên</button>
         </div>
-        <div class="staff-grid" id="simpleEmployeeGrid" style="margin-top:16px"></div>
+        <div class="staff-grid" style="margin-top:16px">
+          <div class="staff-card" style="border-color:rgba(110,231,255,.42);box-shadow:0 0 30px rgba(110,231,255,.06)">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div>
+                <b>CODE-01</b>
+                <div class="role">Lập trình viên AI độc lập · Full-stack</div>
+              </div>
+              <span class="badge">Sẵn sàng</span>
+            </div>
+            <div class="simple-employee-task"><b>Nhiệm vụ:</b><br>Sẵn sàng nhận nhiệm vụ trực tiếp từ Chủ sở hữu</div>
+            <div style="margin-top:9px;font-size:10px;color:#8bdcf0">
+              ĐỘC LẬP · Không thuộc quyền điều phối của CEO/trưởng phòng ·
+              <a href="https://github.com/Gamevalentine/ai-company/tree/main/platform/code-01" target="_blank" rel="noopener" style="color:#8bdcf0">Mở source ↗</a>
+            </div>
+          </div>
+        </div>
+        <div class="staff-grid" id="simpleEmployeeGrid" style="margin-top:12px"></div>
       </div>
     </section>
 
@@ -1178,31 +1194,16 @@
   // AION HQ tối giản: chỉ CEO + Nhân viên xuất hiện trong điều hướng.
   const simpleEmployeeKey='aiCompany.employees.v1';
   const simpleViewKey='aiCompany.simple.view.v1';
-  const code01MigrationKey='aiCompany.code01.migrated.v1';
-  const code01Employee={
-    id:'CODE-01',
-    name:'CODE-01',
-    role:'Lập trình viên AI độc lập · Full-stack',
-    task:'Sẵn sàng nhận nhiệm vụ trực tiếp từ Chủ sở hữu',
-    status:'Sẵn sàng'
-  };
-  const simpleEmployeeDefaults=[
-    code01Employee,
-    {id:'EMP-001',name:'DEV-01',role:'Lập trình viên',task:'Chờ CEO giao việc',status:'Sẵn sàng'},
-    {id:'EMP-002',name:'QA-01',role:'Kiểm thử',task:'Chờ CEO giao việc',status:'Sẵn sàng'},
-    {id:'EMP-003',name:'OPS-01',role:'Vận hành',task:'Chờ CEO giao việc',status:'Sẵn sàng'}
-  ];
+
   function simpleLoadEmployees(){
     try{
-      const saved=JSON.parse(localStorage.getItem(simpleEmployeeKey)||'null');
-      const employees=Array.isArray(saved)?saved:[...simpleEmployeeDefaults];
-      if(!localStorage.getItem(code01MigrationKey)){
-        if(!employees.some(item=>item.id==='CODE-01'||item.name==='CODE-01')) employees.unshift({...code01Employee});
-        localStorage.setItem(simpleEmployeeKey,JSON.stringify(employees));
-        localStorage.setItem(code01MigrationKey,'1');
-      }
-      return employees;
-    }catch(e){ return [...simpleEmployeeDefaults]; }
+      const saved=JSON.parse(localStorage.getItem(simpleEmployeeKey)||'[]');
+      const employees=Array.isArray(saved)?saved:[];
+      // CODE-01 được render cố định từ source, loại bản cũ trong localStorage để tránh trùng.
+      const cleaned=employees.filter(item=>item && item.id!=='CODE-01' && item.name!=='CODE-01');
+      if(cleaned.length!==employees.length) localStorage.setItem(simpleEmployeeKey,JSON.stringify(cleaned));
+      return cleaned;
+    }catch(e){ return []; }
   }
   let simpleEmployees=simpleLoadEmployees();
   function simpleSaveEmployees(){ localStorage.setItem(simpleEmployeeKey,JSON.stringify(simpleEmployees)); }
@@ -1214,9 +1215,10 @@
     const grid=document.getElementById('simpleEmployeeGrid');
     const count=document.getElementById('simpleEmployeeCount');
     if(!grid||!count) return;
-    count.textContent=simpleEmployees.length+' nhân viên';
+    const total=1+simpleEmployees.length;
+    count.textContent=total+' nhân viên';
     if(!simpleEmployees.length){
-      grid.innerHTML='<div style="color:var(--muted);font-size:12px">Chưa có nhân viên.</div>';
+      grid.innerHTML='';
       return;
     }
     grid.innerHTML=simpleEmployees.map((item,index)=>`
@@ -1226,7 +1228,6 @@
           <span class="${simpleEmployeeBadge(item.status)}">${escapeHtml(item.status)}</span>
         </div>
         <div class="simple-employee-task"><b>Nhiệm vụ:</b><br>${escapeHtml(item.task||'Chưa được giao việc')}</div>
-        ${item.id==='CODE-01'?'<div style="margin-top:9px;font-size:10px;color:#8bdcf0">ĐỘC LẬP · Không thuộc quyền điều phối của CEO/trưởng phòng · <a href="https://github.com/Gamevalentine/ai-company/tree/main/platform/code-01" target="_blank" rel="noopener" style="color:#8bdcf0">Mở source ↗</a></div>':''}
         <div class="simple-employee-actions"><button class="small-btn reject" type="button" data-simple-employee-delete="${index}">Xóa</button></div>
       </div>
     `).join('');
