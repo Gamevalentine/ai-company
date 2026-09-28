@@ -29,7 +29,8 @@
       "TB-01",
       "CODE-01",
       "QA-01",
-      "SEO-01"
+      "SEO-01",
+      "PERF-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -65,6 +66,37 @@
     ],
     "prohibited_actions": [
       "qa_pass",
+      "production_deploy",
+      "production_merge",
+      "spend_money",
+      "delete_data",
+      "secret_change"
+    ]
+  },
+  {
+    "agent_id": "PERF-01",
+    "role": "performance_engineer",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_source",
+      "read_public_pages",
+      "performance_audit",
+      "run_benchmark",
+      "profile_workload",
+      "sandbox_patch",
+      "sandbox_build",
+      "sandbox_compare",
+      "recommend_changes",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
       "production_deploy",
       "production_merge",
       "spend_money",
