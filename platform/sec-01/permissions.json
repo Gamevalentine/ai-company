@@ -1,0 +1,40 @@
+{
+  "agent_id": "SEC-01",
+  "name": "SEC-01",
+  "role": "independent_security_engineer",
+  "reports_to": "ATLAS",
+  "organization": "AION-HQ",
+  "aion_hq_member": true,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "ceo_assigned_within_owner_authorized_scope",
+  "default_permissions": {
+    "read_authorized_source": true,
+    "read_security_configuration": true,
+    "read_dependency_audit": true,
+    "read_public_security_headers": true,
+    "inspect_auth_design": true,
+    "inspect_permission_model": true,
+    "inspect_secret_exposure_indicators": true,
+    "run_non_destructive_security_checks": true,
+    "classify_security_risk": true,
+    "create_security_handoff": true,
+    "edit_source_code": false,
+    "change_access_control": false,
+    "read_secret_values": false,
+    "reveal_secrets": false,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "spend_money": false,
+    "destructive_actions": false
+  },
+  "permission_escalation": {
+    "credential_rotation": "explicit OWNER approval",
+    "access_control_change": "explicit OWNER approval",
+    "production_change": "explicit OWNER approval",
+    "paid_service": "explicit OWNER approval",
+    "destructive_action": "explicit OWNER approval"
+  },
+  "management_mode": "direct_ceo"
+}
