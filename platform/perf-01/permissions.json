@@ -1,0 +1,38 @@
+{
+  "agent_id": "PERF-01",
+  "name": "PERF-01",
+  "role": "performance_engineer",
+  "reports_to": "ATLAS",
+  "organization": "AION-HQ",
+  "aion_hq_member": true,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "ceo_assigned_within_owner_authorized_scope",
+  "default_permissions": {
+    "read_source": true,
+    "read_public_pages": true,
+    "read_performance_metrics": true,
+    "run_non_destructive_benchmarks": true,
+    "profile_authorized_workloads": true,
+    "recommend_changes": true,
+    "edit_authorized_working_copy": false,
+    "run_non_destructive_tests": true,
+    "inspect_git_diff": true,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "spend_money": false,
+    "destructive_actions": false,
+    "read_secrets": "only_when_task_requires_and_authorized",
+    "reveal_secrets": false
+  },
+  "permission_escalation": {
+    "edit": "CEO authorization within Owner-approved project policy",
+    "git_write": "CEO authorization within Owner-approved project policy",
+    "deploy_staging": "CEO authorization within Owner-approved project policy",
+    "deploy_production": "explicit OWNER approval",
+    "cost": "explicit OWNER approval",
+    "destructive": "explicit OWNER approval"
+  },
+  "management_mode": "direct_ceo"
+}
