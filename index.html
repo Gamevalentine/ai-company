@@ -3,85 +3,235 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AION HQ — CEO & Nhân viên</title>
+  <title>AION HQ — Trung tâm điều hành cá nhân</title>
   <style>
     :root{
-      --bg:#07111f;--panel:#0d1a2b;--panel2:#101f33;--line:#1f3552;
-      --text:#eef5ff;--muted:#91a4bd;--accent:#6ee7ff;--accent2:#8b5cf6;
-      --ok:#34d399;--warn:#fbbf24;--danger:#fb7185;--shadow:0 18px 60px rgba(0,0,0,.28)
+      --bg:#07111f;
+      --panel:#0d1a2b;
+      --panel-2:#101f33;
+      --line:#1f3552;
+      --text:#eef5ff;
+      --muted:#91a4bd;
+      --accent:#6ee7ff;
+      --accent-2:#8b5cf6;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --danger:#fb7185;
+      --shadow:0 18px 60px rgba(0,0,0,.28);
     }
     *{box-sizing:border-box}
-    html{background:var(--bg)}
-    body{margin:0;min-height:100vh;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);
-      background:radial-gradient(circle at 18% 0%,rgba(110,231,255,.10),transparent 32%),radial-gradient(circle at 90% 8%,rgba(139,92,246,.13),transparent 30%),var(--bg)}
-    button,input,select{font:inherit}button{cursor:pointer}
-    .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-    .sidebar{position:sticky;top:0;height:100vh;padding:22px 16px;border-right:1px solid var(--line);background:rgba(7,17,31,.88);backdrop-filter:blur(18px);display:flex;flex-direction:column}
-    .brand{display:flex;justify-content:center;padding:0 0 22px}
-    .brand-mark{width:190px;height:70px;overflow:hidden}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(110,231,255,.10), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba(139,92,246,.12), transparent 28%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{
+      border-right:1px solid var(--line);
+      background:rgba(7,17,31,.82);
+      backdrop-filter:blur(18px);
+      padding:20px 16px;
+      position:sticky;
+      top:0;height:100vh;
+      display:flex;flex-direction:column;
+    }
+    .brand{display:flex;align-items:center;justify-content:center;gap:12px;padding:4px 0 18px}
+    .brand-mark{
+      width:220px;max-width:100%;height:auto;aspect-ratio:157 / 57;border-radius:0;
+      display:grid;place-items:center;
+      background:transparent;
+      box-shadow:none;
+      overflow:visible;
+      flex:0 0 auto;
+    }
     .brand-logo{width:100%;height:100%;display:block}
-    .nav{display:grid;gap:8px}
-    .nav-btn{border:0;background:transparent;color:var(--muted);text-align:left;padding:13px 14px;border-radius:13px;display:flex;align-items:center;gap:11px;font-weight:700;transition:.18s}
+    .brand b{display:block;font-size:17px}
+    .brand span{font-size:12px;color:var(--muted)}
+    .nav{display:grid;gap:6px}
+    .nav-btn{
+      border:0;background:transparent;color:var(--muted);
+      text-align:left;padding:11px 12px;border-radius:11px;
+      display:flex;align-items:center;gap:10px;
+      transition:.18s;
+    }
     .nav-btn:hover,.nav-btn.active{background:rgba(110,231,255,.08);color:var(--text)}
     .nav-btn.active{outline:1px solid rgba(110,231,255,.18)}
-    .nav-icon{width:24px;text-align:center;font-size:18px}
-    .sidebar-note{margin-top:auto;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--panel);font-size:11px;color:var(--muted);line-height:1.55}
-    .sidebar-note b{display:block;color:var(--text);font-size:12px;margin-bottom:4px}
-    .main{padding:28px 30px 50px;min-width:0}
-    .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:24px}
-    .headline h1{font-size:28px;margin:0 0 5px}.headline p{margin:0;color:var(--muted)}
-    .status-pill{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel);font-size:12px}
-    .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(52,211,153,.08)}
-    .view{display:none}.view.active{display:block}
-    .hero{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;margin-bottom:18px}
-    .card{border:1px solid var(--line);background:rgba(13,26,43,.92);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
-    .card-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 18px;border-bottom:1px solid var(--line)}
-    .card-head h2{font-size:16px;margin:0}.card-head span{font-size:11px;color:var(--muted)}
-    .card-body{padding:18px}
-    .ceo-card{display:flex;align-items:center;gap:16px;padding:22px}
-    .brain-face{width:68px;height:68px;border-radius:20px;display:grid;place-items:center;font-size:34px;background:linear-gradient(135deg,#153458,#25174d);border:1px solid rgba(110,231,255,.28);box-shadow:0 0 36px rgba(110,231,255,.09)}
-    .ceo-card h2{margin:0 0 5px;font-size:22px}.ceo-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
-    .brain-status{padding:18px;display:grid;gap:10px}
-    .brain-stat{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(31,53,82,.7);font-size:12px}
-    .brain-stat:last-child{border-bottom:0}.brain-stat span{color:var(--muted)}.brain-stat b{color:var(--text)}
-    .brain-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-    .form-row{display:grid;grid-template-columns:160px 1fr auto;gap:9px;margin-bottom:14px}
-    .priority-form{display:grid;grid-template-columns:1fr repeat(3,86px) auto;gap:8px;margin-bottom:14px}
-    input,select{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px 11px;background:#0b1728;color:var(--text);outline:none}
-    input:focus,select:focus{border-color:#3c739f}
-    .primary-btn,.small-btn{border:0;border-radius:11px;padding:10px 13px;color:white;font-weight:700;background:linear-gradient(135deg,#0ea5e9,#7c3aed)}
-    .small-btn{padding:7px 9px;font-size:11px;background:#12243b;border:1px solid var(--line)}
-    .small-btn.danger{color:#fda4af;background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.22)}
-    .memory-list,.priority-list{display:grid;gap:9px}
-    .memory-item,.priority-item{border:1px solid var(--line);border-radius:13px;padding:12px;background:#0d1c30}
-    .memory-item{display:grid;grid-template-columns:135px 1fr auto;gap:10px;align-items:start}
-    .memory-type{font-size:10px;color:#8bdcf0;font-weight:800}.memory-text{font-size:12px;line-height:1.55;color:#c6d4e5}
-    .priority-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.priority-top b{font-size:13px}
-    .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:rgba(52,211,153,.10);color:#86efac;border:1px solid rgba(52,211,153,.18);white-space:nowrap}
-    .badge.warn{background:rgba(251,191,36,.10);color:#fde68a;border-color:rgba(251,191,36,.18)}
-    .badge.high{background:rgba(251,113,133,.10);color:#fda4af;border-color:rgba(251,113,133,.20)}
-    .priority-meta{font-size:10px;color:var(--muted);line-height:1.6;margin-top:7px}
-    .priority-actions{display:flex;justify-content:flex-end;margin-top:9px}
-    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:16px}
-    .section-head h2{margin:0 0 4px;font-size:20px}.section-head p{margin:0;color:var(--muted);font-size:12px}
-    .employee-form{display:grid;grid-template-columns:1fr 1fr 1.4fr 150px auto;gap:9px;margin-bottom:18px}
-    .employee-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-    .employee-card{border:1px solid var(--line);border-radius:16px;padding:15px;background:#0d1c30}
-    .employee-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .employee-name{font-weight:800;font-size:14px}.employee-role{font-size:11px;color:var(--muted);margin-top:3px}
-    .employee-task{margin-top:13px;padding:10px;border-radius:11px;background:#10243b;font-size:11px;line-height:1.55;color:#c9d5e4}
-    .employee-actions{display:flex;justify-content:flex-end;margin-top:12px}
-    .empty{padding:22px;text-align:center;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:12px}
-    .mobile-toggle{display:none;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:8px 10px}
-    .toast{position:fixed;right:22px;bottom:22px;display:none;background:#10233a;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);font-size:12px;z-index:60}
-    .toast.show{display:block}
-    @media(max-width:1050px){.brain-grid,.hero{grid-template-columns:1fr}.employee-grid{grid-template-columns:repeat(2,1fr)}.priority-form{grid-template-columns:1fr repeat(3,78px);}.priority-form button{grid-column:1/-1}}
-    @media(max-width:760px){
-      .app{grid-template-columns:1fr}.sidebar{position:fixed;z-index:40;left:-260px;width:240px;transition:.2s}.sidebar.open{left:0}
-      .main{padding:18px 14px 32px}.mobile-toggle{display:block}.topbar{align-items:flex-start}.status-pill{display:none}
-      .headline h1{font-size:22px}.form-row,.employee-form{grid-template-columns:1fr}.memory-item{grid-template-columns:1fr auto}.memory-type{grid-column:1/-1}
-      .employee-grid{grid-template-columns:1fr}.priority-form{grid-template-columns:1fr 1fr}.priority-form input{grid-column:1/-1}.priority-form button{grid-column:1/-1}
+    .nav-icon{width:22px;text-align:center}
+    .sidebar-footer{margin-top:auto;padding:12px}
+    .owner-chip{
+      border:1px solid var(--line);background:var(--panel);
+      border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px
     }
+    .avatar{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#162943}
+    .owner-chip b{font-size:13px;display:block}.owner-chip small{color:var(--muted)}
+    .main{padding:24px 28px 40px;min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+    .headline h1{font-size:26px;margin:0 0 5px}.headline p{margin:0;color:var(--muted)}
+    .top-actions{display:flex;align-items:center;gap:10px}
+    .status-pill,.ghost-btn,.primary-btn{
+      border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel);color:var(--text)
+    }
+    .status-pill{display:flex;align-items:center;gap:8px;font-size:13px}
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--ok);box-shadow:0 0 0 4px rgba(52,211,153,.08)}
+    .primary-btn{background:linear-gradient(135deg,#0ea5e9,#7c3aed);border:0;font-weight:700}
+    .grid-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .stat{
+      border:1px solid var(--line);background:linear-gradient(180deg,rgba(16,31,51,.9),rgba(13,26,43,.9));
+      border-radius:16px;padding:16px;box-shadow:var(--shadow)
+    }
+    .stat .label{font-size:12px;color:var(--muted);margin-bottom:8px}
+    .stat .value{font-size:27px;font-weight:800}
+    .stat .sub{font-size:12px;color:var(--muted);margin-top:6px}
+    .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(310px,.85fr);gap:18px}
+    .card{
+      border:1px solid var(--line);background:rgba(13,26,43,.90);
+      border-radius:18px;box-shadow:var(--shadow);overflow:hidden
+    }
+    .card-head{display:flex;justify-content:space-between;align-items:center;padding:17px 18px;border-bottom:1px solid var(--line)}
+    .card-head h2{font-size:16px;margin:0}.card-head span{font-size:12px;color:var(--muted)}
+    .card-body{padding:18px}
+    .org{display:flex;flex-direction:column;align-items:center;gap:14px}
+    .person{
+      background:var(--panel-2);border:1px solid var(--line);border-radius:16px;padding:12px 14px;
+      display:flex;align-items:center;gap:11px;min-width:220px;position:relative
+    }
+    .person.ceo{outline:1px solid rgba(110,231,255,.35);box-shadow:0 0 36px rgba(110,231,255,.07)}
+    .person .face{width:42px;height:42px;border-radius:14px;background:#172f4d;display:grid;place-items:center;font-size:21px}
+    .person b{display:block;font-size:13px}.person small{color:var(--muted)}
+    .org-line{width:2px;height:18px;background:var(--line)}
+    .managers{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .manager{
+      border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px;
+      transition:.16s;cursor:pointer
+    }
+    .manager:hover{transform:translateY(-2px);border-color:#3b6b94}
+    .manager-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+    .manager-title{font-size:13px;font-weight:800}
+    .badge{font-size:10px;padding:4px 7px;border-radius:999px;background:rgba(52,211,153,.10);color:#86efac;border:1px solid rgba(52,211,153,.18)}
+    .badge.warn{background:rgba(251,191,36,.10);color:#fde68a;border-color:rgba(251,191,36,.18)}
+    .manager p{font-size:11px;color:var(--muted);margin:0;line-height:1.5}
+    .approval-list{display:grid;gap:10px}
+    .approval{
+      border:1px solid var(--line);background:var(--panel-2);border-radius:14px;padding:13px
+    }
+    .approval-top{display:flex;justify-content:space-between;gap:10px}
+    .approval strong{font-size:13px}.approval small{color:var(--muted)}
+    .risk{font-size:10px;padding:4px 7px;border-radius:999px;height:max-content}
+    .risk.high{background:rgba(251,113,133,.11);color:#fda4af}
+    .risk.med{background:rgba(251,191,36,.11);color:#fde68a}
+    .approval p{font-size:12px;color:var(--muted);line-height:1.5}
+    .approve-actions{display:flex;gap:8px}
+    .small-btn{border:1px solid var(--line);background:#12243b;color:var(--text);padding:7px 9px;border-radius:9px;font-size:11px}
+    .small-btn.approve{background:rgba(52,211,153,.12);color:#86efac;border-color:rgba(52,211,153,.25)}
+    .small-btn.reject{background:rgba(251,113,133,.10);color:#fda4af;border-color:rgba(251,113,133,.20)}
+    .section-title{font-size:14px;margin:20px 0 10px}
+    .websites{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .website{
+      border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30;cursor:pointer
+    }
+    .website-line{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .website strong{font-size:13px}.website small{display:block;color:var(--muted);margin-top:4px}
+    .mini-dot{width:8px;height:8px;border-radius:999px;background:var(--ok)}
+    .mini-dot.warn{background:var(--warn)}
+    .task{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid rgba(31,53,82,.65)}
+    .task:last-child{border-bottom:0}
+    .task strong{font-size:13px;display:block}.task small{color:var(--muted)}
+    .progress{width:110px}
+    .bar{height:6px;background:#13263d;border-radius:999px;overflow:hidden;margin-top:7px}
+    .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
+    .activity{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(31,53,82,.55)}
+    .activity:last-child{border-bottom:0}
+    .activity .time{width:46px;color:var(--muted);font-size:11px}.activity p{margin:0;font-size:12px;line-height:1.5}
+    .view{display:none}.view.active{display:block}
+    .page-card{border:1px solid var(--line);background:var(--panel);border-radius:18px;padding:18px}
+    .page-card h2{margin-top:0}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:12px}
+    .table th{color:var(--muted);font-weight:600}
+    .staff-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .staff-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#0d1c30}
+    .staff-card .role{color:var(--muted);font-size:11px;margin-top:3px}
+    .staff-card .now{margin-top:12px;font-size:12px;line-height:1.45}
+    .office{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px
+    }
+    .room{border:1px solid var(--line);border-radius:18px;background:#0c1a2b;padding:14px;min-height:180px}
+    .room-link{display:block;text-decoration:none;color:inherit;transition:.16s}
+    .room-link:hover{transform:translateY(-2px);border-color:#3b6b94;box-shadow:0 10px 28px rgba(0,0,0,.18)}
+    .room-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .room-open{font-size:10px;color:#8bdcf0;border:1px solid rgba(110,231,255,.22);padding:5px 8px;border-radius:999px}
+    .room h3{font-size:13px;margin:0}.desks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .desk{padding:11px;border-radius:12px;background:#12243b;font-size:11px}
+    .desk span{display:block;font-size:18px;margin-bottom:4px}
+    .phase4-goal-grid{display:grid;gap:10px}
+    .phase4-goal{border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30}
+    .phase4-goal-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .phase4-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}
+    .phase4-meta div{padding:8px;border:1px solid rgba(31,53,82,.75);border-radius:9px;font-size:10px;color:var(--muted)}
+    .phase4-meta b{color:var(--text);font-weight:700}
+    .phase4-workflow{display:grid;gap:10px}
+    .phase4-work{border:1px solid var(--line);border-radius:14px;padding:13px;background:#0d1c30}
+    .phase4-work-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .phase4-evidence{margin-top:9px;padding:8px;border-radius:9px;background:#10243b;font-size:10px;color:#b9c9db;line-height:1.5}
+    .phase4-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .executor-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .executor-card{border:1px solid var(--line);background:#0d1c30;border-radius:15px;padding:14px}
+    .executor-card h3{font-size:13px;margin:0 0 6px}.executor-card p{font-size:11px;color:var(--muted);line-height:1.55;margin:5px 0}
+    .executor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .executor-link{display:inline-flex;align-items:center;text-decoration:none}
+    .execution-queue{display:grid;gap:10px}
+    .execution-item{border:1px solid var(--line);background:#0d1c30;border-radius:14px;padding:13px}
+    .execution-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .execution-meta{font-size:10px;color:var(--muted);line-height:1.6;margin-top:7px}
+    .safety-box{border:1px solid rgba(52,211,153,.24);background:rgba(52,211,153,.06);border-radius:12px;padding:11px;font-size:11px;line-height:1.6}
+    @media (max-width:1100px){.executor-grid{grid-template-columns:1fr}}
+    @media (max-width:760px){.phase4-meta{grid-template-columns:1fr}}
+    .modal{
+      position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
+    }
+    .modal.show{display:flex}
+    .modal-card{width:min(620px,100%);border:1px solid var(--line);background:#0a1728;border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+    .modal-head{display:flex;justify-content:space-between;align-items:center;padding:17px;border-bottom:1px solid var(--line)}
+    .modal-head h3{margin:0}.close{border:0;background:transparent;color:var(--muted);font-size:22px}
+    .modal-body{padding:18px}
+    .modal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+    .mini-stat{border:1px solid var(--line);border-radius:12px;padding:11px;background:#0d1c30}
+    .mini-stat b{display:block;font-size:18px}.mini-stat small{color:var(--muted)}
+    .toast{position:fixed;right:22px;bottom:22px;background:#10233a;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow);display:none;z-index:60;font-size:12px}
+    .toast.show{display:block}
+    .mobile-toggle{display:none}
+    @media (max-width:1100px){
+      .grid-stats{grid-template-columns:repeat(2,1fr)}
+      .dashboard-grid{grid-template-columns:1fr}
+      .managers{grid-template-columns:repeat(2,1fr)}
+      .staff-grid,.office{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:760px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:fixed;z-index:40;left:-280px;width:260px;transition:.2s}
+      .sidebar.open{left:0}
+      .main{padding:18px 14px 30px}
+      .mobile-toggle{display:block;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:8px 10px}
+      .topbar{align-items:flex-start}.top-actions .status-pill{display:none}
+      .grid-stats{grid-template-columns:repeat(2,1fr)}
+      .managers,.websites,.staff-grid,.office{grid-template-columns:1fr}
+      .modal-grid{grid-template-columns:1fr}
+      .headline h1{font-size:21px}
+    }
+  .simple-employee-form{display:grid;grid-template-columns:1fr 1fr 1.4fr 150px auto;gap:9px}
+    .simple-employee-form input,.simple-employee-form select{width:100%;border:1px solid var(--line);border-radius:10px;background:#0d1c30;color:var(--text);padding:10px;outline:none}
+    .simple-employee-form input:focus,.simple-employee-form select:focus{border-color:#3b6b94}
+    .simple-employee-task{margin-top:12px;padding:10px;border-radius:10px;background:#10243b;font-size:11px;line-height:1.55;color:#c9d5e4}
+    .simple-employee-actions{display:flex;justify-content:flex-end;margin-top:10px}
+    @media(max-width:1000px){.simple-employee-form{grid-template-columns:1fr 1fr}.simple-employee-form #simpleEmployeeTask{grid-column:1/-1}}
+    @media(max-width:760px){.simple-employee-form{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -89,7 +239,8 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="brand-mark">
-        <svg class="brand-logo" viewBox="0 0 220 80" role="img" aria-label="AION HQ" xmlns="http://www.w3.org/2000/svg">
+        <svg class="brand-logo" viewBox="0 0 220 80" role="img" aria-labelledby="brandLogoTitle" xmlns="http://www.w3.org/2000/svg">
+          <title id="brandLogoTitle">AION HQ logo</title>
           <svg x="12" y="16" width="56" height="48" viewBox="170 134 914 777" overflow="hidden">
             <image href="./assets/aion-hq-original.webp" width="1254" height="1254"/>
           </svg>
@@ -99,11 +250,16 @@
         </svg>
       </div>
     </div>
-    <nav class="nav">
+    <nav class="nav" id="nav">
       <button class="nav-btn active" data-view="ceo"><span class="nav-icon">🧠</span>CEO</button>
-      <button class="nav-btn" data-view="employees"><span class="nav-icon">♟</span>Nhân viên</button>
+      <button class="nav-btn" data-view="staff"><span class="nav-icon">♟</span>Nhân viên</button>
     </nav>
-    <div class="sidebar-note"><b>AION HQ tối giản</b>Chỉ giữ CEO, bộ não của CEO và khu Nhân viên.</div>
+    <div class="sidebar-footer">
+      <div class="owner-chip">
+        <div class="avatar">👤</div>
+        <div><b>Chủ sở hữu</b><small>Quyền phê duyệt tối cao</small></div>
+      </div>
+    </div>
   </aside>
 
   <main class="main">
@@ -112,225 +268,1172 @@
         <button class="mobile-toggle" id="mobileToggle">☰</button>
         <div class="headline">
           <h1 id="pageTitle">CEO</h1>
-          <p id="pageSubtitle">ATLAS và bộ não điều hành cá nhân.</p>
+          <p id="pageSubtitle">ATLAS và toàn bộ bộ não điều hành.</p>
         </div>
       </div>
-      <div class="status-pill"><span class="dot"></span> Hệ thống sẵn sàng</div>
+      <div class="top-actions">
+        <div class="status-pill"><span class="dot"></span> Hệ thống bình thường</div>
+        <button class="primary-btn" id="ceoBriefBtn">Hỏi CEO</button>
+      </div>
     </div>
 
-    <section class="view active" id="view-ceo">
-      <div class="hero">
-        <div class="card ceo-card">
-          <div class="brain-face">🧠</div>
-          <div>
-            <h2>ATLAS — CEO</h2>
-            <p>Đây là phần lõi được giữ lại. CEO ghi nhớ quy tắc, quyết định, bài học và tự sắp xếp mức ưu tiên.</p>
-          </div>
-        </div>
-        <div class="card brain-status">
-          <div class="brain-stat"><span>Trạng thái</span><b style="color:#86efac">Đang hoạt động</b></div>
-          <div class="brain-stat"><span>Ghi nhớ</span><b id="brainCountTop">0</b></div>
-          <div class="brain-stat"><span>Ưu tiên đang theo dõi</span><b id="priorityCountTop">0</b></div>
-        </div>
+    <section class="view" id="view-overview">
+      <div class="grid-stats">
+        <div class="stat"><div class="label">Website đang quản lý</div><div class="value">5</div><div class="sub">5 trưởng phòng AI phụ trách</div></div>
+        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">33</div><div class="sub">5 đội chuyên trách theo từng website</div></div>
+        <div class="stat"><div class="label">Nhiệm vụ đang chạy</div><div class="value">14</div><div class="sub">4 ưu tiên cao</div></div>
+        <div class="stat"><div class="label">Chờ bạn phê duyệt</div><div class="value" id="approvalMetric">3</div><div class="sub">Không có chi phí phát sinh</div></div>
       </div>
 
-      <div class="brain-grid">
-        <div class="card">
-          <div class="card-head"><div><h2>Bộ nhớ CEO</h2><span>Giữ nguyên bộ nhớ ATLAS đã có</span></div><span id="brainCount">0 mục</span></div>
-          <div class="card-body">
-            <div class="form-row">
-              <select id="brainType">
-                <option>Quy tắc Chủ sở hữu</option>
-                <option>Quyết định</option>
-                <option>Bài học</option>
-                <option>Ưu tiên</option>
-              </select>
-              <input id="brainInput" placeholder="Nhập điều CEO cần ghi nhớ...">
-              <button class="primary-btn" id="brainSave">Ghi nhớ</button>
+      <div class="dashboard-grid">
+        <div>
+          <div class="card">
+            <div class="card-head"><div><h2>Sơ đồ điều hành</h2><span>Chủ sở hữu → CEO → Trưởng phòng website</span></div><span>BẢN DEMO</span></div>
+            <div class="card-body">
+              <div class="org">
+                <div class="person">
+                  <div class="face">👤</div><div><b>Bạn — Chủ sở hữu</b><small>Duyệt quyết định quan trọng</small></div>
+                </div>
+                <div class="org-line"></div>
+                <div class="person ceo" id="ceoCard">
+                  <div class="face">🧠</div><div><b>ATLAS — AI CEO</b><small>🟢 Đang điều hành · 5 phòng ban</small></div>
+                </div>
+                <div class="org-line"></div>
+                <div class="managers">
+                  <div class="manager" data-name="TrainingBot" data-status="Bình thường" data-tasks="5" data-staff="6" data-goal="Ổn định API, cải thiện trải nghiệm và tăng nội dung hữu ích.">
+                    <div class="manager-top"><div class="manager-title">TrainingBot Trưởng phòng</div><span class="badge">Trực tuyến</span></div>
+                    <p>6 AI · 5 nhiệm vụ<br>Ưu tiên: API & nội dung</p>
+                  </div>
+                  <div class="manager" data-name="Toolpick" data-status="Bình thường" data-tasks="3" data-staff="5" data-goal="Giữ hệ sinh thái công cụ ổn định và tối ưu luồng người dùng.">
+                    <div class="manager-top"><div class="manager-title">Toolpick Trưởng phòng</div><span class="badge">Trực tuyến</span></div>
+                    <p>5 AI · 3 nhiệm vụ<br>Ưu tiên: ổn định hệ thống</p>
+                  </div>
+                  <div class="manager" data-name="HMOOB MUSIC" data-status="Cần theo dõi" data-tasks="4" data-staff="6" data-goal="Tối ưu trang sản phẩm, hiệu năng mobile và chất lượng trải nghiệm mua hàng.">
+                    <div class="manager-top"><div class="manager-title">HMOOB Trưởng phòng</div><span class="badge warn">Theo dõi</span></div>
+                    <p>6 AI · 4 nhiệm vụ<br>Ưu tiên: tốc độ mobile</p>
+                  </div>
+                  <div class="manager" data-name="Toolpick Mail" data-status="Bình thường" data-tasks="1" data-staff="5" data-goal="Theo dõi đăng nhập, bảo mật, độ ổn định và luồng gửi nhận thư.">
+                    <div class="manager-top"><div class="manager-title">Trưởng phòng Toolpick Mail</div><span class="badge">Trực tuyến</span></div>
+                    <p>5 AI · 1 nhiệm vụ<br>Ưu tiên: bảo mật</p>
+                  </div>
+                  <div class="manager" data-name="Mầm Kids" data-status="Bình thường" data-tasks="1" data-staff="4" data-goal="Giữ giao diện học tập rõ ràng, ổn định và thân thiện trên nhiều màn hình.">
+                    <div class="manager-top"><div class="manager-title">Mầm Kids Trưởng phòng</div><span class="badge">Trực tuyến</span></div>
+                    <p>4 AI · 1 nhiệm vụ<br>Ưu tiên: giao diện</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-title">Website</div>
+              <div class="websites">
+                <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small>Trưởng phòng: TB-01 · 5 việc</small></div>
+                <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>Trưởng phòng: TP-01 · 3 việc</small></div>
+                <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small>Trưởng phòng: HM-01 · cần theo dõi</small></div>
+                <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>Trưởng phòng: ML-01 · ổn định</small></div>
+              </div>
             </div>
-            <div class="memory-list" id="brainList"></div>
+          </div>
+
+          <div class="card" style="margin-top:18px">
+            <div class="card-head"><div><h2>Nhiệm vụ CEO đã giao</h2><span>Đồng bộ từ mục tiêu Giai đoạn 4</span></div><span id="ceoAssignedCount">0 đang chạy</span></div>
+            <div class="card-body" id="ceoAssignedList"></div>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-head"><div><h2>Bộ não ưu tiên</h2><span>Ảnh hưởng ×2 + Khẩn cấp ×2 + Rủi ro</span></div><span id="priorityCount">0 mục</span></div>
-          <div class="card-body">
-            <div class="priority-form">
-              <input id="priorityName" placeholder="Tên việc cần ưu tiên">
-              <select id="priorityImpact" title="Ảnh hưởng"><option value="5">AH 5</option><option value="4">AH 4</option><option value="3">AH 3</option><option value="2">AH 2</option><option value="1">AH 1</option></select>
-              <select id="priorityUrgency" title="Khẩn cấp"><option value="5">KC 5</option><option value="4">KC 4</option><option value="3">KC 3</option><option value="2">KC 2</option><option value="1">KC 1</option></select>
-              <select id="priorityRisk" title="Rủi ro"><option value="5">RR 5</option><option value="4">RR 4</option><option value="3">RR 3</option><option value="2">RR 2</option><option value="1">RR 1</option></select>
-              <button class="primary-btn" id="priorityAdd">Thêm</button>
-            </div>
-            <div class="priority-list" id="priorityList"></div>
+        <div>
+          <div class="card">
+            <div class="card-head"><div><h2>Chờ bạn phê duyệt</h2><span>AI không được vượt quyền</span></div><span id="approvalHeader">3 yêu cầu</span></div>
+            <div class="card-body approval-list" id="approvalList"></div>
+          </div>
+
+          <div class="card" style="margin-top:18px">
+            <div class="card-head"><div><h2>Nhật ký CEO</h2><span>Hoạt động gần đây</span></div></div>
+            <div class="card-body" id="ceoActivityList"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="view" id="view-employees">
-      <div class="section-head">
-        <div><h2>Nhân viên</h2><p>Danh sách nhân viên độc lập để CEO quản lý.</p></div>
-        <span id="employeeCount" style="font-size:12px;color:var(--muted)">0 nhân viên</span>
-      </div>
-      <div class="card">
-        <div class="card-body">
-          <div class="employee-form">
-            <input id="employeeName" placeholder="Tên / mã nhân viên">
-            <input id="employeeRole" placeholder="Vai trò">
-            <input id="employeeTask" placeholder="Nhiệm vụ hiện tại">
-            <select id="employeeStatus"><option>Sẵn sàng</option><option>Đang làm việc</option><option>Tạm nghỉ</option></select>
-            <button class="primary-btn" id="employeeAdd">Thêm nhân viên</button>
+    <section class="view active" id="view-ceo">
+      <div class="page-card">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <h2 style="margin-bottom:6px">🧠 ATLAS — AI CEO</h2>
+            <p style="color:var(--muted);line-height:1.7;margin:0;max-width:850px">
+              ATLAS là AI điều hành cao nhất của công ty. Ở giai đoạn hiện tại, CEO chỉ được quan sát, phân tích,
+              tự đề xuất mục tiêu và chuẩn bị kế hoạch. CEO chưa được tự ý thay đổi website thật.
+            </p>
           </div>
-          <div class="employee-grid" id="employeeGrid"></div>
+          <div class="status-pill"><span class="dot"></span> Chế độ: Quan sát · lập mục tiêu · giao việc nội bộ</div>
         </div>
+
+        <div class="grid-stats" style="margin-top:18px">
+          <div class="stat"><div class="label">Website đang quan sát</div><div class="value">5</div><div class="sub">chưa tự can thiệp website thật</div></div>
+          <div class="stat"><div class="label">Mục tiêu CEO đang theo dõi</div><div class="value" id="ceoGoalMetric">3</div><div class="sub">hồ sơ mục tiêu có căn cứ và tiêu chí</div></div>
+          <div class="stat"><div class="label">Việc cần Chủ sở hữu duyệt</div><div class="value" id="ceoApprovalMetric">3</div><div class="sub">mọi việc nhạy cảm đều dừng lại</div></div>
+          <div class="stat"><div class="label">Hành động vượt quyền</div><div class="value">0</div><div class="sub">CEO không được vượt phạm vi cho phép</div></div>
+        </div>
+
+        <div class="card" style="box-shadow:none;margin-top:16px">
+          <div class="card-head">
+            <div>
+              <h2>Sổ điều hành của CEO</h2>
+              <span>Những gì ATLAS đang quan sát, cân nhắc và ghi chú để Chủ sở hữu nắm được tình hình</span>
+            </div>
+            <span>Cập nhật gần đây</span>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+              <div class="staff-card">
+                <b>👀 Đang quan sát</b>
+                <div class="role" style="margin-top:8px;line-height:1.55">
+                  HMOOB MUSIC có dấu hiệu cần theo dõi hiệu năng mobile; TrainingBot đang có một số luồng API cần tiếp tục kiểm tra.
+                </div>
+              </div>
+              <div class="staff-card">
+                <b>💡 Ý tưởng đang cân nhắc</b>
+                <div class="role" style="margin-top:8px;line-height:1.55">
+                  Tạo tiêu chuẩn chung để mọi website đều có cách báo lỗi, kiểm thử và xin phê duyệt giống nhau.
+                </div>
+              </div>
+              <div class="staff-card">
+                <b>⚠️ Điều đang lo</b>
+                <div class="role" style="margin-top:8px;line-height:1.55">
+                  Không để AI sửa lan sang website khác hoặc tự thay đổi production khi chưa có kiểm tra và phê duyệt.
+                </div>
+              </div>
+              <div class="staff-card">
+                <b>❓ Câu hỏi chưa giải quyết</b>
+                <div class="role" style="margin-top:8px;line-height:1.55">
+                  Khi nào một lỗi đủ nghiêm trọng để CEO tự nâng thành mục tiêu ưu tiên cao?
+                </div>
+              </div>
+              <div class="staff-card">
+                <b>📝 Ghi chú linh tinh</b>
+                <div class="role" style="margin-top:8px;line-height:1.55">
+                  Cần tránh tạo quá nhiều nhiệm vụ cùng lúc. Ưu tiên việc ảnh hưởng người dùng trước, việc làm đẹp giao diện xếp sau.
+                </div>
+              </div>
+              <div class="staff-card">
+                <b>🎯 Việc muốn làm tiếp</b>
+                <div class="role" style="margin-top:8px;line-height:1.55">
+                  Hoàn thiện cách CEO tự đặt mục tiêu, chấm mức ưu tiên và trình lý do cho Chủ sở hữu trước khi giao việc.
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
+              <div style="font-size:12px;font-weight:700;margin-bottom:8px">Nhật ký quyết định gần đây</div>
+              <div class="activity">
+                <div class="time">23:03</div>
+                <p><b>ATLAS:</b> Giữ CEO ở chế độ quan sát và lập kế hoạch; chưa mở quyền tự sửa website thật. <span style="color:var(--muted)">Lý do: bộ máy kiểm thử và phê duyệt chưa hoàn thiện.</span></p>
+              </div>
+              <div class="activity">
+                <div class="time">22:48</div>
+                <p><b>ATLAS:</b> Đưa ổn định website lên ưu tiên cao hơn việc bổ sung tính năng mới. <span style="color:var(--muted)">Lý do: giảm nguy cơ phát sinh lỗi khi hệ thống AI còn đang xây dựng.</span></p>
+              </div>
+              <div class="activity">
+                <div class="time">22:32</div>
+                <p><b>ATLAS:</b> Mọi thay đổi production phải tiếp tục đi qua Chủ sở hữu. <span style="color:var(--muted)">Lý do: giữ quyền kiểm soát cuối cùng ở con người.</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;margin-top:16px" id="ceoStage3">
+          <div class="card-head">
+            <div>
+              <h2>🌐 Dữ liệu thật CEO đang đọc</h2>
+              <span>Chế độ chỉ đọc — ATLAS chỉ kiểm tra khả năng truy cập và nguồn công khai, không thay đổi website</span>
+            </div>
+            <button id="ceoLiveRefresh" class="small-btn" type="button">Kiểm tra lại</button>
+          </div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px" id="ceoLiveSources">
+              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://trainingbot.io.vn">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>TrainingBot</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn: trainingbot.io.vn</div>
+                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
+              </div>
+
+              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://toolpick.id.vn">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Toolpick</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn: toolpick.id.vn</div>
+                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
+              </div>
+
+              <div class="staff-card ceo-live-source" data-kind="website" data-url="https://toolpick.id.vn/mam-kids/">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Mầm Kids</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn: toolpick.id.vn/mam-kids/</div>
+                <div class="now ceo-live-detail">Chờ ATLAS kiểm tra kết nối.</div>
+              </div>
+
+              <div class="staff-card">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>HMOOB MUSIC</b><span class="badge warn">Chưa cấu hình</span>
+                </div>
+                <div class="role" style="margin-top:7px">Chưa có URL công khai được xác định chắc chắn.</div>
+                <div class="now">ATLAS không tự đoán nguồn dữ liệu.</div>
+              </div>
+
+              <div class="staff-card">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Toolpick Mail</b><span class="badge warn">Chưa cấu hình</span>
+                </div>
+                <div class="role" style="margin-top:7px">Chưa có URL production được xác định chắc chắn.</div>
+                <div class="now">ATLAS không tự đoán nguồn dữ liệu.</div>
+              </div>
+
+              <div class="staff-card ceo-live-source" data-kind="github" data-url="https://api.github.com/repos/Gamevalentine/trainingbot-cloudflare">
+                <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+                  <b>Mã nguồn TrainingBot</b><span class="badge ceo-live-status">Chưa kiểm tra</span>
+                </div>
+                <div class="role" style="margin-top:7px">Nguồn công khai: GitHub</div>
+                <div class="now ceo-live-detail">Chờ đọc trạng thái repository.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)">
+              <div style="font-size:10px;color:var(--muted)">
+                Kiểm tra website dùng yêu cầu mạng chỉ đọc. “Có phản hồi” chỉ xác nhận kết nối mạng thành công, không khẳng định toàn bộ chức năng website đều tốt.
+              </div>
+              <div id="ceoLiveLastCheck" style="font-size:10px;color:var(--muted)">Chưa kiểm tra</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:16px" id="ceoStage2">
+          <div class="card" style="box-shadow:none">
+            <div class="card-head">
+              <div>
+                <h2>🧠 Bộ nhớ CEO</h2>
+                <span>Ghi nhớ lâu dài trong trình duyệt này</span>
+              </div>
+              <span id="ceoMemoryCount">0 mục</span>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:160px 1fr auto;gap:8px;margin-bottom:12px">
+                <select id="ceoMemoryType" class="small-btn" style="width:100%;padding:9px">
+                  <option value="Quy tắc Chủ sở hữu">Quy tắc Chủ sở hữu</option>
+                  <option value="Quyết định">Quyết định</option>
+                  <option value="Bài học">Bài học</option>
+                  <option value="Ghi chú">Ghi chú</option>
+                </select>
+                <input id="ceoMemoryInput" type="text" placeholder="Nhập điều CEO cần ghi nhớ..." style="min-width:0;border:1px solid var(--line);background:#0d1c30;color:var(--text);border-radius:9px;padding:9px 10px;outline:none">
+                <button id="ceoMemorySave" class="small-btn approve" type="button">Lưu nhớ</button>
+              </div>
+              <div id="ceoMemoryList" style="display:grid;gap:8px"></div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted)">
+                Bộ nhớ này hiện được lưu bằng localStorage trên trình duyệt; chưa đồng bộ lên máy chủ hay AI thật.
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="box-shadow:none">
+            <div class="card-head">
+              <div>
+                <h2>🎯 Hệ thống ưu tiên của CEO</h2>
+                <span>CEO phải giải thích vì sao một việc được xếp trước việc khác</span>
+              </div>
+              <span>Dữ liệu demo</span>
+            </div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:12px;font-size:10px;color:var(--muted)">
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Ảnh hưởng</b><br>0–5 điểm</div>
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Khẩn cấp</b><br>0–5 điểm</div>
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Rủi ro</b><br>0–5 điểm</div>
+                <div style="padding:8px;border:1px solid var(--line);border-radius:9px"><b style="color:var(--text)">Điểm</b><br>Ảnh hưởng×2 + Khẩn×2 + Rủi ro</div>
+              </div>
+              <div id="ceoPriorityList" style="display:grid;gap:9px">
+                <div class="staff-card ceo-priority-item" data-impact="4" data-urgency="4" data-risk="3">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div><b>TrainingBot — tiếp tục kiểm tra các luồng API</b><div class="role" style="margin-top:5px">Lý do: có thể ảnh hưởng chức năng mà người dùng đang sử dụng.</div></div>
+                    <span class="badge ceo-priority-badge">—</span>
+                  </div>
+                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
+                </div>
+                <div class="staff-card ceo-priority-item" data-impact="4" data-urgency="3" data-risk="3">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div><b>HMOOB MUSIC — theo dõi hiệu năng di động</b><div class="role" style="margin-top:5px">Lý do: tốc độ chậm có thể ảnh hưởng trải nghiệm mua hàng.</div></div>
+                    <span class="badge ceo-priority-badge">—</span>
+                  </div>
+                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
+                </div>
+                <div class="staff-card ceo-priority-item" data-impact="3" data-urgency="2" data-risk="2">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div><b>Chuẩn hóa cách CEO tạo và giải thích mục tiêu</b><div class="role" style="margin-top:5px">Lý do: cần cho vận hành lâu dài nhưng chưa ảnh hưởng trực tiếp người dùng hiện tại.</div></div>
+                    <span class="badge ceo-priority-badge">—</span>
+                  </div>
+                  <div class="role ceo-priority-score" style="margin-top:8px"></div>
+                </div>
+              </div>
+              <div style="margin-top:10px;font-size:10px;color:var(--muted)">
+                Ngưỡng hiện tại: 20–25 Khẩn cấp · 15–19 Cao · 9–14 Trung bình · 0–8 Thấp.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:16px;margin-top:16px">
+          <div style="display:grid;gap:16px">
+            <div class="card" style="box-shadow:none">
+              <div class="card-head">
+                <div><h2>Hồ sơ mục tiêu CEO</h2><span>Mỗi mục tiêu có căn cứ, website, phụ trách, ưu tiên, thời hạn và tiêu chí hoàn thành</span></div>
+                <span id="ceoGoalCount">0 mục tiêu</span>
+              </div>
+              <div class="card-body">
+                <div class="phase4-goal-grid" id="ceoGoalProfiles"></div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="card-head">
+                <div><h2>Luồng giao việc & nghiệm thu</h2><span>CEO giao → Trưởng phòng nhận → cung cấp bằng chứng → CEO nghiệm thu</span></div>
+                <span id="ceoWorkflowCount">0 việc</span>
+              </div>
+              <div class="card-body">
+                <div class="phase4-workflow" id="ceoWorkflowList"></div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="card-head">
+                <div><h2>Chu trình làm việc của CEO</h2><span>Khung điều hành sẽ được dùng khi ATLAS hoạt động thật</span></div>
+              </div>
+              <div class="card-body">
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+                  <div class="staff-card"><b>1. Quan sát</b><div class="role">Đọc trạng thái website, lỗi, hiệu năng và cảnh báo.</div></div>
+                  <div class="staff-card"><b>2. Phân tích</b><div class="role">Xác định vấn đề, nguyên nhân và mức độ ảnh hưởng.</div></div>
+                  <div class="staff-card"><b>3. Đặt mục tiêu</b><div class="role">Tự tạo mục tiêu có lý do, ưu tiên và tiêu chí hoàn thành.</div></div>
+                  <div class="staff-card"><b>4. Lập kế hoạch</b><div class="role">Chia mục tiêu thành các bước cần thực hiện.</div></div>
+                  <div class="staff-card"><b>5. Xin phê duyệt</b><div class="role">Dừng lại khi có production, chi phí hoặc quyền cao.</div></div>
+                  <div class="staff-card"><b>6. Đánh giá</b><div class="role">So sánh kết quả với mục tiêu rồi quyết định bước tiếp theo.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;gap:16px">
+            <div class="card" style="box-shadow:none">
+              <div class="card-head"><div><h2>Quyền hạn hiện tại</h2><span>Giai đoạn 4 · không tự sửa production</span></div></div>
+              <div class="card-body">
+                <div class="activity"><div style="width:26px">✅</div><p><b>Được phép:</b> đọc dữ liệu, phân tích, đề xuất mục tiêu, lập kế hoạch và viết báo cáo.</p></div>
+                <div class="activity"><div style="width:26px">⛔</div><p><b>Chưa được phép:</b> sửa code production, deploy, xóa dữ liệu, đổi DNS hoặc tự chi tiền.</p></div>
+                <div class="activity"><div style="width:26px">👤</div><p><b>Phải xin bạn duyệt:</b> mọi hành động có thể ảnh hưởng website thật, tài khoản, dữ liệu hoặc chi phí.</p></div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none">
+              <div class="card-head"><div><h2>Nguyên tắc bắt buộc</h2><span>CEO không được tự thay đổi</span></div></div>
+              <div class="card-body">
+                <div class="activity"><div style="width:26px">01</div><p>Không được hành động nếu chưa giải thích được <b>vì sao cần làm</b>.</p></div>
+                <div class="activity"><div style="width:26px">02</div><p>Không được sửa một website chỉ vì vấn đề xuất hiện ở website khác.</p></div>
+                <div class="activity"><div style="width:26px">03</div><p>Không được coi nhiệm vụ là hoàn thành nếu chưa có kết quả kiểm tra.</p></div>
+                <div class="activity"><div style="width:26px">04</div><p>Không được tự phát sinh chi phí nếu chưa có Chủ sở hữu chấp thuận.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-departments">
+      <div class="page-card">
+        <h2>Trưởng phòng theo website</h2>
+        <table class="table">
+          <thead><tr><th>Website</th><th>Trưởng phòng</th><th>Nhân viên</th><th>Nhiệm vụ</th><th>Trạng thái</th></tr></thead>
+          <tbody>
+            <tr><td>TrainingBot</td><td>TB-01</td><td>6 AI</td><td>5</td><td>🟢 Bình thường</td></tr>
+            <tr><td>Toolpick</td><td>TP-01</td><td>5 AI</td><td>3</td><td>🟢 Bình thường</td></tr>
+            <tr><td>HMOOB MUSIC</td><td>HM-01</td><td>6 AI</td><td>4</td><td>🟡 Theo dõi</td></tr>
+            <tr><td>Toolpick Mail</td><td>ML-01</td><td>5 AI</td><td>1</td><td>🟢 Bình thường</td></tr>
+            <tr><td>Mầm Kids</td><td>MK-01</td><td>4 AI</td><td>1</td><td>🟢 Bình thường</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-websites">
+      <div class="page-card">
+        <h2>Danh mục website</h2>
+        <div class="websites">
+          <div class="website"><div class="website-line"><strong>TrainingBot</strong><span class="mini-dot"></span></div><small id="websiteSummaryTrainingBot">6 AI · 5 nhiệm vụ</small></div>
+          <div class="website"><div class="website-line"><strong>Toolpick</strong><span class="mini-dot"></span></div><small>5 AI · 3 nhiệm vụ</small></div>
+          <div class="website"><div class="website-line"><strong>HMOOB MUSIC</strong><span class="mini-dot warn"></span></div><small id="websiteSummaryHmoob">6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi</small></div>
+          <div class="website"><div class="website-line"><strong>Toolpick Mail</strong><span class="mini-dot"></span></div><small>5 AI · bảo mật bình thường</small></div>
+          <div class="website"><div class="website-line"><strong>Mầm Kids</strong><span class="mini-dot"></span></div><small>4 AI · giao diện ổn định</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-staff">
+      <div class="page-card">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap">
+          <div>
+            <h2 style="margin-bottom:6px">Nhân viên</h2>
+            <p style="color:var(--muted);margin:0">Đội ngũ nhân viên độc lập do CEO quản lý.</p>
+          </div>
+          <span id="simpleEmployeeCount" style="font-size:12px;color:var(--muted)">0 nhân viên</span>
+        </div>
+        <div class="simple-employee-form" style="margin-top:16px">
+          <input id="simpleEmployeeName" placeholder="Tên / mã nhân viên">
+          <input id="simpleEmployeeRole" placeholder="Vai trò">
+          <input id="simpleEmployeeTask" placeholder="Nhiệm vụ hiện tại">
+          <select id="simpleEmployeeStatus">
+            <option>Sẵn sàng</option>
+            <option>Đang làm việc</option>
+            <option>Tạm nghỉ</option>
+          </select>
+          <button class="primary-btn" id="simpleEmployeeAdd" type="button">Thêm nhân viên</button>
+        </div>
+        <div class="staff-grid" id="simpleEmployeeGrid" style="margin-top:16px"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-tasks">
+      <div class="page-card">
+        <h2>Nhiệm vụ toàn công ty</h2>
+        <table class="table">
+          <thead><tr><th>ID</th><th>Nhiệm vụ</th><th>Website</th><th>AI phụ trách</th><th>Tiến độ</th></tr></thead>
+          <tbody>
+            <tr><td>#1842</td><td>Kiểm tra API Theo dõi truy cập</td><td>TrainingBot</td><td>DEV-TB-01</td><td>68%</td></tr>
+            <tr><td>#1843</td><td>Kiểm thử mobile</td><td>HMOOB MUSIC</td><td>Kiểm thử-HM-01</td><td>42%</td></tr>
+            <tr><td>#1844</td><td>Kiểm tra backup</td><td>Toolpick</td><td>OPS-TP-01</td><td>92%</td></tr>
+            <tr><td>#1845</td><td>Rà soát phiên đăng nhập</td><td>Toolpick Mail</td><td>SEC-ML-01</td><td>75%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-approvals">
+      <div class="page-card">
+        <h2>Trung tâm phê duyệt</h2>
+        <p style="color:var(--muted)">Mọi thao tác production, quyền cao, chi phí hoặc thay đổi nhạy cảm sẽ dừng ở đây để bạn quyết định.</p>
+        <div class="approval-list" id="approvalListFull" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-execution">
+      <div class="page-card">
+        <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap">
+          <div>
+            <h2 style="margin-bottom:6px">▶ Bộ thực thi có kiểm soát — Giai đoạn 5</h2>
+            <p style="color:var(--muted);line-height:1.65;margin:0;max-width:900px">AION HQ đã có kênh thực thi thật đầu tiên cho TrainingBot bằng GitHub Actions. Việc an toàn chạy trên nhánh <b>aion-sandbox</b>; production vẫn bị khóa và không có token bí mật nào được đặt trong trình duyệt.</p>
+          </div>
+          <button class="small-btn" id="executorRefresh" type="button">Kiểm tra trạng thái thật</button>
+        </div>
+
+        <div class="executor-grid" style="margin-top:18px">
+          <div class="executor-card">
+            <div style="display:flex;justify-content:space-between;gap:8px"><h3>TrainingBot</h3><span class="badge">Đã kết nối</span></div>
+            <p>GitHub: Gamevalentine/trainingbot-cloudflare</p>
+            <p>Nhánh an toàn: <b style="color:var(--text)">aion-sandbox</b></p>
+            <p>Cho phép: kiểm tra shell, build sandbox, so sánh với main.</p>
+            <div class="executor-actions">
+              <a class="small-btn approve executor-link" target="_blank" rel="noopener" href="https://github.com/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml">Mở bộ thực thi GitHub ↗</a>
+            </div>
+          </div>
+          <div class="executor-card">
+            <div style="display:flex;justify-content:space-between;gap:8px"><h3>Production</h3><span class="badge warn">Đang khóa</span></div>
+            <p>Không deploy, đổi DNS, xóa dữ liệu hoặc dùng secret production từ trang AION HQ.</p>
+            <p>Muốn mở production phải có một cổng backend an toàn và một lần phê duyệt riêng cho từng hành động.</p>
+          </div>
+          <div class="executor-card">
+            <div style="display:flex;justify-content:space-between;gap:8px"><h3>Trạng thái GitHub Actions</h3><span class="badge" id="executorLiveBadge">Chưa kiểm tra</span></div>
+            <p id="executorLiveDetail">Bấm “Kiểm tra trạng thái thật” để đọc lần chạy gần nhất.</p>
+            <p id="executorLiveTime"></p>
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;margin-top:18px">
+          <div class="card-head"><div><h2>Hàng đợi thực thi</h2><span>Chỉ tạo sau khi Chủ sở hữu đã phê duyệt</span></div><span id="executionQueueCount">0 việc</span></div>
+          <div class="card-body execution-queue" id="executionQueue"></div>
+        </div>
+
+        <div class="safety-box" style="margin-top:16px">
+          <b>Cơ chế an toàn:</b> workflow hiện có quyền GitHub chỉ đọc, checkout đúng nhánh <b>aion-sandbox</b>, yêu cầu nhập câu xác nhận <b>AION-SANDBOX</b>, và không chứa bước deploy production.
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-reports">
+      <div class="page-card">
+        <h2>Báo cáo điều hành</h2>
+        <table class="table">
+          <thead><tr><th>Chu kỳ</th><th>CEO kết luận</th><th>Hoàn thành</th><th>Cần duyệt</th></tr></thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view" id="view-office">
+      <div class="page-card">
+        <h2>Văn phòng AI</h2>
+        <p style="color:var(--muted)">Mỗi website có một đội nhân viên AI khác nhau, được thiết kế theo đúng loại công việc của website đó. Bấm vào văn phòng để quan sát chi tiết.</p>
+        <div class="office" style="margin-top:16px">
+          <a class="room room-link" href="office/trainingbot/"><div class="room-top"><h3>TrainingBot Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>💻</span>Lập trình viên</div><div class="desk"><span>✍️</span>Nội dung</div><div class="desk"><span>🔎</span>SEO</div><div class="desk"><span>📊</span>Phân tích</div><div class="desk"><span>📰</span>Tin tức & cập nhật</div><div class="desk"><span>💬</span>Hỗ trợ cộng đồng</div></div></a>
+          <a class="room room-link" href="office/toolpick/"><div class="room-top"><h3>Toolpick Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🛠️</span>Lập trình full-stack</div><div class="desk"><span>☁️</span>Vận hành hệ thống</div><div class="desk"><span>🛡️</span>Bảo mật</div><div class="desk"><span>🔌</span>Tích hợp</div><div class="desk"><span>⚡</span>Hiệu năng</div><div class="desk"><span>🧪</span>Kiểm thử</div></div></a>
+          <a class="room room-link" href="office/hmoob-music/"><div class="room-top"><h3>HMOOB MUSIC Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🛍️</span>Danh mục</div><div class="desk"><span>💰</span>Kinh doanh</div><div class="desk"><span>💬</span>Chăm sóc khách hàng</div><div class="desk"><span>🎨</span>UI/UX</div><div class="desk"><span>🔎</span>SEO/Nội dung</div><div class="desk"><span>📦</span>Order Kiểm thử</div></div></a>
+          <a class="room room-link" href="office/toolpick-mail/"><div class="room-top"><h3>Văn phòng Toolpick Mail</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>⚙️</span>Lập trình máy chủ</div><div class="desk"><span>📨</span>Hạ tầng thư điện tử</div><div class="desk"><span>🔐</span>Xác thực</div><div class="desk"><span>📬</span>Đảm bảo gửi thư</div><div class="desk"><span>🛡️</span>Bảo mật</div><div class="desk"><span>☁️</span>Vận hành hệ thống</div></div></a>
+          <a class="room room-link" href="office/mam-kids/"><div class="room-top"><h3>Mầm Kids Văn phòng</h3><span class="room-open">Mở văn phòng →</span></div><div class="desks"><div class="desk"><span>🎨</span>UI/UX</div><div class="desk"><span>💻</span>Giao diện</div><div class="desk"><span>📚</span>Education Nội dung</div><div class="desk"><span>🧸</span>Trải nghiệm trẻ em</div><div class="desk"><span>🧪</span>Kiểm thử đa thiết bị</div><div class="desk"><span>🎞️</span>Đa phương tiện & hoạt ảnh</div></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-logs">
+      <div class="page-card">
+        <h2>Nhật ký quyết định</h2>
+        <table class="table">
+          <thead><tr><th>Thời gian</th><th>AI</th><th>Hành động</th><th>Quyền</th></tr></thead>
+          <tbody id="decisionLogBody"></tbody>
+        </table>
       </div>
     </section>
   </main>
 </div>
 
+<div class="modal" id="detailModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="modalTitle">Văn phòng</h3><button class="close" id="modalClose">×</button></div>
+    <div class="modal-body">
+      <div id="modalStatus" style="color:var(--muted)"></div>
+      <div class="modal-grid">
+        <div class="mini-stat"><b id="modalStaff">0</b><small>Nhân viên AI</small></div>
+        <div class="mini-stat"><b id="modalTasks">0</b><small>Nhiệm vụ</small></div>
+        <div class="mini-stat"><b>1</b><small>Trưởng phòng</small></div>
+      </div>
+      <h4>Mục tiêu hiện tại</h4>
+      <p id="modalGoal" style="color:var(--muted);line-height:1.65"></p>
+      <button class="primary-btn" id="openVăn phòng">Mở phòng làm việc</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="ceoModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3>🧠 Báo cáo nhanh từ ATLAS</h3><button class="close" id="ceoClose">×</button></div>
+    <div class="modal-body">
+      <p id="ceoBriefSummary" style="line-height:1.7;margin-top:0"></p>
+      <p id="ceoBriefDetail" style="color:var(--muted);line-height:1.7"></p>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-  const memoryKey='aiCompany.ceo.memory.v1';
-  const priorityKey='aiCompany.ceo.priorities.v1';
-  const employeeKey='aiCompany.employees.v1';
-  const viewKey='aiCompany.simple.view.v1';
+  const navButtons=[...document.querySelectorAll('.nav-btn')];
+  const views=[...document.querySelectorAll('.view')];
+  const titles={
+    overview:['Trung tâm điều hành','CEO AI đang quản lý toàn bộ hệ sinh thái website.'],
+    ceo:['CEO','ATLAS và toàn bộ bộ não điều hành.'],
+    departments:['Các Trưởng phòng','Mỗi Trưởng phòng chịu trách nhiệm một website.'],
+    websites:['Website','Toàn bộ tài sản số đang được AION HQ quản lý.'],
+    staff:['Nhân viên','Đội ngũ nhân viên độc lập để CEO quản lý.'],
+    tasks:['Nhiệm vụ','Công việc AI đang thực hiện trên toàn công ty.'],
+    approvals:['Phê duyệt','Những việc AI bắt buộc phải xin quyền từ bạn.'],
+    execution:['Thực thi','Các hành động thật được đưa qua cổng an toàn sau khi bạn phê duyệt.'],
+    reports:['Báo cáo','Kết quả điều hành do CEO tổng hợp.'],
+    office:['Văn phòng AI','Chế độ trực quan theo dõi AI đang làm việc.'],
+    logs:['Nhật ký','Lịch sử quyết định và hành động của các AI.']
+  };
 
-  const defaultMemories=[
+  function switchView(name){
+    navButtons.forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+    views.forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+    document.getElementById('pageTitle').textContent=titles[name][0];
+    document.getElementById('pageSubtitle').textContent=titles[name][1];
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  navButtons.forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
+  document.getElementById('mobileToggle').onclick=()=>document.getElementById('sidebar').classList.toggle('open');
+
+  const modal=document.getElementById('detailModal');
+  document.querySelectorAll('.manager').forEach(m=>m.addEventListener('click',()=>{
+    document.getElementById('modalTitle').textContent=m.dataset.name+' Văn phòng';
+    document.getElementById('modalStatus').textContent='Trạng thái: '+m.dataset.status;
+    document.getElementById('modalStaff').textContent=m.dataset.staff;
+    document.getElementById('modalTasks').textContent=m.dataset.tasks;
+    document.getElementById('modalGoal').textContent=m.dataset.goal;
+    modal.classList.add('show');
+  }));
+  document.getElementById('modalClose').onclick=()=>modal.classList.remove('show');
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+  document.getElementById('openVăn phòng').onclick=()=>{modal.classList.remove('show');switchView('staff')};
+
+  const ceoModal=document.getElementById('ceoModal');
+  document.getElementById('ceoBriefBtn').onclick=()=>{renderCeoBrief();ceoModal.classList.add('show')};
+  document.getElementById('ceoClose').onclick=()=>ceoModal.classList.remove('show');
+  ceoModal.addEventListener('click',e=>{if(e.target===ceoModal)ceoModal.classList.remove('show')});
+
+  // CEO Giai đoạn 4: trạng thái dùng chung cho mục tiêu, giao việc, phê duyệt, báo cáo và nhật ký.
+  const phase4Key='aiCompany.ceo.phase4.v1';
+  const phase4Defaults={
+    goals:[
+      {id:'G-001',title:'Ổn định các luồng API quan trọng của TrainingBot',basis:'Kiểm tra nguồn thật cho thấy TrainingBot là tài sản đang hoạt động; các luồng API có ảnh hưởng trực tiếp người dùng.',website:'TrainingBot',owner:'TB-01',priority:'Cao',deadline:'Trong phiên kiểm tra hiện tại',criteria:'Có kết quả kiểm thử rõ ràng; nếu cần production thì phải tạo yêu cầu phê duyệt.',status:'Đã giao'},
+      {id:'G-002',title:'Theo dõi hiệu năng mobile của HMOOB MUSIC',basis:'Hiệu năng mobile đang được đánh dấu cần theo dõi trong bảng điều hành.',website:'HMOOB MUSIC',owner:'HM-01',priority:'Cao',deadline:'Trước khi mở thêm thay đổi giao diện',criteria:'Có bằng chứng kiểm thử mobile và kết luận đạt/chưa đạt; không tự đổi production.',status:'Đã giao'},
+      {id:'G-003',title:'Chuẩn hóa cách CEO tạo, giao và nghiệm thu mục tiêu',basis:'Bộ máy cần một luồng thống nhất để tránh giao việc mơ hồ hoặc báo hoàn thành khi chưa có bằng chứng.',website:'AION HQ',owner:'ATLAS',priority:'Trung bình',deadline:'Giai đoạn 4',criteria:'Mục tiêu có đủ hồ sơ; trạng thái giao việc, phê duyệt, báo cáo và nhật ký đồng bộ.',status:'Đang thực hiện'}
+    ],
+    tasks:[
+      {id:'CEO-1842',goalId:'G-001',title:'Kiểm tra API Theo dõi truy cập',website:'TrainingBot',assignee:'TB-01',status:'assigned',progress:25,evidence:''},
+      {id:'CEO-1843',goalId:'G-002',title:'Kiểm thử hiệu năng và giao diện mobile',website:'HMOOB MUSIC',assignee:'HM-01',status:'accepted',progress:50,evidence:''},
+      {id:'CEO-1844',goalId:'G-003',title:'Đối chiếu trạng thái giữa CEO, Phê duyệt, Báo cáo và Nhật ký',website:'AION HQ',assignee:'ATLAS',status:'evidence_ready',progress:85,evidence:'Đã dùng chung một state có ID/trạng thái; chờ nghiệm thu trên giao diện.'}
+    ],
+    approvals:[
+      {id:'APR-001',title:'Deploy bản sửa #1842',website:'TrainingBot',risk:'Vừa',description:'Lập trình viên và Kiểm thử đã hoàn thành bản sửa. CEO yêu cầu quyền triển khai production.',status:'pending',linkedTask:'CEO-1842'},
+      {id:'APR-002',title:'Thay đổi cấu hình cache',website:'HMOOB MUSIC',risk:'Cao',description:'Đề xuất thay đổi cấu hình nhằm cải thiện tốc độ. Cần Chủ sở hữu duyệt trước khi tác động production.',status:'pending',linkedTask:'CEO-1843'},
+      {id:'APR-003',title:'Xuất bản 2 bài SEO',website:'TrainingBot',risk:'Thấp',description:'Nội dung đã qua rà soát; việc xuất bản thật vẫn phải chờ Chủ sở hữu quyết định.',status:'pending',linkedTask:'CEO-1842'}
+    ],
+    logs:[
+      {time:'22:01',actor:'ATLAS',action:'Giao kiểm thử HMOOB MUSIC trên mobile.',permission:'Tự động'},
+      {time:'21:54',actor:'TB-01',action:'Nhận mục tiêu kiểm tra luồng API TrainingBot.',permission:'Tự động'},
+      {time:'21:43',actor:'ATLAS',action:'Tạo hồ sơ mục tiêu có căn cứ và tiêu chí hoàn thành.',permission:'Tự động'},
+      {time:'21:30',actor:'ATLAS',action:'Khởi tạo Giai đoạn 4 với trạng thái dùng chung.',permission:'Tự động'}
+    ]
+  };
+
+  function clonePhase4Defaults(){ return JSON.parse(JSON.stringify(phase4Defaults)); }
+  function getPhase4State(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(phase4Key)||'null');
+      if(!saved||!Array.isArray(saved.goals)||!Array.isArray(saved.tasks)||!Array.isArray(saved.approvals)||!Array.isArray(saved.logs)) return clonePhase4Defaults();
+      return saved;
+    }catch(e){ return clonePhase4Defaults(); }
+  }
+  let phase4State=getPhase4State();
+
+  const phase5Key='aiCompany.ceo.phase5.v1';
+  const executorConfig={
+    TrainingBot:{
+      repo:'Gamevalentine/trainingbot-cloudflare',
+      branch:'aion-sandbox',
+      workflow:'aion-safe-executor.yml',
+      workflowUrl:'https://github.com/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml',
+      runsApi:'https://api.github.com/repos/Gamevalentine/trainingbot-cloudflare/actions/workflows/aion-safe-executor.yml/runs?per_page=5'
+    }
+  };
+  function getPhase5State(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(phase5Key)||'null');
+      return saved&&Array.isArray(saved.executions)?saved:{executions:[],lastRun:null};
+    }catch(e){ return {executions:[],lastRun:null}; }
+  }
+  let phase5State=getPhase5State();
+  function savePhase5State(){ localStorage.setItem(phase5Key,JSON.stringify(phase5State)); }
+
+  function savePhase4State(){
+    localStorage.setItem(phase4Key,JSON.stringify(phase4State));
+  }
+  function nowTime(){
+    return new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+  }
+  function addPhase4Log(actor,action,permission='Tự động'){
+    phase4State.logs.unshift({time:nowTime(),actor,action,permission});
+    phase4State.logs=phase4State.logs.slice(0,30);
+  }
+  function escapeHtml(value){
+    return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+  }
+  function statusLabel(status){
+    return ({assigned:'Đã giao',accepted:'Đã nhận',evidence_ready:'Chờ nghiệm thu',completed:'Hoàn thành'}[status]||status);
+  }
+  function statusBadgeClass(status){
+    return status==='completed'?'badge':(status==='assigned'||status==='evidence_ready'?'badge warn':'badge');
+  }
+  function pendingApprovals(){ return phase4State.approvals.filter(x=>x.status==='pending'); }
+
+  function toast(msg){
+    const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),2200);
+  }
+
+  function renderPhase4Goals(){
+    const host=document.getElementById('ceoGoalProfiles');
+    if(!host) return;
+    document.getElementById('ceoGoalCount').textContent=phase4State.goals.length+' mục tiêu';
+    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
+    const metric=document.getElementById('ceoGoalMetric');
+    if(metric) metric.textContent=activeGoals;
+    host.innerHTML=phase4State.goals.map(g=>`
+      <div class="phase4-goal">
+        <div class="phase4-goal-top">
+          <div><b>${escapeHtml(g.id)} · ${escapeHtml(g.title)}</b><div class="role" style="margin-top:5px;line-height:1.5">${escapeHtml(g.basis)}</div></div>
+          <span class="badge ${g.priority==='Cao'?'warn':''}">${escapeHtml(g.status)}</span>
+        </div>
+        <div class="phase4-meta">
+          <div><b>Website</b><br>${escapeHtml(g.website)}</div>
+          <div><b>Phụ trách</b><br>${escapeHtml(g.owner)}</div>
+          <div><b>Ưu tiên</b><br>${escapeHtml(g.priority)}</div>
+          <div><b>Thời hạn</b><br>${escapeHtml(g.deadline)}</div>
+        </div>
+        <div class="phase4-evidence"><b>Tiêu chí hoàn thành:</b> ${escapeHtml(g.criteria)}</div>
+      </div>`).join('');
+  }
+
+  function renderPhase4Workflow(){
+    const host=document.getElementById('ceoWorkflowList');
+    if(!host) return;
+    const active=phase4State.tasks.filter(t=>t.status!=='completed').length;
+    document.getElementById('ceoWorkflowCount').textContent=active+' việc đang mở';
+    host.innerHTML=phase4State.tasks.map(t=>{
+      let action='';
+      if(t.status==='assigned') action=`<button class="small-btn approve" data-phase4-action="accept" data-task="${t.id}">Trưởng phòng nhận việc</button>`;
+      if(t.status==='accepted') action=`<button class="small-btn approve" data-phase4-action="evidence" data-task="${t.id}">Gửi bằng chứng nghiệm thu</button>`;
+      if(t.status==='evidence_ready') action=`<button class="small-btn approve" data-phase4-action="complete" data-task="${t.id}">CEO nghiệm thu</button>`;
+      return `<div class="phase4-work">
+        <div class="phase4-work-head">
+          <div><b>${escapeHtml(t.id)} · ${escapeHtml(t.title)}</b><div class="role" style="margin-top:5px">${escapeHtml(t.website)} · ${escapeHtml(t.assignee)} · Mục tiêu ${escapeHtml(t.goalId)}</div></div>
+          <span class="${statusBadgeClass(t.status)}">${escapeHtml(statusLabel(t.status))}</span>
+        </div>
+        <div class="progress" style="width:100%;margin-top:10px"><small>${Number(t.progress)||0}%</small><div class="bar"><i style="width:${Math.max(0,Math.min(100,Number(t.progress)||0))}%"></i></div></div>
+        ${t.evidence?`<div class="phase4-evidence"><b>Bằng chứng:</b> ${escapeHtml(t.evidence)}</div>`:''}
+        <div class="phase4-actions">${action}</div>
+      </div>`;
+    }).join('');
+    host.querySelectorAll('[data-phase4-action]').forEach(btn=>btn.onclick=()=>{
+      const task=phase4State.tasks.find(t=>t.id===btn.dataset.task);
+      if(!task) return;
+      const action=btn.dataset.phase4Action;
+      if(action==='accept'&&task.status==='assigned'){
+        task.status='accepted';task.progress=Math.max(task.progress,40);
+        addPhase4Log(task.assignee,'Đã nhận việc '+task.id+': '+task.title+'.','Tự động');
+        toast('Trưởng phòng đã nhận việc.');
+      }else if(action==='evidence'&&task.status==='accepted'){
+        task.status='evidence_ready';task.progress=Math.max(task.progress,85);
+        task.evidence='Đã hoàn thành bước kiểm tra trong môi trường an toàn và gửi kết quả để CEO nghiệm thu.';
+        addPhase4Log(task.assignee,'Đã gửi bằng chứng cho '+task.id+'.','Tự động');
+        toast('Đã gửi bằng chứng, chờ CEO nghiệm thu.');
+      }else if(action==='complete'&&task.status==='evidence_ready'){
+        task.status='completed';task.progress=100;
+        const goal=phase4State.goals.find(g=>g.id===task.goalId);
+        if(goal) goal.status='Hoàn thành';
+        addPhase4Log('ATLAS','Nghiệm thu '+task.id+' sau khi có bằng chứng.','Tự động');
+        toast('CEO đã nghiệm thu nhiệm vụ.');
+      }
+      savePhase4State();renderPhase4();
+    });
+  }
+
+  function queueExecutionForApproval(a){
+    if(a.status!=='approved') return;
+    if(phase5State.executions.some(x=>x.approvalId===a.id)) return;
+    const cfg=executorConfig[a.website];
+    const safeAction=(a.id==='APR-001'&&cfg)?'validate-sandbox':null;
+    phase5State.executions.unshift({
+      id:'EXE-'+a.id,
+      approvalId:a.id,
+      taskId:a.linkedTask||'',
+      website:a.website,
+      title:a.title,
+      status:safeAction?'ready':'blocked',
+      safeAction:safeAction||'',
+      environment:safeAction?cfg.branch:'production',
+      createdAt:new Date().toISOString()
+    });
+    savePhase5State();
+    addPhase4Log('ATLAS',safeAction?'Đã đưa '+a.id+' vào hàng đợi thực thi an toàn trên '+cfg.branch+'.':'Đã ghi nhận '+a.id+' nhưng chưa có executor an toàn phù hợp; production tiếp tục bị khóa.','Thực thi');
+  }
+
+  function executionStatusLabel(status){
+    return ({ready:'Sẵn sàng chạy',blocked:'Bị khóa',running:'Đang chạy',success:'Đã kiểm tra',failed:'Kiểm tra lỗi'}[status]||status);
+  }
+
+  function renderExecutionQueue(){
+    const host=document.getElementById('executionQueue');
+    if(!host) return;
+    const ready=phase5State.executions.filter(x=>x.status==='ready'||x.status==='running').length;
+    const nav=document.getElementById('navExecutionCount');if(nav)nav.textContent=ready;
+    const count=document.getElementById('executionQueueCount');if(count)count.textContent=phase5State.executions.length+' việc';
+    if(!phase5State.executions.length){
+      host.innerHTML='<p style="color:var(--muted);margin:0">Chưa có hành động nào được đưa vào hàng đợi. Khi bạn duyệt một yêu cầu phù hợp, ATLAS sẽ tạo lệnh thực thi ở đây.</p>';
+      return;
+    }
+    host.innerHTML=phase5State.executions.map(x=>{
+      const cfg=executorConfig[x.website];
+      const action=x.status==='ready'&&cfg?'<a class="small-btn approve executor-link" target="_blank" rel="noopener" href="'+cfg.workflowUrl+'">Mở GitHub để chạy ↗</a><button class="small-btn" data-copy-execution="'+escapeHtml(x.id)+'">Chép thông số</button>':'';
+      return '<div class="execution-item"><div class="execution-top"><div><b>'+escapeHtml(x.id)+' · '+escapeHtml(x.title)+'</b><div class="execution-meta">'+escapeHtml(x.website)+' · '+escapeHtml(x.environment)+' · từ '+escapeHtml(x.approvalId)+'</div></div><span class="'+(x.status==='blocked'?'badge warn':'badge')+'">'+escapeHtml(executionStatusLabel(x.status))+'</span></div>'+(x.status==='blocked'?'<div class="phase4-evidence"><b>Đang khóa:</b> hành động này có thể tác động production hoặc chưa có executor an toàn tương ứng.</div>':'<div class="phase4-evidence"><b>Thao tác:</b> validate-sandbox · <b>Task ID:</b> '+escapeHtml(x.taskId)+' · <b>Xác nhận:</b> AION-SANDBOX</div>')+'<div class="executor-actions">'+action+'</div></div>';
+    }).join('');
+    host.querySelectorAll('[data-copy-execution]').forEach(btn=>btn.onclick=async()=>{
+      const x=phase5State.executions.find(e=>e.id===btn.dataset.copyExecution);
+      if(!x) return;
+      const text='task_id='+x.taskId+' | operation=validate-sandbox | confirm=AION-SANDBOX';
+      try{ await navigator.clipboard.writeText(text); toast('Đã chép thông số thực thi.'); }
+      catch(e){ toast(text); }
+    });
+  }
+
+  async function refreshExecutorStatus(){
+    const badge=document.getElementById('executorLiveBadge');
+    const detail=document.getElementById('executorLiveDetail');
+    const time=document.getElementById('executorLiveTime');
+    const button=document.getElementById('executorRefresh');
+    if(!badge||!detail) return;
+    if(button){button.disabled=true;button.textContent='Đang kiểm tra...'}
+    badge.textContent='Đang đọc';
+    try{
+      const res=await fetch(executorConfig.TrainingBot.runsApi,{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data=await res.json();
+      const run=(data.workflow_runs||[])[0];
+      if(!run){
+        badge.textContent='Chưa có lần chạy';
+        detail.textContent='Workflow đã kết nối nhưng chưa có lịch sử thực thi.';
+      }else{
+        const label=run.status==='completed'?(run.conclusion==='success'?'Thành công':'Lỗi'):'Đang chạy';
+        badge.textContent=label;
+        badge.classList.toggle('warn',label==='Lỗi');
+        detail.textContent='Lần chạy #'+run.run_number+' · '+(run.name||'AION HQ Safe Executor')+' · '+label;
+        if(time) time.textContent='Cập nhật: '+new Date(run.updated_at||run.created_at).toLocaleString('vi-VN');
+        phase5State.lastRun={id:run.id,status:run.status,conclusion:run.conclusion,updatedAt:run.updated_at||run.created_at};
+        savePhase5State();
+      }
+    }catch(error){
+      badge.textContent='Không đọc được';
+      badge.classList.add('warn');
+      detail.textContent='Không lấy được trạng thái GitHub Actions ở lần kiểm tra này.';
+    }finally{
+      if(button){button.disabled=false;button.textContent='Kiểm tra trạng thái thật'}
+    }
+  }
+
+  function approvalHtml(a){
+    const riskClass=a.risk==='Cao'?'high':'med';
+    return `<div class="approval" data-approval-id="${escapeHtml(a.id)}">
+      <div class="approval-top"><div><strong>${escapeHtml(a.title)}</strong><small>${escapeHtml(a.website)} · ${escapeHtml(a.id)}</small></div><span class="risk ${riskClass}">Rủi ro ${escapeHtml(a.risk.toLowerCase())}</span></div>
+      <p>${escapeHtml(a.description)}</p>
+      <div class="approve-actions"><button class="small-btn approve" data-approval-action="approved" data-id="${escapeHtml(a.id)}">✓ Duyệt</button><button class="small-btn reject" data-approval-action="rejected" data-id="${escapeHtml(a.id)}">✕ Từ chối</button></div>
+    </div>`;
+  }
+  function renderApprovals(){
+    const pending=pendingApprovals();
+    const html=pending.length?pending.map(approvalHtml).join(''):'<p style="color:var(--muted)">Không còn yêu cầu nào đang chờ.</p>';
+    ['approvalList','approvalListFull'].forEach(id=>{
+      const host=document.getElementById(id);
+      if(!host) return;
+      host.innerHTML=html;
+      host.querySelectorAll('[data-approval-action]').forEach(btn=>btn.onclick=()=>{
+        const item=phase4State.approvals.find(a=>a.id===btn.dataset.id);
+        if(!item||item.status!=='pending') return;
+        item.status=btn.dataset.approvalAction;
+        item.decidedAt=new Date().toISOString();
+        const word=item.status==='approved'?'duyệt':'từ chối';
+        addPhase4Log('Chủ sở hữu','Đã '+word+' '+item.id+' — '+item.title+'.','Phê duyệt');
+        if(item.status==='approved') queueExecutionForApproval(item);
+        savePhase4State();renderPhase4();
+        toast(item.status==='approved'?'Đã duyệt. Nếu có executor an toàn, việc đã được đưa vào hàng đợi thực thi.':'Đã ghi nhận từ chối.');
+      });
+    });
+    const count=pending.length;
+    ['approvalMetric','navApprovalCount','ceoApprovalMetric'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=count});
+    const header=document.getElementById('approvalHeader');if(header) header.textContent=count+' yêu cầu';
+  }
+
+  function renderOverviewAssigned(){
+    const host=document.getElementById('ceoAssignedList');
+    if(!host) return;
+    const active=phase4State.tasks.filter(t=>t.status!=='completed');
+    document.getElementById('ceoAssignedCount').textContent=active.length+' đang chạy';
+    host.innerHTML=(active.length?active:phase4State.tasks.slice(-3)).map(t=>`
+      <div class="task"><div><strong>${escapeHtml(t.id)} · ${escapeHtml(t.title)}</strong><small>${escapeHtml(t.website)} · ${escapeHtml(t.assignee)} · ${escapeHtml(statusLabel(t.status))}</small></div><div class="progress"><small>${t.progress}%</small><div class="bar"><i style="width:${t.progress}%"></i></div></div></div>
+    `).join('');
+  }
+
+  function renderLogs(){
+    const top=document.getElementById('ceoActivityList');
+    if(top) top.innerHTML=phase4State.logs.slice(0,4).map(l=>`<div class="activity"><div class="time">${escapeHtml(l.time)}</div><p><b>${escapeHtml(l.actor)}</b> ${escapeHtml(l.action)}</p></div>`).join('');
+    const table=document.getElementById('decisionLogBody');
+    if(table) table.innerHTML=phase4State.logs.map(l=>`<tr><td>${escapeHtml(l.time)}</td><td>${escapeHtml(l.actor)}</td><td>${escapeHtml(l.action)}</td><td>${escapeHtml(l.permission)}</td></tr>`).join('');
+  }
+
+  function renderWebsiteApprovalSummaries(){
+    const tb=pendingApprovals().filter(a=>a.website==='TrainingBot').length;
+    const hm=pendingApprovals().filter(a=>a.website==='HMOOB MUSIC').length;
+    const tbEl=document.getElementById('websiteSummaryTrainingBot');
+    const hmEl=document.getElementById('websiteSummaryHmoob');
+    if(tbEl) tbEl.textContent='6 AI · 5 nhiệm vụ'+(tb?' · '+tb+' yêu cầu duyệt':'');
+    if(hmEl) hmEl.textContent='6 AI · 4 nhiệm vụ · hiệu năng đang theo dõi'+(hm?' · '+hm+' yêu cầu duyệt':'');
+  }
+
+  function renderReports(){
+    const body=document.getElementById('reportBody');
+    if(!body) return;
+    const completed=phase4State.tasks.filter(t=>t.status==='completed').length;
+    const total=phase4State.tasks.length;
+    const pending=pendingApprovals().length;
+    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
+    const conclusion=pending?'Có '+pending+' việc chờ Chủ sở hữu; '+activeGoals+' mục tiêu còn mở.':'Không còn yêu cầu phê duyệt; '+activeGoals+' mục tiêu còn mở.';
+    body.innerHTML=`<tr><td>Phiên hiện tại</td><td>${escapeHtml(conclusion)}</td><td>${completed}/${total}</td><td>${pending}</td></tr>
+      <tr><td>Giai đoạn 4</td><td>Dữ liệu mục tiêu, giao việc, phê duyệt và nhật ký đã dùng chung một trạng thái.</td><td>${completed}/${total} nghiệm thu</td><td>${pending}</td></tr>`;
+  }
+
+  function renderCeoBrief(){
+    const pending=pendingApprovals().length;
+    const active=phase4State.tasks.filter(t=>t.status!=='completed').length;
+    const activeGoals=phase4State.goals.filter(g=>g.status!=='Hoàn thành').length;
+    const summary=document.getElementById('ceoBriefSummary');
+    const detail=document.getElementById('ceoBriefDetail');
+    if(summary) summary.textContent='Tôi đang theo dõi '+phase4State.goals.length+' mục tiêu; còn '+activeGoals+' mục tiêu mở, '+active+' việc đang chạy và '+pending+' yêu cầu cần Chủ sở hữu quyết định.';
+    if(detail) detail.textContent='Giai đoạn 5 đã nối TrainingBot với bộ thực thi GitHub Actions trên nhánh aion-sandbox. Production, DNS, xóa dữ liệu, secret và chi phí vẫn bị khóa cho tới khi có cổng an toàn và phê duyệt riêng.';
+  }
+
+  function renderPhase4(){
+    renderPhase4Goals();
+    renderPhase4Workflow();
+    renderApprovals();
+    renderOverviewAssigned();
+    renderWebsiteApprovalSummaries();
+    renderExecutionQueue();
+    renderLogs();
+    renderReports();
+    renderCeoBrief();
+  }
+  savePhase4State();
+  renderPhase4();
+
+  // CEO Giai đoạn 2: bộ nhớ cục bộ + hệ thống ưu tiên.
+  const ceoMemoryKey='aiCompany.ceo.memory.v1';
+  const ceoDefaultMemories=[
     {type:'Quy tắc Chủ sở hữu',text:'Không tự ý phát sinh chi phí nếu chưa được Chủ sở hữu đồng ý.'},
     {type:'Quy tắc Chủ sở hữu',text:'Chỉ thay đổi đúng phạm vi công việc đã được giao; không sửa lan sang phần khác.'},
     {type:'Bài học',text:'Mọi thay đổi mã nguồn phải được kiểm tra chức năng liên quan trước khi báo hoàn thành.'}
   ];
-  const defaultPriorities=[
-    {id:'P-001',name:'Giữ hệ thống ổn định',impact:5,urgency:5,risk:5},
-    {id:'P-002',name:'Cải thiện trải nghiệm sử dụng',impact:4,urgency:3,risk:2}
-  ];
-  const defaultEmployees=[
+
+  function getCeoMemories(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(ceoMemoryKey)||'null');
+      return Array.isArray(saved)?saved:ceoDefaultMemories;
+    }catch(e){
+      return ceoDefaultMemories;
+    }
+  }
+
+  function saveCeoMemories(items){
+    localStorage.setItem(ceoMemoryKey,JSON.stringify(items));
+  }
+
+  function renderCeoMemories(){
+    const list=document.getElementById('ceoMemoryList');
+    const count=document.getElementById('ceoMemoryCount');
+    if(!list||!count) return;
+    const items=getCeoMemories();
+    count.textContent=items.length+' mục';
+    list.innerHTML='';
+    items.forEach((item,index)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:grid;grid-template-columns:140px 1fr auto;gap:8px;align-items:start;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0d1c30';
+      const type=document.createElement('div');
+      type.style.cssText='font-size:10px;color:#8bdcf0;font-weight:700';
+      type.textContent=item.type;
+      const body=document.createElement('div');
+      body.style.cssText='font-size:11px;line-height:1.5;color:#c6d4e5';
+      body.textContent=item.text;
+      const del=document.createElement('button');
+      del.type='button';
+      del.className='small-btn reject';
+      del.textContent='Xóa';
+      del.onclick=()=>{
+        const next=getCeoMemories();
+        next.splice(index,1);
+        saveCeoMemories(next);
+        renderCeoMemories();
+      };
+      row.append(type,body,del);
+      list.appendChild(row);
+    });
+  }
+
+  const ceoMemorySave=document.getElementById('ceoMemorySave');
+  if(ceoMemorySave){
+    ceoMemorySave.onclick=()=>{
+      const input=document.getElementById('ceoMemoryInput');
+      const type=document.getElementById('ceoMemoryType');
+      const value=(input.value||'').trim();
+      if(!value){ toast('Nhập nội dung CEO cần ghi nhớ trước.'); return; }
+      const items=getCeoMemories();
+      items.unshift({type:type.value,text:value});
+      saveCeoMemories(items);
+      input.value='';
+      renderCeoMemories();
+      toast('CEO đã lưu ghi nhớ trên trình duyệt này.');
+    };
+    document.getElementById('ceoMemoryInput').addEventListener('keydown',e=>{
+      if(e.key==='Enter') ceoMemorySave.click();
+    });
+    renderCeoMemories();
+  }
+
+  function renderCeoPriorities(){
+    const list=document.getElementById('ceoPriorityList');
+    if(!list) return;
+    const items=[...list.querySelectorAll('.ceo-priority-item')];
+    items.forEach(item=>{
+      const impact=Number(item.dataset.impact||0);
+      const urgency=Number(item.dataset.urgency||0);
+      const risk=Number(item.dataset.risk||0);
+      const score=impact*2+urgency*2+risk;
+      let level='Thấp';
+      if(score>=20) level='Khẩn cấp';
+      else if(score>=15) level='Cao';
+      else if(score>=9) level='Trung bình';
+      const badge=item.querySelector('.ceo-priority-badge');
+      const scoreText=item.querySelector('.ceo-priority-score');
+      badge.textContent=level;
+      badge.classList.toggle('warn',level==='Trung bình');
+      if(level==='Khẩn cấp'||level==='Cao'){
+        badge.style.background='rgba(251,113,133,.10)';
+        badge.style.color='#fda4af';
+        badge.style.borderColor='rgba(251,113,133,.20)';
+      }
+      scoreText.textContent='Điểm '+score+'/25 · Ảnh hưởng '+impact+'/5 · Khẩn cấp '+urgency+'/5 · Rủi ro '+risk+'/5';
+      item.dataset.score=String(score);
+    });
+    items.sort((a,b)=>Number(b.dataset.score)-Number(a.dataset.score)).forEach(item=>list.appendChild(item));
+  }
+  renderCeoPriorities();
+
+  // CEO Giai đoạn 3: đọc dữ liệu thật ở chế độ chỉ đọc.
+  async function checkCeoLiveSource(card){
+    const status=card.querySelector('.ceo-live-status');
+    const detail=card.querySelector('.ceo-live-detail');
+    const kind=card.dataset.kind;
+    const url=card.dataset.url;
+    if(!status||!detail||!url) return;
+
+    status.textContent='Đang kiểm tra';
+    status.classList.remove('warn');
+    status.style.background='';
+    status.style.color='';
+    status.style.borderColor='';
+    detail.textContent='ATLAS đang đọc nguồn dữ liệu...';
+
+    const started=performance.now();
+    try{
+      if(kind==='github'){
+        const res=await fetch(url,{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const data=await res.json();
+        const pushed=data.pushed_at?new Date(data.pushed_at).toLocaleString('vi-VN'):'Không rõ';
+        status.textContent='Đã kết nối';
+        detail.textContent='Nhánh mặc định: '+(data.default_branch||'không rõ')+' · Cập nhật mã nguồn gần nhất: '+pushed;
+      }else{
+        await fetch(url,{method:'GET',mode:'no-cors',cache:'no-store',redirect:'follow'});
+        const ms=Math.max(1,Math.round(performance.now()-started));
+        status.textContent='Có phản hồi';
+        detail.textContent='Kết nối mạng thành công · khoảng '+ms+' ms';
+      }
+    }catch(error){
+      status.textContent='Không truy cập được';
+      status.classList.add('warn');
+      status.style.background='rgba(251,113,133,.10)';
+      status.style.color='#fda4af';
+      status.style.borderColor='rgba(251,113,133,.20)';
+      detail.textContent='Không nhận được phản hồi từ nguồn này ở lần kiểm tra hiện tại.';
+    }
+  }
+
+  async function refreshCeoLiveData(){
+    const button=document.getElementById('ceoLiveRefresh');
+    const last=document.getElementById('ceoLiveLastCheck');
+    const cards=[...document.querySelectorAll('.ceo-live-source')];
+    if(!cards.length) return;
+    if(button){
+      button.disabled=true;
+      button.textContent='Đang kiểm tra...';
+    }
+    await Promise.all(cards.map(checkCeoLiveSource));
+    if(last) last.textContent='Kiểm tra lúc '+new Date().toLocaleString('vi-VN');
+    if(button){
+      button.disabled=false;
+      button.textContent='Kiểm tra lại';
+    }
+  }
+
+  const ceoLiveRefresh=document.getElementById('ceoLiveRefresh');
+  if(ceoLiveRefresh){
+    ceoLiveRefresh.addEventListener('click',refreshCeoLiveData);
+    refreshCeoLiveData();
+  }
+
+  const executorRefresh=document.getElementById('executorRefresh');
+  if(executorRefresh) executorRefresh.addEventListener('click',refreshExecutorStatus);
+
+  if(location.hash==='#office' || localStorage.getItem('aiCompanyView')==='office'){
+    switchView('office');
+    localStorage.removeItem('aiCompanyView');
+  }
+
+  // AION HQ tối giản: chỉ CEO + Nhân viên xuất hiện trong điều hướng.
+  const simpleEmployeeKey='aiCompany.employees.v1';
+  const simpleViewKey='aiCompany.simple.view.v1';
+  const simpleEmployeeDefaults=[
     {id:'EMP-001',name:'DEV-01',role:'Lập trình viên',task:'Chờ CEO giao việc',status:'Sẵn sàng'},
     {id:'EMP-002',name:'QA-01',role:'Kiểm thử',task:'Chờ CEO giao việc',status:'Sẵn sàng'},
     {id:'EMP-003',name:'OPS-01',role:'Vận hành',task:'Chờ CEO giao việc',status:'Sẵn sàng'}
   ];
-
-  function load(key,fallback){
-    try{const value=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(value)?value:fallback}
-    catch(e){return fallback}
+  function simpleLoadEmployees(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(simpleEmployeeKey)||'null');
+      return Array.isArray(saved)?saved:simpleEmployeeDefaults;
+    }catch(e){ return simpleEmployeeDefaults; }
   }
-  function save(key,value){localStorage.setItem(key,JSON.stringify(value))}
-  function escapeHtml(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]})}
-  function toast(message){
-    const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');
-    clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(function(){el.classList.remove('show')},1800)
+  let simpleEmployees=simpleLoadEmployees();
+  function simpleSaveEmployees(){ localStorage.setItem(simpleEmployeeKey,JSON.stringify(simpleEmployees)); }
+  function simpleEmployeeBadge(status){
+    if(status==='Tạm nghỉ') return 'badge warn';
+    return 'badge';
   }
-
-  let memories=load(memoryKey,defaultMemories);
-  let priorities=load(priorityKey,defaultPriorities);
-  let employees=load(employeeKey,defaultEmployees);
-
-  function renderMemories(){
-    const list=document.getElementById('brainList');
-    document.getElementById('brainCount').textContent=memories.length+' mục';
-    document.getElementById('brainCountTop').textContent=memories.length;
-    if(!memories.length){list.innerHTML='<div class="empty">CEO chưa có ghi nhớ nào.</div>';return}
-    list.innerHTML=memories.map(function(item,index){
-      return '<div class="memory-item"><div class="memory-type">'+escapeHtml(item.type)+'</div><div class="memory-text">'+escapeHtml(item.text)+'</div><button class="small-btn danger" data-memory-delete="'+index+'">Xóa</button></div>'
-    }).join('');
-    list.querySelectorAll('[data-memory-delete]').forEach(function(btn){
-      btn.onclick=function(){memories.splice(Number(btn.dataset.memoryDelete),1);save(memoryKey,memories);renderMemories();toast('Đã xóa ghi nhớ.')}
-    })
-  }
-
-  function priorityScore(item){return Number(item.impact)*2+Number(item.urgency)*2+Number(item.risk)}
-  function priorityLevel(score){
-    if(score>=20)return ['Khẩn cấp','high'];
-    if(score>=15)return ['Cao','high'];
-    if(score>=9)return ['Trung bình','warn'];
-    return ['Thấp','']
-  }
-  function renderPriorities(){
-    priorities.sort(function(a,b){return priorityScore(b)-priorityScore(a)});
-    const list=document.getElementById('priorityList');
-    document.getElementById('priorityCount').textContent=priorities.length+' mục';
-    document.getElementById('priorityCountTop').textContent=priorities.length;
-    if(!priorities.length){list.innerHTML='<div class="empty">Chưa có ưu tiên nào.</div>';return}
-    list.innerHTML=priorities.map(function(item,index){
-      const score=priorityScore(item),level=priorityLevel(score);
-      return '<div class="priority-item"><div class="priority-top"><b>'+escapeHtml(item.name)+'</b><span class="badge '+level[1]+'">'+level[0]+'</span></div><div class="priority-meta">Điểm '+score+'/25 · Ảnh hưởng '+item.impact+'/5 · Khẩn cấp '+item.urgency+'/5 · Rủi ro '+item.risk+'/5</div><div class="priority-actions"><button class="small-btn danger" data-priority-delete="'+index+'">Xóa</button></div></div>'
-    }).join('');
-    list.querySelectorAll('[data-priority-delete]').forEach(function(btn){
-      btn.onclick=function(){priorities.splice(Number(btn.dataset.priorityDelete),1);save(priorityKey,priorities);renderPriorities();toast('Đã xóa ưu tiên.')}
-    })
-  }
-
-  function statusClass(status){
-    if(status==='Đang làm việc')return '';
-    if(status==='Tạm nghỉ')return 'warn';
-    return ''
-  }
-  function renderEmployees(){
-    const grid=document.getElementById('employeeGrid');
-    document.getElementById('employeeCount').textContent=employees.length+' nhân viên';
-    if(!employees.length){grid.innerHTML='<div class="empty">Chưa có nhân viên. Hãy thêm nhân viên đầu tiên.</div>';return}
-    grid.innerHTML=employees.map(function(item,index){
-      return '<div class="employee-card"><div class="employee-top"><div><div class="employee-name">'+escapeHtml(item.name)+'</div><div class="employee-role">'+escapeHtml(item.role)+'</div></div><span class="badge '+statusClass(item.status)+'">'+escapeHtml(item.status)+'</span></div><div class="employee-task"><b>Nhiệm vụ:</b><br>'+escapeHtml(item.task||'Chưa được giao việc')+'</div><div class="employee-actions"><button class="small-btn danger" data-employee-delete="'+index+'">Xóa</button></div></div>'
-    }).join('');
-    grid.querySelectorAll('[data-employee-delete]').forEach(function(btn){
-      btn.onclick=function(){employees.splice(Number(btn.dataset.employeeDelete),1);save(employeeKey,employees);renderEmployees();toast('Đã xóa nhân viên.')}
-    })
-  }
-
-  document.getElementById('brainSave').onclick=function(){
-    const input=document.getElementById('brainInput'),value=input.value.trim();
-    if(!value){toast('Nhập nội dung CEO cần ghi nhớ.');return}
-    memories.unshift({type:document.getElementById('brainType').value,text:value});
-    save(memoryKey,memories);input.value='';renderMemories();toast('CEO đã ghi nhớ.')
-  };
-  document.getElementById('brainInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('brainSave').click()});
-
-  document.getElementById('priorityAdd').onclick=function(){
-    const input=document.getElementById('priorityName'),name=input.value.trim();
-    if(!name){toast('Nhập tên việc cần ưu tiên.');return}
-    priorities.push({
-      id:'P-'+Date.now(),
-      name:name,
-      impact:Number(document.getElementById('priorityImpact').value),
-      urgency:Number(document.getElementById('priorityUrgency').value),
-      risk:Number(document.getElementById('priorityRisk').value)
+  function renderSimpleEmployees(){
+    const grid=document.getElementById('simpleEmployeeGrid');
+    const count=document.getElementById('simpleEmployeeCount');
+    if(!grid||!count) return;
+    count.textContent=simpleEmployees.length+' nhân viên';
+    if(!simpleEmployees.length){
+      grid.innerHTML='<div style="color:var(--muted);font-size:12px">Chưa có nhân viên.</div>';
+      return;
+    }
+    grid.innerHTML=simpleEmployees.map((item,index)=>`
+      <div class="staff-card">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <div><b>${escapeHtml(item.name)}</b><div class="role">${escapeHtml(item.role)}</div></div>
+          <span class="${simpleEmployeeBadge(item.status)}">${escapeHtml(item.status)}</span>
+        </div>
+        <div class="simple-employee-task"><b>Nhiệm vụ:</b><br>${escapeHtml(item.task||'Chưa được giao việc')}</div>
+        <div class="simple-employee-actions"><button class="small-btn reject" type="button" data-simple-employee-delete="${index}">Xóa</button></div>
+      </div>
+    `).join('');
+    grid.querySelectorAll('[data-simple-employee-delete]').forEach(btn=>btn.onclick=()=>{
+      simpleEmployees.splice(Number(btn.dataset.simpleEmployeeDelete),1);
+      simpleSaveEmployees();renderSimpleEmployees();toast('Đã xóa nhân viên.');
     });
-    save(priorityKey,priorities);input.value='';renderPriorities();toast('CEO đã thêm ưu tiên.')
-  };
-
-  document.getElementById('employeeAdd').onclick=function(){
-    const name=document.getElementById('employeeName').value.trim();
-    const role=document.getElementById('employeeRole').value.trim();
-    const task=document.getElementById('employeeTask').value.trim();
-    if(!name||!role){toast('Nhập tên và vai trò nhân viên.');return}
-    employees.unshift({id:'EMP-'+Date.now(),name:name,role:role,task:task||'Chưa được giao việc',status:document.getElementById('employeeStatus').value});
-    save(employeeKey,employees);
-    document.getElementById('employeeName').value='';
-    document.getElementById('employeeRole').value='';
-    document.getElementById('employeeTask').value='';
-    renderEmployees();toast('Đã thêm nhân viên.')
-  };
-
-  const viewMeta={
-    ceo:{title:'CEO',subtitle:'ATLAS và bộ não điều hành cá nhân.'},
-    employees:{title:'Nhân viên',subtitle:'Quản lý đội ngũ nhân viên độc lập.'}
-  };
-  function switchView(name){
-    if(!viewMeta[name])name='ceo';
-    document.querySelectorAll('.view').forEach(function(v){v.classList.toggle('active',v.id==='view-'+name)});
-    document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.view===name)});
-    document.getElementById('pageTitle').textContent=viewMeta[name].title;
-    document.getElementById('pageSubtitle').textContent=viewMeta[name].subtitle;
-    localStorage.setItem(viewKey,name);
-    document.getElementById('sidebar').classList.remove('open')
   }
-  document.querySelectorAll('.nav-btn').forEach(function(btn){btn.onclick=function(){switchView(btn.dataset.view)}});
-  document.getElementById('mobileToggle').onclick=function(){document.getElementById('sidebar').classList.toggle('open')};
+  const simpleEmployeeAdd=document.getElementById('simpleEmployeeAdd');
+  if(simpleEmployeeAdd){
+    simpleEmployeeAdd.onclick=()=>{
+      const name=document.getElementById('simpleEmployeeName').value.trim();
+      const role=document.getElementById('simpleEmployeeRole').value.trim();
+      const task=document.getElementById('simpleEmployeeTask').value.trim();
+      const statusValue=document.getElementById('simpleEmployeeStatus').value;
+      if(!name||!role){ toast('Nhập tên và vai trò nhân viên.'); return; }
+      simpleEmployees.unshift({id:'EMP-'+Date.now(),name,role,task:task||'Chưa được giao việc',status:statusValue});
+      simpleSaveEmployees();
+      document.getElementById('simpleEmployeeName').value='';
+      document.getElementById('simpleEmployeeRole').value='';
+      document.getElementById('simpleEmployeeTask').value='';
+      renderSimpleEmployees();toast('Đã thêm nhân viên.');
+    };
+  }
+  navButtons.forEach(btn=>btn.addEventListener('click',()=>{
+    if(btn.dataset.view==='ceo'||btn.dataset.view==='staff') localStorage.setItem(simpleViewKey,btn.dataset.view);
+  }));
+  renderSimpleEmployees();
+  const savedSimpleView=localStorage.getItem(simpleViewKey);
+  switchView(savedSimpleView==='staff'?'staff':'ceo');
 
-  renderMemories();renderPriorities();renderEmployees();
-  switchView(localStorage.getItem(viewKey)||'ceo');
 </script>
 </body>
 </html>
