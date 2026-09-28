@@ -1,0 +1,22 @@
+name: TrainingBot COMMS Telegram Worker Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "platform/telegram-comms-worker/**"
+      - ".github/workflows/trainingbot-comms-telegram-worker-test.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Telegram inbound safety gates
+        working-directory: platform/telegram-comms-worker
+        run: npm test
