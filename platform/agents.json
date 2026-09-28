@@ -31,7 +31,8 @@
       "QA-01",
       "SEO-01",
       "PERF-01",
-      "IDEA-01"
+      "IDEA-01",
+      "OPS-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -206,6 +207,43 @@
       "delete_data",
       "secret_change",
       "change_acceptance_criteria"
+    ]
+  },
+  {
+    "agent_id": "OPS-01",
+    "role": "independent_operations_engineer",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_status",
+      "read_authorized_logs",
+      "health_check",
+      "incident_triage",
+      "read_repository_status",
+      "prepare_deployment_plan",
+      "prepare_rollback_plan",
+      "verify_backup_status",
+      "verify_post_deploy_health",
+      "classify_incident",
+      "escalate_to_ceo",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_application_source",
+      "qa_pass",
+      "production_deploy",
+      "production_merge",
+      "dns_change",
+      "secret_change",
+      "spend_money",
+      "delete_data",
+      "reveal_secrets"
     ]
   },
   {

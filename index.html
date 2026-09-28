@@ -662,6 +662,22 @@
             </div>
           </div>
         </div>
+        <div class="staff-grid" style="margin-top:12px">
+          <div class="staff-card" style="border-color:rgba(110,231,255,.42);box-shadow:0 0 30px rgba(110,231,255,.06)">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div>
+                <b>OPS-01</b>
+                <div class="role">Kỹ sư vận hành AI độc lập · DevOps / Reliability</div>
+              </div>
+              <span class="badge">Sẵn sàng</span>
+            </div>
+            <div class="simple-employee-task"><b>Nhiệm vụ:</b><br>Chờ CEO ATLAS giao nhiệm vụ vận hành</div>
+            <div style="margin-top:9px;font-size:10px;color:#8bdcf0">
+              ĐỘC LẬP · Không thuộc phòng ban · CEO ATLAS quản lý trực tiếp ·
+              <a href="https://github.com/Gamevalentine/ai-company/tree/main/platform/ops-01" target="_blank" rel="noopener" style="color:#8bdcf0">Mở source ↗</a>
+            </div>
+          </div>
+        </div>
         <div class="staff-grid" id="simpleEmployeeGrid" style="margin-top:12px"></div>
       </div>
     </section>
@@ -1241,9 +1257,13 @@
     try{
       const saved=JSON.parse(localStorage.getItem(simpleEmployeeKey)||'[]');
       const employees=Array.isArray(saved)?saved:[];
-      // Các nhân viên hệ thống được render cố định từ source; loại bản cũ trong localStorage để tránh trùng.
-      const fixedEmployees=new Set(['CODE-01','SEO-01','QA-01','PERF-01']);
-      const cleaned=employees.filter(item=>item && !fixedEmployees.has(item.id) && !fixedEmployees.has(item.name));
+      // Nhân viên được render cố định từ source không được trùng với dữ liệu localStorage.
+      const fixedNames=new Set(
+        [...document.querySelectorAll('#view-staff .staff-card b')]
+          .map(el=>el.textContent.trim())
+          .filter(Boolean)
+      );
+      const cleaned=employees.filter(item=>item && !fixedNames.has(item.id) && !fixedNames.has(item.name));
       if(cleaned.length!==employees.length) localStorage.setItem(simpleEmployeeKey,JSON.stringify(cleaned));
       return cleaned;
     }catch(e){ return []; }
@@ -1258,7 +1278,8 @@
     const grid=document.getElementById('simpleEmployeeGrid');
     const count=document.getElementById('simpleEmployeeCount');
     if(!grid||!count) return;
-    const total=4+simpleEmployees.length;
+    const fixedCount=[...document.querySelectorAll('#view-staff .staff-card')].filter(card=>!card.closest('#simpleEmployeeGrid')).length;
+    const total=fixedCount+simpleEmployees.length;
     count.textContent=total+' nhân viên';
     if(!simpleEmployees.length){
       grid.innerHTML='';

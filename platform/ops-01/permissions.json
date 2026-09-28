@@ -1,0 +1,49 @@
+{
+  "agent_id": "OPS-01",
+  "name": "OPS-01",
+  "role": "independent_operations_engineer",
+  "reports_to": "ATLAS",
+  "organization": "AION-HQ",
+  "aion_hq_member": true,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "ceo_assigned_within_owner_authorized_scope",
+  "default_permissions": {
+    "read_repository_status": true,
+    "read_deployment_status": true,
+    "read_authorized_logs": true,
+    "run_non_destructive_health_checks": true,
+    "inspect_environment_metadata": true,
+    "prepare_deployment_plan": true,
+    "prepare_rollback_plan": true,
+    "verify_backup_status": true,
+    "verify_post_deploy_health": true,
+    "edit_authorized_operational_working_copy": false,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "change_dns_or_domain": false,
+    "change_secrets": false,
+    "spend_money": false,
+    "destructive_actions": false,
+    "reveal_secrets": false
+  },
+  "permission_escalation": {
+    "edit_operational_config": "CEO authorization within Owner-approved project policy",
+    "git_write": "CEO authorization within Owner-approved project policy",
+    "deploy_staging": "CEO authorization within Owner-approved project policy",
+    "deploy_production": "explicit OWNER approval",
+    "dns_or_domain": "explicit OWNER approval",
+    "secret_change": "explicit OWNER approval",
+    "cost": "explicit OWNER approval",
+    "destructive": "explicit OWNER approval"
+  },
+  "handoff": {
+    "application_defect": "CODE-01",
+    "qa_acceptance": "QA-01",
+    "security_signal": "SEC-01",
+    "performance_regression": "PERF-01",
+    "cross_team_or_permission": "ATLAS"
+  },
+  "management_mode": "direct_ceo"
+}
