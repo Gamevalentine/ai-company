@@ -14,6 +14,7 @@
     "code01:review": "node code-01/review.mjs",
     "code01:pilot": "node code-01/pilot.mjs",
     "idea01": "node idea-01-brain.mjs",
-    "perf01": "node perf-01-brain.mjs"
+    "perf01": "node perf-01-brain.mjs",
+    "seo01": "node seo-01-brain.mjs"
   }
 }
