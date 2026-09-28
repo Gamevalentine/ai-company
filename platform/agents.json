@@ -27,7 +27,8 @@
     ],
     "can_assign_to": [
       "TB-01",
-      "CODE-01"
+      "CODE-01",
+      "QA-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -68,6 +69,38 @@
       "spend_money",
       "delete_data",
       "secret_change"
+    ]
+  },
+  {
+    "agent_id": "QA-01",
+    "role": "qa",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_source",
+      "read_artifact",
+      "read_logs",
+      "inspect_git_diff",
+      "run_qa",
+      "run_non_destructive_tests",
+      "qa_result",
+      "submit_evidence",
+      "recommend_changes"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "production_deploy",
+      "production_merge",
+      "spend_money",
+      "delete_data",
+      "secret_change",
+      "change_acceptance_criteria"
     ]
   },
   {
