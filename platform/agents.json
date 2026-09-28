@@ -28,7 +28,8 @@
     "can_assign_to": [
       "TB-01",
       "CODE-01",
-      "QA-01"
+      "QA-01",
+      "SEO-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -69,6 +70,43 @@
       "spend_money",
       "delete_data",
       "secret_change"
+    ]
+  },
+  {
+    "agent_id": "SEO-01",
+    "role": "independent_seo_specialist",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_source",
+      "read_page_metadata",
+      "seo_audit",
+      "keyword_research",
+      "technical_seo_audit",
+      "onpage_seo_audit",
+      "content_gap_analysis",
+      "indexation_audit",
+      "schema_audit",
+      "internal_link_audit",
+      "recommend_changes",
+      "edit_authorized_seo_working_copy",
+      "run_non_destructive_checks",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "production_deploy",
+      "production_merge",
+      "spend_money",
+      "delete_data",
+      "secret_change",
+      "publish_unapproved_content",
+      "manipulative_link_spam"
     ]
   },
   {
