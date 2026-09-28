@@ -280,7 +280,7 @@
     <section class="view" id="view-overview">
       <div class="grid-stats">
         <div class="stat"><div class="label">Website đang quản lý</div><div class="value">5</div><div class="sub">5 trưởng phòng AI phụ trách</div></div>
-        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">34</div><div class="sub">5 đội chuyên trách + CODE-01 do CEO quản lý</div></div>
+        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">35</div><div class="sub">5 đội chuyên trách + CODE-01 và SEO-01 do CEO quản lý</div></div>
         <div class="stat"><div class="label">Nhiệm vụ đang chạy</div><div class="value">14</div><div class="sub">4 ưu tiên cao</div></div>
         <div class="stat"><div class="label">Chờ bạn phê duyệt</div><div class="value" id="approvalMetric">3</div><div class="sub">Không có chi phí phát sinh</div></div>
       </div>
@@ -589,7 +589,7 @@
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap">
           <div>
             <h2 style="margin-bottom:6px">Nhân viên</h2>
-            <p style="color:var(--muted);margin:0">Danh sách nhân viên. CODE-01 không thuộc phòng ban nào và do CEO ATLAS quản lý trực tiếp.</p>
+            <p style="color:var(--muted);margin:0">Danh sách nhân viên. CODE-01 và SEO-01 là nhân viên độc lập, không thuộc phòng ban nào và do CEO ATLAS quản lý trực tiếp.</p>
           </div>
           <span id="simpleEmployeeCount" style="font-size:12px;color:var(--muted)">0 nhân viên</span>
         </div>
@@ -617,6 +617,20 @@
             <div style="margin-top:9px;font-size:10px;color:#8bdcf0">
               ĐỘC LẬP · Không thuộc phòng ban · CEO ATLAS quản lý trực tiếp ·
               <a href="https://github.com/Gamevalentine/ai-company/tree/main/platform/code-01" target="_blank" rel="noopener" style="color:#8bdcf0">Mở source ↗</a>
+            </div>
+          </div>
+          <div class="staff-card" style="border-color:rgba(110,231,255,.42);box-shadow:0 0 30px rgba(110,231,255,.06)">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+              <div>
+                <b>SEO-01</b>
+                <div class="role">Chuyên viên SEO AI độc lập · Technical & Content SEO</div>
+              </div>
+              <span class="badge">Sẵn sàng</span>
+            </div>
+            <div class="simple-employee-task"><b>Nhiệm vụ:</b><br>Chờ CEO ATLAS giao nhiệm vụ SEO</div>
+            <div style="margin-top:9px;font-size:10px;color:#8bdcf0">
+              ĐỘC LẬP · Không thuộc phòng ban · CEO ATLAS quản lý trực tiếp ·
+              <a href="https://github.com/Gamevalentine/ai-company/tree/main/platform/seo-01" target="_blank" rel="noopener" style="color:#8bdcf0">Mở source ↗</a>
             </div>
           </div>
         </div>
@@ -1199,8 +1213,9 @@
     try{
       const saved=JSON.parse(localStorage.getItem(simpleEmployeeKey)||'[]');
       const employees=Array.isArray(saved)?saved:[];
-      // CODE-01 được render cố định từ source, loại bản cũ trong localStorage để tránh trùng.
-      const cleaned=employees.filter(item=>item && item.id!=='CODE-01' && item.name!=='CODE-01');
+      // CODE-01 và SEO-01 được render cố định từ source, loại bản cũ trong localStorage để tránh trùng.
+      const fixedEmployees=new Set(['CODE-01','SEO-01']);
+      const cleaned=employees.filter(item=>item && !fixedEmployees.has(item.id) && !fixedEmployees.has(item.name));
       if(cleaned.length!==employees.length) localStorage.setItem(simpleEmployeeKey,JSON.stringify(cleaned));
       return cleaned;
     }catch(e){ return []; }
@@ -1215,7 +1230,7 @@
     const grid=document.getElementById('simpleEmployeeGrid');
     const count=document.getElementById('simpleEmployeeCount');
     if(!grid||!count) return;
-    const total=1+simpleEmployees.length;
+    const total=2+simpleEmployees.length;
     count.textContent=total+' nhân viên';
     if(!simpleEmployees.length){
       grid.innerHTML='';
