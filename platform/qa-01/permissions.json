@@ -1,0 +1,41 @@
+{
+  "agent_id": "QA-01",
+  "name": "QA-01",
+  "role": "independent_quality_assurance_engineer",
+  "runtime_role": "qa",
+  "reports_to": "ATLAS",
+  "organization": "AION-HQ",
+  "aion_hq_member": true,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "ceo_assigned_within_owner_authorized_scope",
+  "default_permissions": {
+    "read_source": true,
+    "read_artifacts": true,
+    "read_logs": true,
+    "inspect_git_diff": true,
+    "run_non_destructive_tests": true,
+    "inspect_public_or_staging_site": true,
+    "submit_qa_evidence": true,
+    "issue_qa_verdict": true,
+    "edit_source": false,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "spend_money": false,
+    "destructive_actions": false,
+    "read_secrets": "only_when_task_requires_and_authorized",
+    "reveal_secrets": false
+  },
+  "permission_escalation": {
+    "git_write": "explicit authorization; must not alter implementation under independent review",
+    "deploy_staging": "CEO authorization within Owner-approved project policy",
+    "deploy_production": "explicit OWNER approval",
+    "cost": "explicit OWNER approval",
+    "destructive": "explicit OWNER approval"
+  },
+  "management_mode": "direct_ceo",
+  "independence_from": [
+    "CODE-01"
+  ]
+}
