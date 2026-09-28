@@ -127,3 +127,31 @@ test('DESIGN-01 refuses work assigned to another agent',async()=>{
 test('design output validator rejects incomplete handoff',()=>{
   assert.throws(()=>validateDesignDecision({design_goal:'x'}),/user_problem is required/);
 });
+
+
+test('DESIGN-01 loads named design reference and records provenance',async()=>{
+  const task={
+    task_id:'DESIGN-TASK-REF-001',
+    project:'TrainingBot',
+    created_by:'ATLAS',
+    assigned_to:'DESIGN-01',
+    objective:'Thiết kế trang theo phong cách Apple',
+    scope:'UI only',
+    acceptance_criteria:['Giữ chức năng hiện tại'],
+    status:'QUEUED',
+    inputs:{},
+    outputs:{},
+    evidence:[]
+  };
+  const referenceFetchImpl=async url=>({
+    ok:true,
+    async text(){ return '# Apple reference\n## Typography\nUse restrained hierarchy\n## Spacing\nUse generous whitespace'; }
+  });
+  const out=await runDesignBrain(stateFor(task),{
+    taskId:task.task_id,
+    fetchImpl:fakeFetch(designPayload()),
+    referenceFetchImpl
+  });
+  assert.deepEqual(out.report.design_references_used.map(r=>r.slug),['apple']);
+  assert.equal(out.report.design_reference_errors.length,0);
+});
