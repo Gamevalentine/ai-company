@@ -1,0 +1,37 @@
+{
+  "agent_id": "DESIGN-01",
+  "name": "DESIGN-01",
+  "role": "independent_product_designer",
+  "reports_to": "ATLAS",
+  "organization": "AION-HQ",
+  "aion_hq_member": true,
+  "directory_visibility": "AION_HQ_STAFF_DIRECTORY",
+  "project_scope": "ceo_assigned_within_owner_authorized_scope",
+  "default_permissions": {
+    "read_product_requirements": true,
+    "read_authorized_source": true,
+    "inspect_supplied_ui_evidence": true,
+    "create_user_flow": true,
+    "create_wireframe_spec": true,
+    "create_visual_spec": true,
+    "create_responsive_spec": true,
+    "create_accessibility_notes": true,
+    "create_design_handoff": true,
+    "edit_source_code": false,
+    "commit": false,
+    "push": false,
+    "deploy_staging": false,
+    "deploy_production": false,
+    "spend_money": false,
+    "destructive_actions": false,
+    "read_secrets": false,
+    "reveal_secrets": false
+  },
+  "permission_escalation": {
+    "additional_project_access": "CEO authorization within Owner-approved project policy",
+    "paid_assets_or_services": "explicit OWNER approval",
+    "production_action": "explicit OWNER approval",
+    "destructive": "explicit OWNER approval"
+  },
+  "management_mode": "direct_ceo"
+}

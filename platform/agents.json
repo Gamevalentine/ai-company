@@ -29,7 +29,8 @@
       "TB-01",
       "CODE-01",
       "QA-01",
-      "SEO-01"
+      "SEO-01",
+      "DESIGN-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -64,6 +65,39 @@
       "submit_evidence"
     ],
     "prohibited_actions": [
+      "qa_pass",
+      "production_deploy",
+      "production_merge",
+      "spend_money",
+      "delete_data",
+      "secret_change"
+    ]
+  },
+  {
+    "agent_id": "DESIGN-01",
+    "role": "independent_product_designer",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_source",
+      "read_product_requirements",
+      "inspect_ui_evidence",
+      "design_user_flow",
+      "create_wireframe_spec",
+      "create_visual_spec",
+      "create_responsive_spec",
+      "create_accessibility_notes",
+      "create_design_handoff",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
       "qa_pass",
       "production_deploy",
       "production_merge",
