@@ -280,7 +280,7 @@
     <section class="view" id="view-overview">
       <div class="grid-stats">
         <div class="stat"><div class="label">Website đang quản lý</div><div class="value">5</div><div class="sub">5 trưởng phòng AI phụ trách</div></div>
-        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">33</div><div class="sub">5 đội chuyên trách theo từng website</div></div>
+        <div class="stat"><div class="label">Nhân viên AI</div><div class="value">34</div><div class="sub">5 đội chuyên trách + CODE-01 độc lập</div></div>
         <div class="stat"><div class="label">Nhiệm vụ đang chạy</div><div class="value">14</div><div class="sub">4 ưu tiên cao</div></div>
         <div class="stat"><div class="label">Chờ bạn phê duyệt</div><div class="value" id="approvalMetric">3</div><div class="sub">Không có chi phí phát sinh</div></div>
       </div>
@@ -676,7 +676,7 @@
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-end;flex-wrap:wrap">
           <div>
             <h2 style="margin-bottom:6px">Nhân viên</h2>
-            <p style="color:var(--muted);margin:0">Đội ngũ nhân viên độc lập do CEO quản lý.</p>
+            <p style="color:var(--muted);margin:0">Danh sách nhân viên. CODE-01 hoạt động độc lập và nhận nhiệm vụ trực tiếp từ Chủ sở hữu.</p>
           </div>
           <span id="simpleEmployeeCount" style="font-size:12px;color:var(--muted)">0 nhân viên</span>
         </div>
@@ -834,7 +834,7 @@
     ceo:['CEO','ATLAS và toàn bộ bộ não điều hành.'],
     departments:['Các Trưởng phòng','Mỗi Trưởng phòng chịu trách nhiệm một website.'],
     websites:['Website','Toàn bộ tài sản số đang được AION HQ quản lý.'],
-    staff:['Nhân viên','Đội ngũ nhân viên độc lập để CEO quản lý.'],
+    staff:['Nhân viên','CODE-01 hoạt động độc lập, nhận nhiệm vụ trực tiếp từ Chủ sở hữu.'],
     tasks:['Nhiệm vụ','Công việc AI đang thực hiện trên toàn công ty.'],
     approvals:['Phê duyệt','Những việc AI bắt buộc phải xin quyền từ bạn.'],
     execution:['Thực thi','Các hành động thật được đưa qua cổng an toàn sau khi bạn phê duyệt.'],
@@ -1370,7 +1370,16 @@
   // AION HQ tối giản: chỉ CEO + Nhân viên xuất hiện trong điều hướng.
   const simpleEmployeeKey='aiCompany.employees.v1';
   const simpleViewKey='aiCompany.simple.view.v1';
+  const code01MigrationKey='aiCompany.code01.migrated.v1';
+  const code01Employee={
+    id:'CODE-01',
+    name:'CODE-01',
+    role:'Lập trình viên AI độc lập · Full-stack',
+    task:'Sẵn sàng nhận nhiệm vụ trực tiếp từ Chủ sở hữu',
+    status:'Sẵn sàng'
+  };
   const simpleEmployeeDefaults=[
+    code01Employee,
     {id:'EMP-001',name:'DEV-01',role:'Lập trình viên',task:'Chờ CEO giao việc',status:'Sẵn sàng'},
     {id:'EMP-002',name:'QA-01',role:'Kiểm thử',task:'Chờ CEO giao việc',status:'Sẵn sàng'},
     {id:'EMP-003',name:'OPS-01',role:'Vận hành',task:'Chờ CEO giao việc',status:'Sẵn sàng'}
@@ -1378,8 +1387,14 @@
   function simpleLoadEmployees(){
     try{
       const saved=JSON.parse(localStorage.getItem(simpleEmployeeKey)||'null');
-      return Array.isArray(saved)?saved:simpleEmployeeDefaults;
-    }catch(e){ return simpleEmployeeDefaults; }
+      const employees=Array.isArray(saved)?saved:[...simpleEmployeeDefaults];
+      if(!localStorage.getItem(code01MigrationKey)){
+        if(!employees.some(item=>item.id==='CODE-01'||item.name==='CODE-01')) employees.unshift({...code01Employee});
+        localStorage.setItem(simpleEmployeeKey,JSON.stringify(employees));
+        localStorage.setItem(code01MigrationKey,'1');
+      }
+      return employees;
+    }catch(e){ return [...simpleEmployeeDefaults]; }
   }
   let simpleEmployees=simpleLoadEmployees();
   function simpleSaveEmployees(){ localStorage.setItem(simpleEmployeeKey,JSON.stringify(simpleEmployees)); }
@@ -1403,6 +1418,7 @@
           <span class="${simpleEmployeeBadge(item.status)}">${escapeHtml(item.status)}</span>
         </div>
         <div class="simple-employee-task"><b>Nhiệm vụ:</b><br>${escapeHtml(item.task||'Chưa được giao việc')}</div>
+        ${item.id==='CODE-01'?'<div style="margin-top:9px;font-size:10px;color:#8bdcf0">ĐỘC LẬP · Không thuộc quyền điều phối của CEO/trưởng phòng · <a href="https://github.com/Gamevalentine/ai-company/tree/main/platform/code-01" target="_blank" rel="noopener" style="color:#8bdcf0">Mở source ↗</a></div>':''}
         <div class="simple-employee-actions"><button class="small-btn reject" type="button" data-simple-employee-delete="${index}">Xóa</button></div>
       </div>
     `).join('');
