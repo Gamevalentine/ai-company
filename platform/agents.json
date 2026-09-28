@@ -30,7 +30,8 @@
       "CODE-01",
       "QA-01",
       "SEO-01",
-      "PERF-01"
+      "PERF-01",
+      "IDEA-01"
     ],
     "allowed_tools": [],
     "permissions": [
@@ -71,6 +72,40 @@
       "spend_money",
       "delete_data",
       "secret_change"
+    ]
+  },
+  {
+    "agent_id": "IDEA-01",
+    "role": "product_ideation_requirements_analyst",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_project_context",
+      "analyze_requirements",
+      "propose_product_scope",
+      "define_user_flow",
+      "define_acceptance_criteria",
+      "identify_dependencies",
+      "identify_risks",
+      "recommend_downstream_assignees",
+      "submit_brief",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "edit_source",
+      "qa_pass",
+      "production_deploy",
+      "production_merge",
+      "spend_money",
+      "delete_data",
+      "secret_change",
+      "make_final_product_decision"
     ]
   },
   {
