@@ -111,13 +111,15 @@ export function hardPerfChecks(evidence={}){
   const {baseline,after,deltas}=computeMetricDeltas(evidence.baseline,evidence.after);
   const baselineAvailable=baseline.available;
   const afterAvailable=after.available;
-  const explicitComparable=evidence.comparable_conditions===true;
+  const hasExplicitComparable=Object.prototype.hasOwnProperty.call(evidence,'comparable_conditions');
   const matchingContext=
     baselineAvailable&&afterAvailable&&
     baseline.method&&after.method&&baseline.method===after.method&&
     baseline.environment&&after.environment&&baseline.environment===after.environment&&
     baseline.device===after.device&&baseline.network===after.network;
-  const comparable=Boolean(explicitComparable||matchingContext);
+  const comparable=hasExplicitComparable
+    ? evidence.comparable_conditions===true
+    : Boolean(matchingContext);
   const matchedMetrics=deltas.length;
   const regressions=deltas.filter(d=>d.regressed);
   const improvements=deltas.filter(d=>d.improved);
