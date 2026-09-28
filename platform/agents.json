@@ -26,19 +26,48 @@
       "TrainingBot"
     ],
     "can_assign_to": [
-      "TB-01"
+      "TB-01",
+      "CODE-01"
     ],
     "allowed_tools": [],
     "permissions": [
       "create_goal",
       "assign_manager",
       "ceo_review",
-      "read_manager_shared_memory"
+      "read_manager_shared_memory",
+      "assign_independent_staff"
     ],
     "prohibited_actions": [
       "edit_source",
       "qa_pass",
       "production_deploy"
+    ]
+  },
+  {
+    "agent_id": "CODE-01",
+    "role": "independent_developer",
+    "reports_to": "ATLAS",
+    "project_scope": [
+      "AION-HQ",
+      "TrainingBot"
+    ],
+    "can_assign_to": [],
+    "allowed_tools": [],
+    "permissions": [
+      "accept_ceo_task",
+      "read_source",
+      "sandbox_patch",
+      "sandbox_build",
+      "sandbox_compare",
+      "submit_evidence"
+    ],
+    "prohibited_actions": [
+      "qa_pass",
+      "production_deploy",
+      "production_merge",
+      "spend_money",
+      "delete_data",
+      "secret_change"
     ]
   },
   {
