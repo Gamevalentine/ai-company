@@ -16,6 +16,7 @@
     "idea01": "node idea-01-brain.mjs",
     "perf01": "node perf-01-brain.mjs",
     "seo01": "node seo-01-brain.mjs",
-    "ops01": "node ops-01-brain.mjs"
+    "ops01": "node ops-01-brain.mjs",
+    "qa01": "node qa-01-brain.mjs"
   }
 }
