@@ -26,6 +26,7 @@
   },
   "vars": {
     "AI_MODEL": "@cf/meta/llama-3.2-1b-instruct",
-    "MAX_AI_CALLS_PER_DAY": "40"
+    "MAX_AI_CALLS_PER_DAY": "40",
+    "TELEGRAM_ALLOWED_CHAT_USERNAME": "TraininggBott"
   }
 }
