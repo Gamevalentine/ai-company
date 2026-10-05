@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="64" viewBox="0 0 360 64">
+  <text x="180" y="33" text-anchor="middle"
+        font-family="Noto Sans, DejaVu Sans, sans-serif"
+        font-size="27" font-weight="300" letter-spacing="11"
+        fill="#F5F8FF">LUNOR</text>
+  <text x="180" y="55" text-anchor="middle"
+        font-family="Noto Sans, DejaVu Sans, sans-serif"
+        font-size="9" font-weight="400" letter-spacing="4"
+        fill="#9EC9FF" opacity=".78">OS 1.1</text>
+</svg>
