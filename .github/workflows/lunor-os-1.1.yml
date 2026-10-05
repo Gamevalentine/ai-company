@@ -1,9 +1,6 @@
 name: Build LUNOR OS 1.1 ISO
 
 on:
-  push:
-    branches:
-      - build/lunor-os-1.1
   workflow_dispatch:
 
 permissions:
