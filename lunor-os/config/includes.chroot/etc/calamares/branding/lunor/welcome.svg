@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="300" viewBox="0 0 640 300">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#02050A"/>
+      <stop offset=".58" stop-color="#071325"/>
+      <stop offset="1" stop-color="#02050A"/>
+    </linearGradient>
+    <radialGradient id="aura" cx="50%" cy="40%" r="62%">
+      <stop offset="0" stop-color="#315F96" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#02050A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="300" rx="26" fill="url(#base)"/>
+  <rect width="640" height="300" rx="26" fill="url(#aura)"/>
+  <text x="320" y="138" text-anchor="middle" fill="#F5F8FF"
+        font-family="Noto Sans, sans-serif" font-size="46" font-weight="300" letter-spacing="8">LUNOR OS</text>
+  <text x="320" y="178" text-anchor="middle" fill="#9EC9FF"
+        font-family="Noto Sans, sans-serif" font-size="16" letter-spacing="4">AURORA · 1.1</text>
+  <text x="320" y="226" text-anchor="middle" fill="#CFE3FF" opacity=".82"
+        font-family="Noto Sans, sans-serif" font-size="15">Clean · Calm · Futuristic · Premium</text>
+</svg>
