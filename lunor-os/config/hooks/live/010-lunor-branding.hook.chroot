@@ -53,3 +53,20 @@ chmod 644 /etc/skel/.face.icon 2>/dev/null || true
 
 chmod 644 /usr/share/color-schemes/Lunor.colors 2>/dev/null || true
 chmod 644 /etc/skel/.config/kdeglobals 2>/dev/null || true
+
+LUNOR_ICON=/usr/share/icons/hicolor/scalable/apps/lunor.svg
+if [ -f "$LUNOR_ICON" ]; then
+  mkdir -p /usr/share/pixmaps
+  cp "$LUNOR_ICON" /usr/share/pixmaps/lunor.svg
+  cp "$LUNOR_ICON" /usr/share/icons/hicolor/scalable/apps/distributor-logo.svg
+
+  if command -v rsvg-convert >/dev/null 2>&1; then
+    rsvg-convert -w 256 -h 256 "$LUNOR_ICON" -o /usr/share/pixmaps/lunor.png
+  fi
+
+  if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+    gtk-update-icon-cache -f -t /usr/share/icons/hicolor >/dev/null 2>&1 || true
+  fi
+fi
+
+chmod 644 /etc/os-release /etc/lsb-release /etc/lunor-release /etc/issue 2>/dev/null || true
