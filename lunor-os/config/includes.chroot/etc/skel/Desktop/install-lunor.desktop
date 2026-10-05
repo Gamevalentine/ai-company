@@ -1,8 +1,12 @@
 [Desktop Entry]
 Type=Application
+Version=1.0
 Name=Install LUNOR OS
+GenericName=LUNOR OS Installer
 Comment=Install LUNOR OS 1.1 to disk
-Exec=pkexec calamares
+Exec=/usr/bin/calamares-install-debian
 Icon=lunor
 Terminal=false
-Categories=System;
+Categories=Qt;System;
+StartupWMClass=calamares
+StartupNotify=true
