@@ -2,6 +2,7 @@
 set -e
 
 chmod 755 /usr/local/bin/lunor-first-login || true
+chmod 755 /usr/local/bin/lunor-apply-desktop || true
 chmod 755 /etc/skel/Desktop/install-lunor.desktop || true
 
 mkdir -p /etc/sudoers.d
@@ -70,3 +71,5 @@ if [ -f "$LUNOR_ICON" ]; then
 fi
 
 chmod 644 /etc/os-release /etc/lsb-release /etc/lunor-release /etc/issue 2>/dev/null || true
+
+chmod 644 /usr/share/lunor/desktop-layout.js 2>/dev/null || true
