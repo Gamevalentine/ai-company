@@ -5,15 +5,25 @@ MARK="$HOME/.config/lunor-1.1-initialized"
 
 mkdir -p "$HOME/.config"
 
-if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
-  sleep 4
-  plasma-apply-wallpaperimage /usr/share/wallpapers/LUNOR/lunor-wallpaper.svg >/dev/null 2>&1 || true
+sleep 4
+
+DEFAULT_WALLPAPER=/usr/share/wallpapers/LUNOR/lunor-wallpaper.png
+if [ -f "$DEFAULT_WALLPAPER" ] && command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
+  plasma-apply-wallpaperimage "$DEFAULT_WALLPAPER" >/dev/null 2>&1 || true
+fi
+
+if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
+  plasma-apply-colorscheme Lunor >/dev/null 2>&1 || true
+  plasma-apply-colorscheme --accent-color "#9EC9FF" >/dev/null 2>&1 || true
+elif command -v kwriteconfig6 >/dev/null 2>&1; then
+  kwriteconfig6 --file kdeglobals --group General --key ColorScheme Lunor >/dev/null 2>&1 || true
+  kwriteconfig6 --file kdeglobals --group General --key AccentColor "158,201,255" >/dev/null 2>&1 || true
+  kwriteconfig6 --file kdeglobals --group General --key accentColorFromWallpaper false >/dev/null 2>&1 || true
 fi
 
 if command -v kwriteconfig6 >/dev/null 2>&1; then
-  kwriteconfig6 --file kscreenlockerrc     --group Greeter     --key WallpaperPlugin org.kde.image >/dev/null 2>&1 || true
-
-  kwriteconfig6 --file kscreenlockerrc     --group Greeter     --group Wallpaper     --group org.kde.image     --group General     --key Image file:///usr/share/wallpapers/LUNOR/lockscreen.png >/dev/null 2>&1 || true
+  kwriteconfig6 --file kscreenlockerrc --group Greeter --key WallpaperPlugin org.kde.image >/dev/null 2>&1 || true
+  kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image file:///usr/share/wallpapers/LUNOR/lockscreen.png >/dev/null 2>&1 || true
 fi
 
 if [ ! -e "$HOME/.face.icon" ] && [ -f /usr/share/pixmaps/lunor-avatar.png ]; then
