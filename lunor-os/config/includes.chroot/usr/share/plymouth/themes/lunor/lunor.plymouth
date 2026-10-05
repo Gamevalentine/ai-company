@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=LUNOR Boot
+Description=LUNOR OS 1.1 quiet premium boot experience
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/lunor
+ScriptFile=/usr/share/plymouth/themes/lunor/lunor.script
