@@ -1,0 +1,38 @@
+---
+componentName: lunor
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 920px,630px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+  productName: LUNOR OS
+  shortProductName: LUNOR
+  version: "1.1"
+  shortVersion: "1.1"
+  versionedName: LUNOR OS 1.1
+  shortVersionedName: LUNOR 1.1
+  bootloaderEntryName: LUNOR OS
+  productUrl: ""
+  supportUrl: ""
+  knownIssuesUrl: ""
+  releaseNotesUrl: ""
+  donateUrl: ""
+
+images:
+  productIcon: "logo.png"
+  productLogo: "logo.png"
+  productWelcome: "welcome.png"
+
+style:
+  SidebarBackground: "#071325"
+  SidebarText: "#F5F8FF"
+  SidebarTextCurrent: "#02050A"
+  SidebarBackgroundCurrent: "#9EC9FF"
+
+slideshow: [ "slide.png" ]
