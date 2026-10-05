@@ -122,3 +122,44 @@ jobs:
           grep -q '/usr/share/pixmaps/lunor-avatar.png' "$hook"
           grep -q 'kwriteconfig6 --file kscreenlockerrc' "$first"
           grep -q 'file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$first"
+
+
+  validate-desktop-theme:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate desktop wallpaper set
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
+          dir='lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR'
+          for name in lunor-wallpaper lunor-horizon lunor-silence; do
+            xmllint --noout "$dir/$name.svg"
+            rsvg-convert "$dir/$name.svg" -o "/tmp/$name.png"
+            test -s "/tmp/$name.png"
+          done
+
+      - name: Validate LUNOR color scheme and defaults
+        shell: bash
+        run: |
+          set -euxo pipefail
+          colors='lunor-os/config/includes.chroot/usr/share/color-schemes/Lunor.colors'
+          globals='lunor-os/config/includes.chroot/etc/skel/.config/kdeglobals'
+          first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
+          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+
+          grep -q '^ColorScheme=Lunor$' "$colors"
+          grep -q '^Name=LUNOR$' "$colors"
+          grep -q '^DecorationFocus=158,201,255$' "$colors"
+          grep -q '^ColorScheme=Lunor$' "$globals"
+          grep -q '^AccentColor=158,201,255$' "$globals"
+          grep -q '^accentColorFromWallpaper=false$' "$globals"
+          grep -q 'plasma-apply-wallpaperimage' "$first"
+          grep -q 'plasma-apply-colorscheme Lunor' "$first"
+          grep -q 'accent-color "#9EC9FF"' "$first"
+          grep -q 'lunor-wallpaper lunor-horizon lunor-silence' "$hook"
+          sh -n "$first"
+          sh -n "$hook"
