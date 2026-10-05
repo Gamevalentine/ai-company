@@ -49,7 +49,104 @@ jobs:
           test -n "$squashfs"
 
           unsquashfs -cat "$squashfs" etc/calamares/settings.conf | grep -q '^branding: lunor$'
-          unsquashfs -cat "$squashfs" etc/skel/Desktop/install-lunor.desktop | grep -q '^Exec=/usr/bin/calamares-install-debian$'
+          unsquashfs -cat "$squashfs" usr/share/lunor/live/install-lunor.desktop | grep -q '^Exec=/usr/bin/calamares-install-debian
+          unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/logo.png'
+          unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/welcome.png'
+          unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/slide.png'
+
+          if unsquashfs -ll "$squashfs" | grep -q 'usr/bin/plasma-welcome'; then
+            echo 'KDE Welcome Center is still installed'
+            exit 1
+          fi
+
+          if unsquashfs -ll "$squashfs" | grep -q 'etc/xdg/autostart/calamares-desktop-icon.desktop'; then
+            echo 'Debian installer desktop-icon autostart is still present'
+            exit 1
+          fi
+
+      - name: Normalize ISO filename
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd lunor-os
+          iso="$(find . -maxdepth 1 -type f \( -name '*.iso' -o -name '*.hybrid.iso' \) | head -n1)"
+          test -n "$iso"
+          mv "$iso" LUNOR-OS-1.1-amd64.iso
+          sha256sum LUNOR-OS-1.1-amd64.iso | tee LUNOR-OS-1.1-amd64.iso.sha256
+          ls -lh LUNOR-OS-1.1-amd64.iso
+
+      - name: Verify hybrid ISO metadata
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/work" \
+            debian:13 bash -lc '
+              apt-get update >/dev/null
+              DEBIAN_FRONTEND=noninteractive apt-get install -y xorriso >/dev/null
+              xorriso -indev /work/lunor-os/LUNOR-OS-1.1-amd64.iso \
+                -report_el_torito plain
+            '
+
+      - name: Upload LUNOR OS 1.1
+        uses: actions/upload-artifact@v4
+        with:
+          name: LUNOR-OS-1.1-amd64
+          path: |
+            lunor-os/LUNOR-OS-1.1-amd64.iso
+            lunor-os/LUNOR-OS-1.1-amd64.iso.sha256
+            lunor-os/build.log
+          compression-level: 0
+          retention-days: 30
+          if-no-files-found: error
+
+          unsquashfs -cat "$squashfs" etc/skel/Desktop/install-lunor.desktop | grep -q '^Hidden=true
+          unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/logo.png'
+          unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/welcome.png'
+          unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/slide.png'
+
+          if unsquashfs -ll "$squashfs" | grep -q 'etc/xdg/autostart/calamares-desktop-icon.desktop'; then
+            echo 'Debian installer desktop-icon autostart is still present'
+            exit 1
+          fi
+
+      - name: Normalize ISO filename
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cd lunor-os
+          iso="$(find . -maxdepth 1 -type f \( -name '*.iso' -o -name '*.hybrid.iso' \) | head -n1)"
+          test -n "$iso"
+          mv "$iso" LUNOR-OS-1.1-amd64.iso
+          sha256sum LUNOR-OS-1.1-amd64.iso | tee LUNOR-OS-1.1-amd64.iso.sha256
+          ls -lh LUNOR-OS-1.1-amd64.iso
+
+      - name: Verify hybrid ISO metadata
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/work" \
+            debian:13 bash -lc '
+              apt-get update >/dev/null
+              DEBIAN_FRONTEND=noninteractive apt-get install -y xorriso >/dev/null
+              xorriso -indev /work/lunor-os/LUNOR-OS-1.1-amd64.iso \
+                -report_el_torito plain
+            '
+
+      - name: Upload LUNOR OS 1.1
+        uses: actions/upload-artifact@v4
+        with:
+          name: LUNOR-OS-1.1-amd64
+          path: |
+            lunor-os/LUNOR-OS-1.1-amd64.iso
+            lunor-os/LUNOR-OS-1.1-amd64.iso.sha256
+            lunor-os/build.log
+          compression-level: 0
+          retention-days: 30
+          if-no-files-found: error
+
+          unsquashfs -cat "$squashfs" usr/local/bin/lunor-first-login | grep -q '/usr/share/lunor/live/install-lunor.desktop'
           unsquashfs -ll "$squashfs" | grep -q 'usr/bin/calamares-install-debian'
           unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/logo.png'
           unsquashfs -ll "$squashfs" | grep -q 'etc/calamares/branding/lunor/welcome.png'
