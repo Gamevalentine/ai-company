@@ -229,13 +229,140 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
 
-          desktop='lunor-os/config/includes.chroot/etc/skel/Desktop/install-lunor.desktop'
+          desktop='lunor-os/config/includes.chroot/usr/share/lunor/live/install-lunor.desktop'
+          skel='lunor-os/config/includes.chroot/etc/skel/Desktop/install-lunor.desktop'
           hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+          first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
           brand='lunor-os/config/includes.chroot/etc/calamares/branding/lunor'
 
-          grep -q '^Exec=/usr/bin/calamares-install-debian$' "$desktop"
-          grep -q '^Name=Install LUNOR OS$' "$desktop"
-          grep -q '^Icon=lunor$' "$desktop"
+          grep -q '^Exec=/usr/bin/calamares-install-debian
+
+          test -s "$brand/branding.desc"
+          grep -q '^componentName: lunor$' "$brand/branding.desc"
+          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
+
+          for name in logo welcome slide; do
+            xmllint --noout "$brand/$name.svg"
+            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
+            test -s "/tmp/$name.png"
+          done
+
+          grep -q "branding: lunor" "$hook"
+          grep -q 'calamares-desktop-icon.desktop' "$hook"
+          grep -q 'apt-get purge -y plasma-welcome' "$hook"
+          sh -n "$first"
+          sh -n "$hook"
+
+      - name: Verify Debian 13 live installer wrapper exists
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker pull debian:13 >/dev/null
+          docker run --rm debian:13 bash -lc '
+            set -eux
+            apt-get update >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
+            test -x /usr/bin/calamares-install-debian
+            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
+          '
+ "$desktop"
+          grep -q '^Name=Install LUNOR OS
+
+          test -s "$brand/branding.desc"
+          grep -q '^componentName: lunor$' "$brand/branding.desc"
+          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
+
+          for name in logo welcome slide; do
+            xmllint --noout "$brand/$name.svg"
+            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
+            test -s "/tmp/$name.png"
+          done
+
+          grep -q "branding: lunor" "$hook"
+          grep -q 'calamares-desktop-icon.desktop' "$hook"
+          sh -n "$hook"
+
+      - name: Verify Debian 13 live installer wrapper exists
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker pull debian:13 >/dev/null
+          docker run --rm debian:13 bash -lc '
+            set -eux
+            apt-get update >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
+            test -x /usr/bin/calamares-install-debian
+            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
+          '
+ "$desktop"
+          grep -q '^Icon=lunor
+
+          test -s "$brand/branding.desc"
+          grep -q '^componentName: lunor$' "$brand/branding.desc"
+          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
+
+          for name in logo welcome slide; do
+            xmllint --noout "$brand/$name.svg"
+            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
+            test -s "/tmp/$name.png"
+          done
+
+          grep -q "branding: lunor" "$hook"
+          grep -q 'calamares-desktop-icon.desktop' "$hook"
+          sh -n "$hook"
+
+      - name: Verify Debian 13 live installer wrapper exists
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker pull debian:13 >/dev/null
+          docker run --rm debian:13 bash -lc '
+            set -eux
+            apt-get update >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
+            test -x /usr/bin/calamares-install-debian
+            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
+          '
+ "$desktop"
+          grep -q '^Hidden=true
+
+          test -s "$brand/branding.desc"
+          grep -q '^componentName: lunor$' "$brand/branding.desc"
+          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
+
+          for name in logo welcome slide; do
+            xmllint --noout "$brand/$name.svg"
+            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
+            test -s "/tmp/$name.png"
+          done
+
+          grep -q "branding: lunor" "$hook"
+          grep -q 'calamares-desktop-icon.desktop' "$hook"
+          sh -n "$hook"
+
+      - name: Verify Debian 13 live installer wrapper exists
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker pull debian:13 >/dev/null
+          docker run --rm debian:13 bash -lc '
+            set -eux
+            apt-get update >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
+            test -x /usr/bin/calamares-install-debian
+            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
+          '
+ "$skel"
+          grep -q '/usr/share/lunor/live/install-lunor.desktop' "$first"
+          grep -q "rm -f.*install-lunor.desktop" "$first"
 
           test -s "$brand/branding.desc"
           grep -q '^componentName: lunor$' "$brand/branding.desc"
