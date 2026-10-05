@@ -1,0 +1,41 @@
+name: Validate LUNOR OS 1.1 development
+
+on:
+  push:
+    branches:
+      - build/lunor-os-1.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-boot-theme:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SVG boot assets
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
+          dir='lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor'
+          for f in background.svg logo.svg wordmark.svg loader.svg; do
+            xmllint --noout "$dir/$f"
+            rsvg-convert "$dir/$f" -o "/tmp/${f%.svg}.png"
+            test -s "/tmp/${f%.svg}.png"
+          done
+
+      - name: Validate Plymouth theme wiring
+        shell: bash
+        run: |
+          set -euxo pipefail
+          dir='lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor'
+          test -s "$dir/lunor.plymouth"
+          test -s "$dir/lunor.script"
+          grep -q '^ModuleName=script$' "$dir/lunor.plymouth"
+          grep -q 'Plymouth.SetRefreshFunction' "$dir/lunor.script"
+          grep -q 'plymouth-set-default-theme lunor' lunor-os/config/hooks/live/010-lunor-branding.hook.chroot
+          grep -q '^librsvg2-bin$' lunor-os/config/package-lists/lunor.list.chroot
