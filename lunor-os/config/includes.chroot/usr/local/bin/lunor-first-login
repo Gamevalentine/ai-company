@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MARK="$HOME/.config/lunor-1.1-initialized"
+MARK="$HOME/.config/lunor-1.2-initialized"
 [ -e "$MARK" ] && exit 0
 
 mkdir -p "$HOME/.config"
@@ -29,5 +29,7 @@ fi
 if [ ! -e "$HOME/.face.icon" ] && [ -f /usr/share/pixmaps/lunor-avatar.png ]; then
   cp /usr/share/pixmaps/lunor-avatar.png "$HOME/.face.icon"
 fi
+
+/usr/local/bin/lunor-apply-desktop >/dev/null 2>&1 || true
 
 touch "$MARK"
