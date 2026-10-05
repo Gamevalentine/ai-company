@@ -172,7 +172,7 @@ Rectangle {
             Layout.preferredWidth: 220
             model: sessionModel
             textRole: "name"
-            currentIndex: sessionModel.lastIndex
+            currentIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
             visible: count > 1
 
             contentItem: Text {
