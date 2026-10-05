@@ -8,15 +8,26 @@ mkdir -p /etc/sudoers.d
 printf '%s\n' 'lunor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/99-lunor-live
 chmod 440 /etc/sudoers.d/99-lunor-live
 
-THEME_DIR=/usr/share/plymouth/themes/lunor
-if [ -d "$THEME_DIR" ] && command -v rsvg-convert >/dev/null 2>&1; then
-  rsvg-convert "$THEME_DIR/background.svg" -o "$THEME_DIR/background.png"
-  rsvg-convert "$THEME_DIR/logo.svg" -o "$THEME_DIR/logo.png"
-  rsvg-convert "$THEME_DIR/wordmark.svg" -o "$THEME_DIR/wordmark.png"
-  rsvg-convert "$THEME_DIR/loader.svg" -o "$THEME_DIR/loader.png"
+PLYMOUTH_DIR=/usr/share/plymouth/themes/lunor
+if [ -d "$PLYMOUTH_DIR" ] && command -v rsvg-convert >/dev/null 2>&1; then
+  rsvg-convert "$PLYMOUTH_DIR/background.svg" -o "$PLYMOUTH_DIR/background.png"
+  rsvg-convert "$PLYMOUTH_DIR/logo.svg" -o "$PLYMOUTH_DIR/logo.png"
+  rsvg-convert "$PLYMOUTH_DIR/wordmark.svg" -o "$PLYMOUTH_DIR/wordmark.png"
+  rsvg-convert "$PLYMOUTH_DIR/loader.svg" -o "$PLYMOUTH_DIR/loader.png"
 fi
 
-if [ -f "$THEME_DIR/lunor.plymouth" ]; then
+if [ -f "$PLYMOUTH_DIR/lunor.plymouth" ]; then
   plymouth-set-default-theme lunor || true
   update-initramfs -u -k all || true
+fi
+
+SDDM_DIR=/usr/share/sddm/themes/lunor
+if [ -d "$SDDM_DIR" ] && command -v rsvg-convert >/dev/null 2>&1; then
+  rsvg-convert "$SDDM_DIR/background.svg" -o "$SDDM_DIR/background.png"
+  rsvg-convert "$SDDM_DIR/logo.svg" -o "$SDDM_DIR/logo.png"
+  cp "$SDDM_DIR/background.png" "$SDDM_DIR/preview.png"
+fi
+
+if [ -f /etc/sddm.conf.d/20-lunor-theme.conf ]; then
+  chmod 644 /etc/sddm.conf.d/20-lunor-theme.conf
 fi
