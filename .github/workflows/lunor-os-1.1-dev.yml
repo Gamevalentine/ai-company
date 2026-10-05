@@ -61,7 +61,12 @@ jobs:
           test -s "$dir/Main.qml"
           test -s "$dir/metadata.desktop"
           test -s "$dir/theme.conf"
-          qmlformat --check "$dir/Main.qml"
+          qmlformat_bin="$(command -v qmlformat || true)"
+          if [ -z "$qmlformat_bin" ] && [ -x /usr/lib/qt6/bin/qmlformat ]; then
+            qmlformat_bin=/usr/lib/qt6/bin/qmlformat
+          fi
+          test -n "$qmlformat_bin"
+          "$qmlformat_bin" --check "$dir/Main.qml"
 
       - name: Validate SDDM theme wiring
         shell: bash
