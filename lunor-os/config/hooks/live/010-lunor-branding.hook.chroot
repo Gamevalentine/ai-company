@@ -1,10 +1,22 @@
 #!/bin/sh
 set -e
+
 chmod 755 /usr/local/bin/lunor-first-login || true
 chmod 755 /etc/skel/Desktop/install-lunor.desktop || true
+
 mkdir -p /etc/sudoers.d
 printf '%s\n' 'lunor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/99-lunor-live
 chmod 440 /etc/sudoers.d/99-lunor-live
-if [ -f /usr/share/plymouth/themes/spinner/spinner.plymouth ]; then
-  plymouth-set-default-theme spinner || true
+
+THEME_DIR=/usr/share/plymouth/themes/lunor
+if [ -d "$THEME_DIR" ] && command -v rsvg-convert >/dev/null 2>&1; then
+  rsvg-convert "$THEME_DIR/background.svg" -o "$THEME_DIR/background.png"
+  rsvg-convert "$THEME_DIR/logo.svg" -o "$THEME_DIR/logo.png"
+  rsvg-convert "$THEME_DIR/wordmark.svg" -o "$THEME_DIR/wordmark.png"
+  rsvg-convert "$THEME_DIR/loader.svg" -o "$THEME_DIR/loader.png"
+fi
+
+if [ -f "$THEME_DIR/lunor.plymouth" ]; then
+  plymouth-set-default-theme lunor || true
+  update-initramfs -u -k all || true
 fi
