@@ -29,3 +29,4 @@ spice-vdagent
 qemu-guest-agent
 open-vm-tools-desktop
 librsvg2-bin
+qdbus-qt6
