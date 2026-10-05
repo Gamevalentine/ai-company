@@ -1,0 +1,27 @@
+#!/bin/sh
+set -eu
+
+SCRIPT=/usr/share/lunor/desktop-layout.js
+[ -r "$SCRIPT" ] || exit 1
+
+QDBUS=""
+for candidate in qdbus6 qdbus-qt6 qdbus; do
+  if command -v "$candidate" >/dev/null 2>&1; then
+    QDBUS="$candidate"
+    break
+  fi
+done
+
+[ -n "$QDBUS" ] || exit 1
+
+# Plasma Shell can take a few seconds to publish its D-Bus API after login.
+i=0
+while [ "$i" -lt 30 ]; do
+  if "$QDBUS" org.kde.plasmashell /PlasmaShell       org.kde.PlasmaShell.evaluateScript "$(cat "$SCRIPT")" >/dev/null 2>&1; then
+    exit 0
+  fi
+  i=$((i + 1))
+  sleep 1
+done
+
+exit 1
