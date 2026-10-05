@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+chmod 755 /usr/local/bin/lunor-first-login || true
+chmod 755 /etc/skel/Desktop/install-lunor.desktop || true
+mkdir -p /etc/sudoers.d
+printf '%s\n' 'lunor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/99-lunor-live
+chmod 440 /etc/sudoers.d/99-lunor-live
+if [ -f /usr/share/plymouth/themes/spinner/spinner.plymouth ]; then
+  plymouth-set-default-theme spinner || true
+fi
