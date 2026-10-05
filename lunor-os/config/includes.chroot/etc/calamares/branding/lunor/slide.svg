@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#02050A"/>
+      <stop offset=".55" stop-color="#071325"/>
+      <stop offset="1" stop-color="#02050A"/>
+    </linearGradient>
+    <radialGradient id="aura" cx="72%" cy="42%" r="62%">
+      <stop offset="0" stop-color="#315F96" stop-opacity=".40"/>
+      <stop offset=".36" stop-color="#17365C" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#02050A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="520" fill="url(#base)"/>
+  <rect width="900" height="520" fill="url(#aura)"/>
+  <text x="450" y="228" text-anchor="middle" fill="#F5F8FF"
+        font-family="Noto Sans, sans-serif" font-size="42" font-weight="300" letter-spacing="7">INSTALLING LUNOR OS</text>
+  <text x="450" y="275" text-anchor="middle" fill="#9EC9FF"
+        font-family="Noto Sans, sans-serif" font-size="17" letter-spacing="3">PREPARING YOUR SYSTEM</text>
+  <text x="450" y="332" text-anchor="middle" fill="#CFE3FF" opacity=".76"
+        font-family="Noto Sans, sans-serif" font-size="14">Please keep the virtual machine powered on until installation is complete.</text>
+</svg>
