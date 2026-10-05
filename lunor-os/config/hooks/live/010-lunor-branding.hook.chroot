@@ -2,7 +2,8 @@
 set -e
 
 chmod 755 /usr/local/bin/lunor-first-login || true
-chmod 755 /etc/skel/Desktop/install-lunor.desktop || true
+chmod 644 /etc/skel/Desktop/install-lunor.desktop || true
+chmod 644 /usr/share/lunor/live/install-lunor.desktop || true
 
 mkdir -p /etc/sudoers.d
 printf '%s\n' 'lunor ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/99-lunor-live
@@ -95,3 +96,8 @@ rm -f /etc/skel/Desktop/calamares-install-debian.desktop
 
 chmod 644 "$CALAMARES_BRAND_DIR/branding.desc" 2>/dev/null || true
 chmod 644 "$CALAMARES_BRAND_DIR"/*.png 2>/dev/null || true
+
+# Keep the installed desktop clean: LUNOR does not auto-launch KDE Welcome Center.
+if dpkg-query -W -f='${Status}' plasma-welcome 2>/dev/null | grep -q 'install ok installed'; then
+  DEBIAN_FRONTEND=noninteractive apt-get purge -y plasma-welcome >/dev/null 2>&1 || true
+fi
