@@ -1,9 +1,23 @@
 #!/bin/sh
-MARK="$HOME/.config/lunor-1.0-initialized"
+
+MARK="$HOME/.config/lunor-1.1-initialized"
 [ -e "$MARK" ] && exit 0
+
 mkdir -p "$HOME/.config"
+
 if command -v plasma-apply-wallpaperimage >/dev/null 2>&1; then
   sleep 4
   plasma-apply-wallpaperimage /usr/share/wallpapers/LUNOR/lunor-wallpaper.svg >/dev/null 2>&1 || true
 fi
+
+if command -v kwriteconfig6 >/dev/null 2>&1; then
+  kwriteconfig6 --file kscreenlockerrc     --group Greeter     --key WallpaperPlugin org.kde.image >/dev/null 2>&1 || true
+
+  kwriteconfig6 --file kscreenlockerrc     --group Greeter     --group Wallpaper     --group org.kde.image     --group General     --key Image file:///usr/share/wallpapers/LUNOR/lockscreen.png >/dev/null 2>&1 || true
+fi
+
+if [ ! -e "$HOME/.face.icon" ] && [ -f /usr/share/pixmaps/lunor-avatar.png ]; then
+  cp /usr/share/pixmaps/lunor-avatar.png "$HOME/.face.icon"
+fi
+
 touch "$MARK"
