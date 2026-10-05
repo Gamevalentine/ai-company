@@ -1,17 +1,27 @@
-# LUNOR OS 1.0
+# LUNOR OS 1.1
 
-First bootable milestone of LUNOR OS.
+Second milestone of LUNOR OS, built on the stable 1.0 base.
 
 - Base: Debian 13 (trixie)
 - Desktop: KDE Plasma
 - Installer: Calamares
+- Codename: Aurora
 - Live user: `lunor`
 - Live password: `live`
 
-## 1.0 acceptance criteria
+## What 1.1 adds
+
+1. LUNOR Plymouth boot theme.
+2. LUNOR SDDM login theme.
+3. LUNOR lock-screen branding.
+4. LUNOR desktop wallpaper set and base color scheme.
+5. System-wide LUNOR OS 1.1 identity and release branding.
+
+## 1.1 acceptance criteria
 
 1. Boots in BIOS and UEFI virtual machines.
-2. Reaches a KDE Plasma desktop.
-3. Shows LUNOR OS identity and a basic LUNOR wallpaper.
-4. Provides an **Install LUNOR OS** desktop shortcut using Calamares.
-5. Produces a downloadable hybrid ISO.
+2. Shows LUNOR branding during boot, login, lock screen and desktop.
+3. Reports itself as **LUNOR OS 1.1 (Aurora)** through standard release metadata.
+4. Keeps networking, audio and the KDE Plasma session working.
+5. Keeps the **Install LUNOR OS** Calamares shortcut working.
+6. Produces a downloadable hybrid ISO for VM testing.
