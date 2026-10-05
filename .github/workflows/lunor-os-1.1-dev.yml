@@ -39,3 +39,41 @@ jobs:
           grep -q 'Plymouth.SetRefreshFunction' "$dir/lunor.script"
           grep -q 'plymouth-set-default-theme lunor' lunor-os/config/hooks/live/010-lunor-branding.hook.chroot
           grep -q '^librsvg2-bin$' lunor-os/config/package-lists/lunor.list.chroot
+
+  validate-login-theme:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SDDM assets
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils qt6-declarative-dev-tools
+          dir='lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor'
+          xmllint --noout "$dir/background.svg"
+          xmllint --noout "$dir/logo.svg"
+          rsvg-convert "$dir/background.svg" -o /tmp/lunor-login-background.png
+          rsvg-convert "$dir/logo.svg" -o /tmp/lunor-login-logo.png
+          test -s /tmp/lunor-login-background.png
+          test -s /tmp/lunor-login-logo.png
+          test -s "$dir/Main.qml"
+          test -s "$dir/metadata.desktop"
+          test -s "$dir/theme.conf"
+          qmlformat --check "$dir/Main.qml"
+
+      - name: Validate SDDM theme wiring
+        shell: bash
+        run: |
+          set -euxo pipefail
+          cfg='lunor-os/config/includes.chroot/etc/sddm.conf.d/20-lunor-theme.conf'
+          qml='lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/Main.qml'
+          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+          grep -q '^Current=lunor$' "$cfg"
+          grep -q 'sddm.login' "$qml"
+          grep -q 'sddm.reboot' "$qml"
+          grep -q 'sddm.powerOff' "$qml"
+          grep -q 'SDDM_DIR=/usr/share/sddm/themes/lunor' "$hook"
+          grep -q 'background.png' "$hook"
+          grep -q 'logo.png' "$hook"
