@@ -83,3 +83,42 @@ jobs:
           grep -q 'SDDM_DIR=/usr/share/sddm/themes/lunor' "$hook"
           grep -q 'background.png' "$hook"
           grep -q 'logo.png' "$hook"
+
+
+  validate-lockscreen-theme:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate lock-screen assets
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
+          dir='lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR'
+          xmllint --noout "$dir/lockscreen.svg"
+          xmllint --noout "$dir/lock-avatar.svg"
+          rsvg-convert "$dir/lockscreen.svg" -o /tmp/lunor-lockscreen.png
+          rsvg-convert "$dir/lock-avatar.svg" -o /tmp/lunor-lock-avatar.png
+          test -s /tmp/lunor-lockscreen.png
+          test -s /tmp/lunor-lock-avatar.png
+
+      - name: Validate KScreenLocker wiring
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sys='lunor-os/config/includes.chroot/etc/xdg/kscreenlockerrc'
+          skel='lunor-os/config/includes.chroot/etc/skel/.config/kscreenlockerrc'
+          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+          first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
+
+          grep -q '^WallpaperPlugin=org.kde.image$' "$sys"
+          grep -q '^WallpaperPlugin=org.kde.image$' "$skel"
+          grep -q 'Image=file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$sys"
+          grep -q 'Image=file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$skel"
+          grep -q 'lockscreen.svg' "$hook"
+          grep -q 'lock-avatar.svg' "$hook"
+          grep -q '/usr/share/pixmaps/lunor-avatar.png' "$hook"
+          grep -q 'kwriteconfig6 --file kscreenlockerrc' "$first"
+          grep -q 'file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$first"
