@@ -162,3 +162,56 @@ jobs:
           grep -q 'lunor-wallpaper lunor-horizon lunor-silence' "$hook"
           sh -n "$first"
           sh -n "$hook"
+
+
+  validate-system-branding:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate release metadata
+        shell: bash
+        run: |
+          set -euxo pipefail
+          osr='lunor-os/config/includes.chroot/etc/os-release'
+          lsb='lunor-os/config/includes.chroot/etc/lsb-release'
+          issue='lunor-os/config/includes.chroot/etc/issue'
+          rel='lunor-os/config/includes.chroot/etc/lunor-release'
+          version='lunor-os/VERSION'
+          auto='lunor-os/auto/config'
+          installer='lunor-os/config/includes.chroot/etc/skel/Desktop/install-lunor.desktop'
+
+          grep -q '^PRETTY_NAME="LUNOR OS 1.1"$' "$osr"
+          grep -q '^VERSION_ID="1.1"$' "$osr"
+          grep -q '^VERSION="1.1 (Aurora)"$' "$osr"
+          grep -q '^VERSION_CODENAME=aurora$' "$osr"
+          grep -q '^LOGO=lunor$' "$osr"
+          grep -q '^DISTRIB_RELEASE=1.1$' "$lsb"
+          grep -q 'LUNOR OS 1.1 (Aurora)' "$issue"
+          grep -q '^LUNOR OS 1.1 (Aurora)$' "$rel"
+          test "$(tr -d '\n\r' < "$version")" = "1.1"
+
+          grep -q -- '--image-name "LUNOR-OS-1.1"' "$auto"
+          grep -q -- '--iso-application "LUNOR OS 1.1"' "$auto"
+          grep -q -- '--iso-volume "LUNOR_1_1"' "$auto"
+          grep -q '^Comment=Install LUNOR OS 1.1 to disk$' "$installer"
+          grep -q '^Icon=lunor$' "$installer"
+
+          sh -n "$auto"
+
+      - name: Validate LUNOR system icon
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
+          icon='lunor-os/config/includes.chroot/usr/share/icons/hicolor/scalable/apps/lunor.svg'
+          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+
+          xmllint --noout "$icon"
+          rsvg-convert "$icon" -o /tmp/lunor-system-icon.png
+          test -s /tmp/lunor-system-icon.png
+          grep -q 'distributor-logo.svg' "$hook"
+          grep -q '/usr/share/pixmaps/lunor.png' "$hook"
+          grep -q '/etc/os-release /etc/lsb-release /etc/lunor-release /etc/issue' "$hook"
+          sh -n "$hook"
