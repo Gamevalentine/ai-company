@@ -31,3 +31,20 @@ fi
 if [ -f /etc/sddm.conf.d/20-lunor-theme.conf ]; then
   chmod 644 /etc/sddm.conf.d/20-lunor-theme.conf
 fi
+
+WALLPAPER_DIR=/usr/share/wallpapers/LUNOR
+if [ -d "$WALLPAPER_DIR" ] && command -v rsvg-convert >/dev/null 2>&1; then
+  if [ -f "$WALLPAPER_DIR/lockscreen.svg" ]; then
+    rsvg-convert "$WALLPAPER_DIR/lockscreen.svg" -o "$WALLPAPER_DIR/lockscreen.png"
+  fi
+  if [ -f "$WALLPAPER_DIR/lock-avatar.svg" ]; then
+    rsvg-convert "$WALLPAPER_DIR/lock-avatar.svg" -o "$WALLPAPER_DIR/lock-avatar.png"
+    mkdir -p /usr/share/pixmaps
+    cp "$WALLPAPER_DIR/lock-avatar.png" /usr/share/pixmaps/lunor-avatar.png
+    cp "$WALLPAPER_DIR/lock-avatar.png" /etc/skel/.face.icon
+  fi
+fi
+
+chmod 644 /etc/xdg/kscreenlockerrc 2>/dev/null || true
+chmod 644 /etc/skel/.config/kscreenlockerrc 2>/dev/null || true
+chmod 644 /etc/skel/.face.icon 2>/dev/null || true
