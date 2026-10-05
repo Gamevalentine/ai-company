@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=LUNOR first login setup
+Exec=/usr/local/bin/lunor-first-login
+X-KDE-autostart-after=panel
+Hidden=false
+NoDisplay=true
