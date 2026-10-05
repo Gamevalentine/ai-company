@@ -215,3 +215,53 @@ jobs:
           grep -q '/usr/share/pixmaps/lunor.png' "$hook"
           grep -q '/etc/os-release /etc/lsb-release /etc/lunor-release /etc/issue' "$hook"
           sh -n "$hook"
+
+
+  validate-installer-repair:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate LUNOR Calamares assets and launcher
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
+
+          desktop='lunor-os/config/includes.chroot/etc/skel/Desktop/install-lunor.desktop'
+          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+          brand='lunor-os/config/includes.chroot/etc/calamares/branding/lunor'
+
+          grep -q '^Exec=/usr/bin/calamares-install-debian$' "$desktop"
+          grep -q '^Name=Install LUNOR OS$' "$desktop"
+          grep -q '^Icon=lunor$' "$desktop"
+
+          test -s "$brand/branding.desc"
+          grep -q '^componentName: lunor$' "$brand/branding.desc"
+          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
+          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
+
+          for name in logo welcome slide; do
+            xmllint --noout "$brand/$name.svg"
+            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
+            test -s "/tmp/$name.png"
+          done
+
+          grep -q "branding: lunor" "$hook"
+          grep -q 'calamares-desktop-icon.desktop' "$hook"
+          sh -n "$hook"
+
+      - name: Verify Debian 13 live installer wrapper exists
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker pull debian:13 >/dev/null
+          docker run --rm debian:13 bash -lc '
+            set -eux
+            apt-get update >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
+            test -x /usr/bin/calamares-install-debian
+            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
+          '
