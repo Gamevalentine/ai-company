@@ -7,7 +7,7 @@ lb config noauto \
   --binary-images iso-hybrid \
   --archive-areas "main contrib non-free-firmware" \
   --bootappend-live "boot=live components quiet splash username=lunor hostname=lunor locales=en_US.UTF-8 keyboard-layouts=us" \
-  --image-name "LUNOR-OS-1.0-amd64" \
+  --image-name "LUNOR-OS-1.0" \
   --iso-application "LUNOR OS 1.0" \
   --iso-publisher "LUNOR Project" \
   --iso-volume "LUNOR_1_0" \
