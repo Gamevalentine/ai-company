@@ -1,0 +1,7 @@
+[General]
+ColorScheme=Lunor
+AccentColor=158,201,255
+accentColorFromWallpaper=false
+
+[KDE]
+widgetStyle=Breeze
