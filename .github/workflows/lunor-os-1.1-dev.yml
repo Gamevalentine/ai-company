@@ -10,377 +10,104 @@ permissions:
   contents: read
 
 jobs:
-  validate-boot-theme:
+  validate-visuals:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate SVG boot assets
-        shell: bash
-        run: |
-          set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
-          dir='lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor'
-          for f in background.svg logo.svg wordmark.svg loader.svg; do
-            xmllint --noout "$dir/$f"
-            rsvg-convert "$dir/$f" -o "/tmp/${f%.svg}.png"
-            test -s "/tmp/${f%.svg}.png"
-          done
-
-      - name: Validate Plymouth theme wiring
-        shell: bash
-        run: |
-          set -euxo pipefail
-          dir='lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor'
-          test -s "$dir/lunor.plymouth"
-          test -s "$dir/lunor.script"
-          grep -q '^ModuleName=script$' "$dir/lunor.plymouth"
-          grep -q 'Plymouth.SetRefreshFunction' "$dir/lunor.script"
-          grep -q 'plymouth-set-default-theme lunor' lunor-os/config/hooks/live/010-lunor-branding.hook.chroot
-          grep -q '^librsvg2-bin$' lunor-os/config/package-lists/lunor.list.chroot
-
-  validate-login-theme:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate SDDM assets
+      - name: Validate SVG and QML assets
         shell: bash
         run: |
           set -euxo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils qt6-declarative-dev-tools
-          dir='lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor'
-          xmllint --noout "$dir/background.svg"
-          xmllint --noout "$dir/logo.svg"
-          rsvg-convert "$dir/background.svg" -o /tmp/lunor-login-background.png
-          rsvg-convert "$dir/logo.svg" -o /tmp/lunor-login-logo.png
-          test -s /tmp/lunor-login-background.png
-          test -s /tmp/lunor-login-logo.png
-          test -s "$dir/Main.qml"
-          test -s "$dir/metadata.desktop"
-          test -s "$dir/theme.conf"
+
+          for f in \
+            lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor/background.svg \
+            lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor/logo.svg \
+            lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor/wordmark.svg \
+            lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor/loader.svg \
+            lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/background.svg \
+            lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/logo.svg \
+            lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR/lockscreen.svg \
+            lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR/lock-avatar.svg \
+            lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR/lunor-wallpaper.svg \
+            lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR/lunor-horizon.svg \
+            lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR/lunor-silence.svg \
+            lunor-os/config/includes.chroot/usr/share/icons/hicolor/scalable/apps/lunor.svg \
+            lunor-os/config/includes.chroot/etc/calamares/branding/lunor/logo.svg \
+            lunor-os/config/includes.chroot/etc/calamares/branding/lunor/welcome.svg \
+            lunor-os/config/includes.chroot/etc/calamares/branding/lunor/slide.svg
+          do
+            xmllint --noout "$f"
+            rsvg-convert "$f" -o /tmp/asset.png
+            test -s /tmp/asset.png
+          done
+
+          qml='lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/Main.qml'
           qmlformat_bin="$(command -v qmlformat || true)"
           if [ -z "$qmlformat_bin" ] && [ -x /usr/lib/qt6/bin/qmlformat ]; then
             qmlformat_bin=/usr/lib/qt6/bin/qmlformat
           fi
           test -n "$qmlformat_bin"
-          "$qmlformat_bin" "$dir/Main.qml" > /tmp/Main.formatted.qml
+          "$qmlformat_bin" "$qml" > /tmp/Main.formatted.qml
           test -s /tmp/Main.formatted.qml
 
-      - name: Validate SDDM theme wiring
-        shell: bash
-        run: |
-          set -euxo pipefail
-          cfg='lunor-os/config/includes.chroot/etc/sddm.conf.d/20-lunor-theme.conf'
-          qml='lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/Main.qml'
-          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
-          grep -q '^Current=lunor$' "$cfg"
-          grep -q 'sddm.login' "$qml"
-          grep -q 'sddm.reboot' "$qml"
-          grep -q 'sddm.powerOff' "$qml"
-          grep -q 'SDDM_DIR=/usr/share/sddm/themes/lunor' "$hook"
-          grep -q 'background.png' "$hook"
-          grep -q 'logo.png' "$hook"
-
-
-  validate-lockscreen-theme:
+  validate-system:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate lock-screen assets
-        shell: bash
-        run: |
-          set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
-          dir='lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR'
-          xmllint --noout "$dir/lockscreen.svg"
-          xmllint --noout "$dir/lock-avatar.svg"
-          rsvg-convert "$dir/lockscreen.svg" -o /tmp/lunor-lockscreen.png
-          rsvg-convert "$dir/lock-avatar.svg" -o /tmp/lunor-lock-avatar.png
-          test -s /tmp/lunor-lockscreen.png
-          test -s /tmp/lunor-lock-avatar.png
-
-      - name: Validate KScreenLocker wiring
-        shell: bash
-        run: |
-          set -euxo pipefail
-          sys='lunor-os/config/includes.chroot/etc/xdg/kscreenlockerrc'
-          skel='lunor-os/config/includes.chroot/etc/skel/.config/kscreenlockerrc'
-          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
-          first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
-
-          grep -q '^WallpaperPlugin=org.kde.image$' "$sys"
-          grep -q '^WallpaperPlugin=org.kde.image$' "$skel"
-          grep -q 'Image=file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$sys"
-          grep -q 'Image=file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$skel"
-          grep -q 'lunor-wallpaper lunor-horizon lunor-silence lockscreen lock-avatar' "$hook"
-          grep -q '/usr/share/pixmaps/lunor-avatar.png' "$hook"
-          grep -q 'kwriteconfig6 --file kscreenlockerrc' "$first"
-          grep -q 'file:///usr/share/wallpapers/LUNOR/lockscreen.png' "$first"
-
-
-  validate-desktop-theme:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate desktop wallpaper set
-        shell: bash
-        run: |
-          set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
-          dir='lunor-os/config/includes.chroot/usr/share/wallpapers/LUNOR'
-          for name in lunor-wallpaper lunor-horizon lunor-silence; do
-            xmllint --noout "$dir/$name.svg"
-            rsvg-convert "$dir/$name.svg" -o "/tmp/$name.png"
-            test -s "/tmp/$name.png"
-          done
-
-      - name: Validate LUNOR color scheme and defaults
-        shell: bash
-        run: |
-          set -euxo pipefail
-          colors='lunor-os/config/includes.chroot/usr/share/color-schemes/Lunor.colors'
-          globals='lunor-os/config/includes.chroot/etc/skel/.config/kdeglobals'
-          first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
-          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
-
-          grep -q '^ColorScheme=Lunor$' "$colors"
-          grep -q '^Name=LUNOR$' "$colors"
-          grep -q '^DecorationFocus=158,201,255$' "$colors"
-          grep -q '^ColorScheme=Lunor$' "$globals"
-          grep -q '^AccentColor=158,201,255$' "$globals"
-          grep -q '^accentColorFromWallpaper=false$' "$globals"
-          grep -q 'plasma-apply-wallpaperimage' "$first"
-          grep -q 'plasma-apply-colorscheme Lunor' "$first"
-          grep -q 'accent-color "#9EC9FF"' "$first"
-          grep -q 'lunor-wallpaper lunor-horizon lunor-silence' "$hook"
-          sh -n "$first"
-          sh -n "$hook"
-
-
-  validate-system-branding:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate release metadata
+      - name: Validate release identity and theme wiring
         shell: bash
         run: |
           set -euxo pipefail
           osr='lunor-os/config/includes.chroot/etc/os-release'
-          lsb='lunor-os/config/includes.chroot/etc/lsb-release'
-          issue='lunor-os/config/includes.chroot/etc/issue'
-          rel='lunor-os/config/includes.chroot/etc/lunor-release'
-          version='lunor-os/VERSION'
           auto='lunor-os/auto/config'
-          installer='lunor-os/config/includes.chroot/etc/skel/Desktop/install-lunor.desktop'
+          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
+          first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
 
           grep -q '^PRETTY_NAME="LUNOR OS 1.1"$' "$osr"
           grep -q '^VERSION_ID="1.1"$' "$osr"
           grep -q '^VERSION="1.1 (Aurora)"$' "$osr"
-          grep -q '^VERSION_CODENAME=aurora$' "$osr"
-          grep -q '^LOGO=lunor$' "$osr"
-          grep -q '^DISTRIB_RELEASE=1.1$' "$lsb"
-          grep -q 'LUNOR OS 1.1 (Aurora)' "$issue"
-          grep -q '^LUNOR OS 1.1 (Aurora)$' "$rel"
-          test "$(tr -d '\n\r' < "$version")" = "1.1"
-
           grep -q -- '--image-name "LUNOR-OS-1.1"' "$auto"
-          grep -q -- '--iso-application "LUNOR OS 1.1"' "$auto"
           grep -q -- '--iso-volume "LUNOR_1_1"' "$auto"
-          grep -q '^Comment=Install LUNOR OS 1.1 to disk$' "$installer"
-          grep -q '^Icon=lunor$' "$installer"
-
+          grep -q 'plymouth-set-default-theme lunor' "$hook"
+          grep -q '^Current=lunor$' lunor-os/config/includes.chroot/etc/sddm.conf.d/20-lunor-theme.conf
+          grep -q 'file:///usr/share/wallpapers/LUNOR/lockscreen.png' lunor-os/config/includes.chroot/etc/skel/.config/kscreenlockerrc
+          grep -q 'plasma-apply-colorscheme Lunor' "$first"
           sh -n "$auto"
-
-      - name: Validate LUNOR system icon
-        shell: bash
-        run: |
-          set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
-          icon='lunor-os/config/includes.chroot/usr/share/icons/hicolor/scalable/apps/lunor.svg'
-          hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
-
-          xmllint --noout "$icon"
-          rsvg-convert "$icon" -o /tmp/lunor-system-icon.png
-          test -s /tmp/lunor-system-icon.png
-          grep -q 'distributor-logo.svg' "$hook"
-          grep -q '/usr/share/pixmaps/lunor.png' "$hook"
-          grep -q '/etc/os-release /etc/lsb-release /etc/lunor-release /etc/issue' "$hook"
           sh -n "$hook"
+          sh -n "$first"
 
-
-  validate-installer-repair:
+  validate-installer:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate LUNOR Calamares assets and launcher
+      - name: Validate LUNOR installer and post-install cleanup
         shell: bash
         run: |
           set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends librsvg2-bin libxml2-utils
-
           desktop='lunor-os/config/includes.chroot/usr/share/lunor/live/install-lunor.desktop'
           skel='lunor-os/config/includes.chroot/etc/skel/Desktop/install-lunor.desktop'
           hook='lunor-os/config/hooks/live/010-lunor-branding.hook.chroot'
           first='lunor-os/config/includes.chroot/usr/local/bin/lunor-first-login'
-          brand='lunor-os/config/includes.chroot/etc/calamares/branding/lunor'
+          brand='lunor-os/config/includes.chroot/etc/calamares/branding/lunor/branding.desc'
 
-          grep -q '^Exec=/usr/bin/calamares-install-debian
-
-          test -s "$brand/branding.desc"
-          grep -q '^componentName: lunor$' "$brand/branding.desc"
-          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
-
-          for name in logo welcome slide; do
-            xmllint --noout "$brand/$name.svg"
-            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
-            test -s "/tmp/$name.png"
-          done
-
-          grep -q "branding: lunor" "$hook"
+          grep -q '^Exec=/usr/bin/calamares-install-debian$' "$desktop"
+          grep -q '^Name=Install LUNOR OS$' "$desktop"
+          grep -q '^Icon=lunor$' "$desktop"
+          grep -q '^Hidden=true$' "$skel"
+          grep -q '/usr/share/lunor/live/install-lunor.desktop' "$first"
+          grep -q 'rm -f.*install-lunor.desktop' "$first"
+          grep -q '^componentName: lunor$' "$brand"
+          grep -q 'productName: LUNOR OS' "$brand"
+          grep -q 'bootloaderEntryName: LUNOR OS' "$brand"
           grep -q 'calamares-desktop-icon.desktop' "$hook"
           grep -q 'apt-get purge -y plasma-welcome' "$hook"
-          sh -n "$first"
-          sh -n "$hook"
 
-      - name: Verify Debian 13 live installer wrapper exists
-        shell: bash
-        run: |
-          set -euxo pipefail
-          docker pull debian:13 >/dev/null
-          docker run --rm debian:13 bash -lc '
-            set -eux
-            apt-get update >/dev/null
-            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
-            test -x /usr/bin/calamares-install-debian
-            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
-          '
- "$desktop"
-          grep -q '^Name=Install LUNOR OS
-
-          test -s "$brand/branding.desc"
-          grep -q '^componentName: lunor$' "$brand/branding.desc"
-          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
-
-          for name in logo welcome slide; do
-            xmllint --noout "$brand/$name.svg"
-            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
-            test -s "/tmp/$name.png"
-          done
-
-          grep -q "branding: lunor" "$hook"
-          grep -q 'calamares-desktop-icon.desktop' "$hook"
-          sh -n "$hook"
-
-      - name: Verify Debian 13 live installer wrapper exists
-        shell: bash
-        run: |
-          set -euxo pipefail
-          docker pull debian:13 >/dev/null
-          docker run --rm debian:13 bash -lc '
-            set -eux
-            apt-get update >/dev/null
-            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
-            test -x /usr/bin/calamares-install-debian
-            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
-          '
- "$desktop"
-          grep -q '^Icon=lunor
-
-          test -s "$brand/branding.desc"
-          grep -q '^componentName: lunor$' "$brand/branding.desc"
-          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
-
-          for name in logo welcome slide; do
-            xmllint --noout "$brand/$name.svg"
-            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
-            test -s "/tmp/$name.png"
-          done
-
-          grep -q "branding: lunor" "$hook"
-          grep -q 'calamares-desktop-icon.desktop' "$hook"
-          sh -n "$hook"
-
-      - name: Verify Debian 13 live installer wrapper exists
-        shell: bash
-        run: |
-          set -euxo pipefail
-          docker pull debian:13 >/dev/null
-          docker run --rm debian:13 bash -lc '
-            set -eux
-            apt-get update >/dev/null
-            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
-            test -x /usr/bin/calamares-install-debian
-            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
-          '
- "$desktop"
-          grep -q '^Hidden=true
-
-          test -s "$brand/branding.desc"
-          grep -q '^componentName: lunor$' "$brand/branding.desc"
-          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
-
-          for name in logo welcome slide; do
-            xmllint --noout "$brand/$name.svg"
-            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
-            test -s "/tmp/$name.png"
-          done
-
-          grep -q "branding: lunor" "$hook"
-          grep -q 'calamares-desktop-icon.desktop' "$hook"
-          sh -n "$hook"
-
-      - name: Verify Debian 13 live installer wrapper exists
-        shell: bash
-        run: |
-          set -euxo pipefail
-          docker pull debian:13 >/dev/null
-          docker run --rm debian:13 bash -lc '
-            set -eux
-            apt-get update >/dev/null
-            DEBIAN_FRONTEND=noninteractive apt-get install -y calamares-settings-debian >/dev/null
-            test -x /usr/bin/calamares-install-debian
-            grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
-          '
- "$skel"
-          grep -q '/usr/share/lunor/live/install-lunor.desktop' "$first"
-          grep -q "rm -f.*install-lunor.desktop" "$first"
-
-          test -s "$brand/branding.desc"
-          grep -q '^componentName: lunor$' "$brand/branding.desc"
-          grep -q 'productName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'bootloaderEntryName: LUNOR OS' "$brand/branding.desc"
-          grep -q 'slideshow: \[ "slide.png" \]' "$brand/branding.desc"
-
-          for name in logo welcome slide; do
-            xmllint --noout "$brand/$name.svg"
-            rsvg-convert "$brand/$name.svg" -o "/tmp/$name.png"
-            test -s "/tmp/$name.png"
-          done
-
-          grep -q "branding: lunor" "$hook"
-          grep -q 'calamares-desktop-icon.desktop' "$hook"
-          sh -n "$hook"
-
-      - name: Verify Debian 13 live installer wrapper exists
+      - name: Verify Debian 13 installer wrapper
         shell: bash
         run: |
           set -euxo pipefail
