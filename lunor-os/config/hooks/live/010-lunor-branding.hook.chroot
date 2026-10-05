@@ -70,3 +70,28 @@ if [ -f "$LUNOR_ICON" ]; then
 fi
 
 chmod 644 /etc/os-release /etc/lsb-release /etc/lunor-release /etc/issue 2>/dev/null || true
+
+
+# LUNOR Calamares branding and live-media installer integration.
+CALAMARES_BRAND_DIR=/etc/calamares/branding/lunor
+if [ -d "$CALAMARES_BRAND_DIR" ] && command -v rsvg-convert >/dev/null 2>&1; then
+  for name in logo welcome slide; do
+    if [ -f "$CALAMARES_BRAND_DIR/$name.svg" ]; then
+      rsvg-convert "$CALAMARES_BRAND_DIR/$name.svg" -o "$CALAMARES_BRAND_DIR/$name.png"
+    fi
+  done
+fi
+
+# Preserve Debian's tested module sequence, but use LUNOR's visual identity.
+if [ -f /etc/calamares/settings.conf ]; then
+  sed -i -E 's/^[[:space:]]*branding:.*/branding: lunor/' /etc/calamares/settings.conf
+fi
+
+# Debian's package creates an additional "Install Debian" desktop icon at login.
+# LUNOR ships its own installer shortcut, so disable the duplicate generator.
+rm -f /etc/xdg/autostart/calamares-desktop-icon.desktop
+rm -f /etc/skel/Desktop/install-debian.desktop
+rm -f /etc/skel/Desktop/calamares-install-debian.desktop
+
+chmod 644 "$CALAMARES_BRAND_DIR/branding.desc" 2>/dev/null || true
+chmod 644 "$CALAMARES_BRAND_DIR"/*.png 2>/dev/null || true
