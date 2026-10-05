@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Install LUNOR OS
+Comment=Install LUNOR OS 1.0 to disk
+Exec=pkexec calamares
+Icon=system-software-install
+Terminal=false
+Categories=System;
