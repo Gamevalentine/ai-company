@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="236" height="236" viewBox="0 0 236 236">
+  <defs>
+    <linearGradient id="fold" x1="35" y1="30" x2="194" y2="202" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5F8FF"/>
+      <stop offset=".52" stop-color="#CFE3FF"/>
+      <stop offset="1" stop-color="#9EC9FF"/>
+    </linearGradient>
+    <filter id="soft" x="-45%" y="-45%" width="190%" height="190%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <path d="M118 24 L194 68 L194 154 L118 212 L42 168 L42 82 Z" fill="#9EC9FF" opacity=".15" filter="url(#soft)"/>
+  <path d="M48 78 L113 38 L188 79 L123 116 Z" fill="url(#fold)"/>
+  <path d="M48 78 L123 116 L123 198 L48 158 Z" fill="#EAF3FF"/>
+  <path d="M123 116 L188 79 L188 153 L123 198 Z" fill="#A9D0FF"/>
+  <path d="M76 92 L123 66 L160 87 L120 109 Z" fill="#02050A" opacity=".72"/>
+  <path d="M76 92 L120 109 L120 161 L76 138 Z" fill="#071325" opacity=".78"/>
+  <path d="M120 109 L160 87 L160 133 L120 161 Z" fill="#0A1324" opacity=".86"/>
+</svg>
