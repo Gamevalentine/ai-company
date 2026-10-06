@@ -1,0 +1,14 @@
+{
+  "KPackageStructure": "Plasma/Shell",
+  "KPlugin": {
+    "Id": "org.lunor.shell",
+    "Name": "LUNOR Shell",
+    "Description": "LUNOR OS Plasma shell extension for the lock screen",
+    "Version": "1.1",
+    "License": "GPL-2.0-or-later",
+    "Category": "Plasma Shell",
+    "EnabledByDefault": true
+  },
+  "X-Plasma-APIVersion": "2",
+  "X-Plasma-FallbackPackage": "org.kde.plasma.desktop"
+}
