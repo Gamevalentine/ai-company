@@ -12,12 +12,21 @@ Rectangle {
     property string errorMessage: ""
     property bool loggingIn: false
 
+    function isVietnamese() {
+        return Qt.locale().name.toLowerCase().indexOf("vi") === 0
+    }
+    function t(en, vi) {
+        return isVietnamese() ? vi : en
+    }
+
     Image {
+        id: background
         anchors.fill: parent
         source: "background.png"
         fillMode: Image.PreserveAspectCrop
         smooth: true
         asynchronous: true
+        opacity: 0
     }
 
     Rectangle {
@@ -32,15 +41,39 @@ Rectangle {
         height: 118
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: Math.max(72, parent.height * 0.11)
+        anchors.topMargin: Math.max(72, parent.height * 0.10)
         source: "logo.png"
         fillMode: Image.PreserveAspectFit
         smooth: true
         opacity: 0
+        scale: 0.96
+    }
 
-        Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
+    Label {
+        id: welcomeTitle
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: logo.bottom
+        anchors.topMargin: 20
+        text: root.t("Welcome", "Chào mừng")
+        color: "#F5F8FF"
+        font.family: "Noto Sans"
+        font.pixelSize: 28
+        font.weight: Font.Light
+        opacity: 0
+        transform: Translate { id: titleMove; y: 12 }
+    }
 
-        Component.onCompleted: opacity = 1
+    Label {
+        id: welcomeSubline
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: welcomeTitle.bottom
+        anchors.topMargin: 8
+        text: root.t("Sign in to continue", "Đăng nhập để tiếp tục")
+        color: "#9EC9FF"
+        font.family: "Noto Sans"
+        font.pixelSize: 13
+        opacity: 0
+        transform: Translate { id: sublineMove; y: 12 }
     }
 
     ColumnLayout {
@@ -48,24 +81,16 @@ Rectangle {
         width: Math.min(420, parent.width - 48)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 70
+        anchors.verticalCenterOffset: 115
         spacing: 16
+        opacity: 0
+        transform: Translate { id: panelMove; y: 12 }
 
         Label {
             Layout.alignment: Qt.AlignHCenter
-            text: "LUNOR OS"
-            color: "#F5F8FF"
-            font.family: "Noto Sans"
-            font.pixelSize: 26
-            font.weight: Font.Light
-            font.letterSpacing: 5
-        }
-
-        Label {
-            Layout.alignment: Qt.AlignHCenter
-            Layout.bottomMargin: 18
+            Layout.bottomMargin: 12
             text: Qt.formatTime(new Date(), "hh:mm") + "  •  " + Qt.formatDate(new Date(), "ddd d MMM")
-            color: "#9EC9FF"
+            color: "#AFC7E8"
             opacity: 0.84
             font.family: "Noto Sans"
             font.pixelSize: 13
@@ -92,7 +117,7 @@ Rectangle {
                 anchors.margins: 4
                 leftPadding: 18
                 rightPadding: 18
-                placeholderText: "Username"
+                placeholderText: root.t("Username", "Tên đăng nhập")
                 text: userModel.lastUser
                 color: "#F5F8FF"
                 placeholderTextColor: "#7C94B5"
@@ -118,7 +143,7 @@ Rectangle {
                 anchors.margins: 4
                 leftPadding: 18
                 rightPadding: 18
-                placeholderText: "Password"
+                placeholderText: root.t("Password", "Mật khẩu")
                 echoMode: TextInput.Password
                 color: "#F5F8FF"
                 placeholderTextColor: "#7C94B5"
@@ -135,7 +160,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 52
             enabled: !root.loggingIn && username.text.length > 0
-            text: root.loggingIn ? "Signing in…" : "Sign in"
+            text: root.loggingIn ? root.t("Signing in…", "Đang đăng nhập…") : root.t("Sign in", "Đăng nhập")
 
             contentItem: Text {
                 text: loginButton.text
@@ -174,48 +199,28 @@ Rectangle {
             textRole: "name"
             currentIndex: sessionModel.lastIndex >= 0 ? sessionModel.lastIndex : 0
             visible: count > 1
-
-            contentItem: Text {
-                leftPadding: 12
-                rightPadding: 28
-                text: sessionChooser.displayText
-                color: "#AFC7E8"
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Noto Sans"
-                font.pixelSize: 12
-                elide: Text.ElideRight
-            }
-
-            background: Rectangle {
-                radius: 12
-                color: "#660A1324"
-                border.width: 1
-                border.color: "#334D70"
-            }
         }
     }
 
     Row {
+        id: powerRow
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.margins: 28
         spacing: 8
+        opacity: loginPanel.opacity
 
         Button {
-            width: 94
+            width: 104
             height: 38
-            text: "Restart"
-            background: Rectangle { radius: 12; color: parent.down ? "#4D17365C" : "#3317365C" }
-            contentItem: Text { text: parent.text; color: "#AFC7E8"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 12 }
+            text: root.t("Restart", "Khởi động lại")
             onClicked: sddm.reboot()
         }
 
         Button {
-            width: 94
+            width: 104
             height: 38
-            text: "Power off"
-            background: Rectangle { radius: 12; color: parent.down ? "#4D17365C" : "#3317365C" }
-            contentItem: Text { text: parent.text; color: "#AFC7E8"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.pixelSize: 12 }
+            text: root.t("Power off", "Tắt máy")
             onClicked: sddm.powerOff()
         }
     }
@@ -229,6 +234,38 @@ Rectangle {
         font.family: "Noto Sans"
         font.pixelSize: 11
         font.letterSpacing: 1
+        opacity: loginPanel.opacity
+    }
+
+    SequentialAnimation {
+        id: intro
+        running: true
+
+        NumberAnimation {
+            target: background
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: 800
+            easing.type: Easing.OutCubic
+        }
+
+        ParallelAnimation {
+            NumberAnimation { target: logo; property: "opacity"; from: 0; to: 1; duration: 800; easing.type: Easing.OutCubic }
+            NumberAnimation { target: logo; property: "scale"; from: 0.96; to: 1.0; duration: 800; easing.type: Easing.OutCubic }
+        }
+
+        ParallelAnimation {
+            NumberAnimation { target: welcomeTitle; property: "opacity"; from: 0; to: 1; duration: 700; easing.type: Easing.OutCubic }
+            NumberAnimation { target: titleMove; property: "y"; from: 12; to: 0; duration: 700; easing.type: Easing.OutCubic }
+        }
+
+        ParallelAnimation {
+            NumberAnimation { target: welcomeSubline; property: "opacity"; from: 0; to: 1; duration: 700; easing.type: Easing.OutCubic }
+            NumberAnimation { target: sublineMove; property: "y"; from: 12; to: 0; duration: 700; easing.type: Easing.OutCubic }
+            NumberAnimation { target: loginPanel; property: "opacity"; from: 0; to: 1; duration: 700; easing.type: Easing.OutCubic }
+            NumberAnimation { target: panelMove; property: "y"; from: 12; to: 0; duration: 700; easing.type: Easing.OutCubic }
+        }
     }
 
     function performLogin() {
@@ -245,7 +282,7 @@ Rectangle {
 
         function onLoginFailed() {
             root.loggingIn = false
-            root.errorMessage = "Incorrect username or password"
+            root.errorMessage = root.t("Incorrect username or password", "Tên đăng nhập hoặc mật khẩu không đúng")
             password.selectAll()
             password.forceActiveFocus()
         }
