@@ -101,3 +101,14 @@ chmod 644 "$CALAMARES_BRAND_DIR"/*.png 2>/dev/null || true
 if dpkg-query -W -f='${Status}' plasma-welcome 2>/dev/null | grep -q 'install ok installed'; then
   DEBIAN_FRONTEND=noninteractive apt-get purge -y plasma-welcome >/dev/null 2>&1 || true
 fi
+
+
+# LUNOR animation runtime.
+chmod 755 /usr/local/libexec/lunor-plymouth-message 2>/dev/null || true
+chmod 644 /etc/systemd/system/lunor-plymouth-message.service 2>/dev/null || true
+chmod 644 /etc/xdg/plasmashellrc /etc/xdg/kdeglobals /etc/xdg/ksplashrc 2>/dev/null || true
+chmod 644 /usr/share/plasma/shells/org.lunor.shell/metadata.json 2>/dev/null || true
+chmod 644 /usr/share/plasma/shells/org.lunor.shell/contents/lockscreen/LockScreen.qml 2>/dev/null || true
+chmod 644 /usr/share/plasma/look-and-feel/org.lunor.desktop/metadata.json 2>/dev/null || true
+chmod 644 /usr/share/plasma/look-and-feel/org.lunor.desktop/contents/splash/Splash.qml 2>/dev/null || true
+systemctl enable lunor-plymouth-message.service >/dev/null 2>&1 || true
