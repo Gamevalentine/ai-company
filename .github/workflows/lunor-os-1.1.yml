@@ -78,6 +78,133 @@ jobs:
           sha256sum LUNOR-OS-1.1-amd64.iso | tee LUNOR-OS-1.1-amd64.iso.sha256
           ls -lh LUNOR-OS-1.1-amd64.iso
 
+      - name: Automated live desktop smoke test
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            qemu-system-x86 python3-pip netcat-openbsd
+          python3 -m pip install --break-system-packages --quiet vncdotool pillow
+
+          rm -f /tmp/lunor-qga.sock /tmp/lunor-qemu.pid /tmp/lunor-desktop.png
+
+          qemu-system-x86_64 \
+            -machine accel=tcg \
+            -m 3072 \
+            -smp 2 \
+            -cdrom lunor-os/LUNOR-OS-1.1-amd64.iso \
+            -boot d \
+            -display none \
+            -vnc 127.0.0.1:1 \
+            -device virtio-serial \
+            -chardev socket,path=/tmp/lunor-qga.sock,server=on,wait=off,id=qga0 \
+            -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
+            -pidfile /tmp/lunor-qemu.pid \
+            -daemonize
+
+          for i in $(seq 1 30); do
+            nc -z 127.0.0.1 5901 && break
+            sleep 1
+          done
+          nc -z 127.0.0.1 5901
+
+          # Boot the default live entry.
+          sleep 5
+          python3 - <<'PY'
+          from vncdotool import api
+          c = api.connect('127.0.0.1::5901')
+          c.keyPress('enter')
+          c.disconnect()
+          PY
+
+          # Wait up to 5 minutes for the guest agent, then verify the live desktop stack.
+          python3 - <<'PY'
+          import json, os, socket, time, sys
+
+          sock_path = "/tmp/lunor-qga.sock"
+          deadline = time.time() + 300
+
+          def request(payload):
+              s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+              s.settimeout(10)
+              s.connect(sock_path)
+              s.sendall((json.dumps(payload) + "\n").encode())
+              data = b""
+              while b"\n" not in data:
+                  chunk = s.recv(65536)
+                  if not chunk:
+                      break
+                  data += chunk
+              s.close()
+              return json.loads(data.decode().splitlines()[0])
+
+          while time.time() < deadline:
+              try:
+                  r = request({"execute":"guest-ping"})
+                  if "return" in r:
+                      break
+              except Exception:
+                  pass
+              time.sleep(5)
+          else:
+              raise SystemExit("guest agent never became ready")
+
+          cmd = "for i in $(seq 1 36); do pgrep -x plasmashell >/dev/null && echo LUNOR_DESKTOP_READY && exit 0; sleep 5; done; echo LUNOR_DESKTOP_FAILED; exit 1"
+          r = request({
+              "execute":"guest-exec",
+              "arguments":{
+                  "path":"/bin/sh",
+                  "arg":["-lc",cmd],
+                  "capture-output":True
+              }
+          })
+          pid = r["return"]["pid"]
+
+          while True:
+              st = request({"execute":"guest-exec-status","arguments":{"pid":pid}})["return"]
+              if st.get("exited"):
+                  break
+              time.sleep(2)
+
+          if st.get("exitcode") != 0:
+              raise SystemExit("plasmashell did not stay up in the live session")
+          PY
+
+          # Capture what the VM actually rendered so the build has visual evidence.
+          python3 - <<'PY'
+          from vncdotool import api
+          from PIL import Image, ImageStat
+
+          out = "/tmp/lunor-desktop.png"
+          c = api.connect('127.0.0.1::5901')
+          c.captureScreen(out)
+          c.disconnect()
+
+          im = Image.open(out).convert("L")
+          stat = ImageStat.Stat(im)
+          mean = stat.mean[0]
+          std = stat.stddev[0]
+          pixels = list(im.resize((160, 90)).getdata())
+          nonblack = sum(1 for p in pixels if p > 12) / len(pixels)
+          print(f"screen mean={mean:.2f} std={std:.2f} nonblack={nonblack:.3f}")
+
+          # Catch the exact regression seen by the user: a nearly all-black screen.
+          if nonblack < 0.06 or std < 4:
+              raise SystemExit("rendered screen is effectively black")
+          PY
+
+          kill "$(cat /tmp/lunor-qemu.pid)" || true
+          cp /tmp/lunor-desktop.png lunor-os/LUNOR-OS-1.1-smoke.png
+
+      - name: Upload smoke-test screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: LUNOR-OS-1.1-smoke
+          path: lunor-os/LUNOR-OS-1.1-smoke.png
+          retention-days: 14
+          if-no-files-found: error
+
       - name: Verify hybrid ISO metadata
         shell: bash
         run: |
