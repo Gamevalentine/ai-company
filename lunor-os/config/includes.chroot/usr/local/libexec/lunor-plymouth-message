@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+
+[ -r /etc/default/locale ] && . /etc/default/locale || true
+lang="${LC_ALL:-${LC_MESSAGES:-${LANG:-en}}}"
+
+case "$lang" in
+  vi*|VI*)
+    text='Đang khởi động…  •  Vui lòng chờ'
+    ;;
+  *)
+    text='Starting…  •  Please wait'
+    ;;
+esac
+
+if command -v plymouth >/dev/null 2>&1; then
+  plymouth message --text="$text" 2>/dev/null || true
+fi
