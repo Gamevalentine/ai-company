@@ -119,3 +119,66 @@ jobs:
             test -x /usr/bin/calamares-install-debian
             grep -q "/etc/fstab.orig.calamares" /usr/bin/calamares-install-debian
           '
+
+
+  validate-animations:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate LUNOR animation QML
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends qt6-declarative-dev-tools
+
+          qmlformat_bin="$(command -v qmlformat || true)"
+          if [ -z "$qmlformat_bin" ] && [ -x /usr/lib/qt6/bin/qmlformat ]; then
+            qmlformat_bin=/usr/lib/qt6/bin/qmlformat
+          fi
+          test -n "$qmlformat_bin"
+
+          for qml in \
+            lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/Main.qml \
+            lunor-os/config/includes.chroot/usr/share/plasma/shells/org.lunor.shell/contents/lockscreen/LockScreen.qml \
+            lunor-os/config/includes.chroot/usr/share/plasma/look-and-feel/org.lunor.desktop/contents/splash/Splash.qml
+          do
+            "$qmlformat_bin" "$qml" > /tmp/validated.qml
+            test -s /tmp/validated.qml
+          done
+
+      - name: Validate animation timeline and localization wiring
+        shell: bash
+        run: |
+          set -euxo pipefail
+          login='lunor-os/config/includes.chroot/usr/share/sddm/themes/lunor/Main.qml'
+          lock='lunor-os/config/includes.chroot/usr/share/plasma/shells/org.lunor.shell/contents/lockscreen/LockScreen.qml'
+          welcome='lunor-os/config/includes.chroot/usr/share/plasma/look-and-feel/org.lunor.desktop/contents/splash/Splash.qml'
+          ply='lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor/lunor.script'
+          msg='lunor-os/config/includes.chroot/usr/local/libexec/lunor-plymouth-message'
+          shellcfg='lunor-os/config/includes.chroot/etc/xdg/plasmashellrc'
+
+          grep -q 'duration: 800' "$login"
+          grep -q 'duration: 700' "$login"
+          grep -q 'Chào mừng' "$login"
+          grep -q 'Sign in to continue' "$login"
+
+          grep -q 'Welcome back' "$lock"
+          grep -q 'Chào mừng trở lại' "$lock"
+          grep -q 'Unlock to continue' "$lock"
+
+          grep -q 'Welcome to LUNOR OS' "$welcome"
+          grep -q 'Chào mừng đến với LUNOR OS' "$welcome"
+          grep -q 'Clean. Calm. Ready.' "$welcome"
+
+          grep -q 't / 0.8' "$ply"
+          grep -q '(t - 0.8) / 0.8' "$ply"
+          grep -q '(t - 1.6) / 0.7' "$ply"
+          grep -q '(t - 2.3) / 0.7' "$ply"
+          grep -q 'Image.Text("LUNOR OS"' "$ply"
+
+          grep -q "Đang khởi động" "$msg"
+          grep -q "Starting" "$msg"
+          grep -q '^ShellPackage=org.lunor.shell$' "$shellcfg"
+          sh -n "$msg"
