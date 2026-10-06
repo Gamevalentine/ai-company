@@ -16,19 +16,6 @@ if command -v plasma-apply-colorscheme >/dev/null 2>&1; then
   plasma-apply-colorscheme Lunor >/dev/null 2>&1 || true
   plasma-apply-colorscheme --accent-color "#9EC9FF" >/dev/null 2>&1 || true
 elif command -v kwriteconfig6 >/dev/null 2>&1; then
-  kwriteconfig6 --file kdeglobals --group General --key ColorScheme Lunor >/dev/null 2>&1 || true
-  kwriteconfig6 --file kdeglobals --group General --key AccentColor "158,201,255" >/dev/null 2>&1 || true
-  kwriteconfig6 --file kdeglobals --group General --key accentColorFromWallpaper false >/dev/null 2>&1 || true
-fi
-
-if command -v kwriteconfig6 >/dev/null 2>&1; then
-  kwriteconfig6 --file kscreenlockerrc --group Greeter --key WallpaperPlugin org.kde.image >/dev/null 2>&1 || true
-  kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image file:///usr/share/wallpapers/LUNOR/lockscreen.png >/dev/null 2>&1 || true
-fi
-
-if command -v kwriteconfig6 >/dev/null 2>&1; then
-  kwriteconfig6 --file kdeglobals --group KDE --key LookAndFeelPackage org.lunor.desktop >/dev/null 2>&1 || true
-  kwriteconfig6 --file plasmashellrc --group Shell --key ShellPackage org.lunor.shell >/dev/null 2>&1 || true
   kwriteconfig6 --file ksplashrc --group KSplash --key Theme org.lunor.desktop >/dev/null 2>&1 || true
   kwriteconfig6 --file ksplashrc --group KSplash --key Engine KSplashQML >/dev/null 2>&1 || true
 fi
