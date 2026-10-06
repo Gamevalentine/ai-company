@@ -1,0 +1,6 @@
+[kdeglobals][KDE]
+LookAndFeelPackage=org.lunor.desktop
+
+[ksplashrc][KSplash]
+Theme=org.lunor.desktop
+Engine=KSplashQML
