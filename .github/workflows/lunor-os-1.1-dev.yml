@@ -157,7 +157,6 @@ jobs:
           welcome='lunor-os/config/includes.chroot/usr/share/plasma/look-and-feel/org.lunor.desktop/contents/splash/Splash.qml'
           ply='lunor-os/config/includes.chroot/usr/share/plymouth/themes/lunor/lunor.script'
           msg='lunor-os/config/includes.chroot/usr/local/libexec/lunor-plymouth-message'
-          shellcfg='lunor-os/config/includes.chroot/etc/xdg/plasmashellrc'
 
           grep -q 'duration: 800' "$login"
           grep -q 'duration: 700' "$login"
@@ -180,5 +179,15 @@ jobs:
 
           grep -q "Đang khởi động" "$msg"
           grep -q "Starting" "$msg"
-          grep -q '^ShellPackage=org.lunor.shell$' "$shellcfg"
+          test ! -e lunor-os/config/includes.chroot/etc/xdg/plasmashellrc
+          grep -q 'onStageChanged' "$welcome"
+          grep -q 'stage === 2' "$welcome"
+          grep -q 'stage >= 5' "$welcome"
           sh -n "$msg"
+
+      - name: Reject risky Plasma shell override
+        shell: bash
+        run: |
+          set -euxo pipefail
+          test ! -e lunor-os/config/includes.chroot/etc/xdg/plasmashellrc
+          ! grep -R "ShellPackage=org.lunor.shell" lunor-os/config/includes.chroot/etc/xdg lunor-os/config/includes.chroot/etc/skel 2>/dev/null
