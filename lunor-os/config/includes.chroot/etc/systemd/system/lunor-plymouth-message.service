@@ -1,0 +1,13 @@
+[Unit]
+Description=LUNOR localized boot message
+DefaultDependencies=no
+After=plymouth-start.service local-fs.target
+Before=display-manager.service
+ConditionPathExists=/run/plymouth/pid
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/libexec/lunor-plymouth-message
+
+[Install]
+WantedBy=multi-user.target
