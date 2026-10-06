@@ -26,6 +26,13 @@ if command -v kwriteconfig6 >/dev/null 2>&1; then
   kwriteconfig6 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image file:///usr/share/wallpapers/LUNOR/lockscreen.png >/dev/null 2>&1 || true
 fi
 
+if command -v kwriteconfig6 >/dev/null 2>&1; then
+  kwriteconfig6 --file kdeglobals --group KDE --key LookAndFeelPackage org.lunor.desktop >/dev/null 2>&1 || true
+  kwriteconfig6 --file plasmashellrc --group Shell --key ShellPackage org.lunor.shell >/dev/null 2>&1 || true
+  kwriteconfig6 --file ksplashrc --group KSplash --key Theme org.lunor.desktop >/dev/null 2>&1 || true
+  kwriteconfig6 --file ksplashrc --group KSplash --key Engine KSplashQML >/dev/null 2>&1 || true
+fi
+
 if [ ! -e "$HOME/.face.icon" ] && [ -f /usr/share/pixmaps/lunor-avatar.png ]; then
   cp /usr/share/pixmaps/lunor-avatar.png "$HOME/.face.icon"
 fi
